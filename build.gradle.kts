@@ -27,7 +27,7 @@ buildscript {
 plugins {
     kotlin("jvm") version "1.8.10"
     id("nebula.release") version (properties["nebulaReleasePluginVersion"] as String)
-    id("com.github.node-gradle.node") version "4.0.0"
+    id("com.github.node-gradle.node") version "7.0.2"
     id("maven-publish")
     id("idea")
 }
@@ -259,7 +259,7 @@ publishing {
 }
 
 node {
-    version.set("16.13.2")
-    yarnVersion.set("1.22.17")
+    version.set("20.14.0")
+    yarnVersion.set("1.22.22")
     download.set(true)
 }
