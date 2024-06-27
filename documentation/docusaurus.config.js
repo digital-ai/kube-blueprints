@@ -3,20 +3,20 @@ const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
 
 module.exports = {
-  title: 'XL OP Blueprints',
+  title: 'Digital.ai Kube Blueprints',
   tagline: '',
-  url: 'https://xebialabs.github.io',
-  baseUrl: '/xl-op-blueprints/',
+  url: 'https://digital-ai.github.io',
+  baseUrl: '/kube-blueprints/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/digital_ai_deploy.svg',
   organizationName: 'Digital.ai',
-  projectName: 'xl-op-blueprints',
+  projectName: 'kube-blueprints',
   themeConfig: {
     navbar: {
-      title: 'XL OP Blueprints',
+      title: 'Kube Blueprints',
       logo: {
-        alt: 'XL OP Blueprints Digital.ai',
+        alt: 'Digital.ai Kube Blueprints',
         src: 'img/digital_ai_deploy.svg',
       },
       items: [
@@ -28,7 +28,7 @@ module.exports = {
         },
 
         {
-          href: 'https://github.com/xebialabs/xl-op-blueprints',
+          href: 'https://github.com/digitial-ai/kube-blueprints',
           label: 'GitHub',
           position: 'right',
         }
@@ -46,12 +46,12 @@ module.exports = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/xebialabs/xl-op-blueprints',
+              href: 'https://github.com/digital-ai/kube-blueprints',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} OP Blueprints Digital.ai`,
+      copyright: `Copyright © ${new Date().getFullYear()} Kube Blueprints Digital.ai`,
     },
     prism: {
       theme: lightCodeTheme,
