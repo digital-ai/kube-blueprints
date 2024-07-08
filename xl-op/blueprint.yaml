@@ -626,7 +626,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Select source of the ingress keystore:"
+      prompt: "Select source of the secure ingress keystore:"
       promptIf: !expr K8sSetup != 'Openshift' && ServerType != 'dai-release-runner'&& ProcessType == "install" && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != "http"
       description: "Provide source of the ingress keystore"
       default: "generate"
@@ -641,12 +641,12 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Select source of the ingress keystore:"
+      prompt: "Select source of the secure ingress keystore:"
       promptIf: !expr K8sSetup != 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == 'haproxy' && HttpProtocolIngress != "http"
       description: "Provide source of the ingress keystore"
       default: "generate"
       validate: !expr "IngressKeystoreSourceHaproxy == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : true"
-    - name: IngressKeystoreSourceOpenshift
+    - name: IngressKeystoreSourceOpenshiftHttp
       type: Select
       options:
         - label: Use route default certificate
@@ -661,10 +661,29 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the keystore for the route:"
-      promptIf: !expr K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType != 'none' && HttpProtocolIngress != "http"
+      promptIf: !expr "K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease == 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')"
       description: "Provide source of the keystore"
       default: "default"
-      validate: !expr "IngressKeystoreSourceOpenshift == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshift == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
+      validate: !expr "IngressKeystoreSourceOpenshiftHttp == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttp == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
+    - name: IngressKeystoreSourceOpenshiftHttps
+      type: Select
+      options:
+        - label: SSL passthrough (It will pass the traffic to the backend without decryption)
+          value: passthrough
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      prompt: "Select source of the keystore for the secure route (only passthrough is supported in case of the secure backend):"
+      promptIf: !expr "K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http')"
+      description: "Provide source of the keystore"
+      default: "passthrough"
+      validate: !expr "IngressKeystoreSourceOpenshiftHttps == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttps == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
+    - name: IngressKeystoreSourceOpenshift
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      value: !expr "K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http') ? IngressKeystoreSourceOpenshiftHttps : IngressKeystoreSourceOpenshiftHttp"
+      description: "Provide source of the keystore"
     - name: IngressKeystoreSource
       type: Input
       saveInXlvals: true
