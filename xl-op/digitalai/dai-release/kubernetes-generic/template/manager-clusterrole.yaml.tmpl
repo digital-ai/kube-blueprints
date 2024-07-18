@@ -37,6 +37,12 @@ rules:
   verbs:
     - '*'
 - apiGroups:
+    - networking.k8s.io
+  resources:
+    - networkpolicies
+  verbs:
+    - '*'
+- apiGroups:
     - route.openshift.io
   resources:
     - '*'
