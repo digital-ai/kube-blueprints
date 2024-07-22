@@ -37,6 +37,18 @@ rules:
   verbs:
     - '*'
 - apiGroups:
+    - networking.k8s.io
+  resources:
+    - networkpolicies
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
     - route.openshift.io
   resources:
     - '*'
