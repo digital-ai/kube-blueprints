@@ -415,17 +415,11 @@ spec:
       securityContextConstraints:
         enabled: true
       {{- end }}
-    {{- if or (eq .IsCustomImageRegistry true) (eq .K8sSetup "Openshift") }}
+    {{- if eq .IsCustomImageRegistry true }}
     volumePermissions:
-      {{- if eq .IsCustomImageRegistry true }}
       image:
         {{- /* registry name defined in global section */}}
         repository: {{ .RepositoryName }}/os-shell
-      {{- end }}
-      {{- if eq .K8sSetup "Openshift" }}
-      containerSecurityContext:
-        seLinuxOptions: null
-      {{- end }}
     {{- end }}
   rabbitmq:
     {{- if eq .IsCustomImageRegistry true }}
