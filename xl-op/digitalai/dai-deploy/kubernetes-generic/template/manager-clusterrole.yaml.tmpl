@@ -18,7 +18,6 @@ rules:
   - "networking.k8s.io"
   resources:
   - "ingressclasses"
-  - "networkpolicies"
   verbs:
   - "*"
 - apiGroups:
@@ -36,18 +35,6 @@ rules:
     - poddisruptionbudgets
   verbs:
     - '*'
-- apiGroups:
-    - networking.k8s.io
-  resources:
-    - networkpolicies
-  verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch    
 - apiGroups:
     - route.openshift.io
   resources:
