@@ -13,12 +13,19 @@ rules:
   - ""
   resources:
   - "configmaps"
+  - "endpoints"
   - "persistentvolumeclaims"
   - "secrets"
   - "serviceaccounts"
   - "services"
   verbs:
-  - "*"
+  - "create"
+  - "delete"
+  - "get"
+  - "list"
+  - "patch"
+  - "update"
+  - "watch"
 - apiGroups:
   - "apps"
   resources:
@@ -26,7 +33,13 @@ rules:
   - "statefulsets"
   - "daemonsets"
   verbs:
-  - "*"
+  - "create"
+  - "delete"
+  - "get"
+  - "list"
+  - "patch"
+  - "update"
+  - "watch"
 - apiGroups:
   - "batch"
   resources:
@@ -40,21 +53,40 @@ rules:
   - "networking.k8s.io"
   resources:
   - "ingresses"
+  - "networkpolicies"
   verbs:
-  - "*"
+  - "create"
+  - "delete"
+  - "get"
+  - "list"
+  - "patch"
+  - "update"
+  - "watch"
 - apiGroups:
   - policy
   resources:
   - poddisruptionbudgets
   verbs:
-  - '*'
+  - "create"
+  - "delete"
+  - "get"
+  - "list"
+  - "patch"
+  - "update"
+  - "watch"
 - apiGroups:
   - "rbac.authorization.k8s.io"
   resources:
   - "rolebindings"
   - "roles"
   verbs:
-  - "*"
+  - "create"
+  - "delete"
+  - "get"
+  - "list"
+  - "patch"
+  - "update"
+  - "watch"
 - apiGroups:
   - xld.digital.ai
   resources:
