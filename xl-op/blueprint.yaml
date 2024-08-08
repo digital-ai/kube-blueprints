@@ -302,20 +302,20 @@ spec:
     - name: ResourcesPresetDeployCc
       type: Select
       options:
-        - label: Request - 100m cpu, 128Mi memory. Limit - 150m cpu, 192Mi memory
-          value: nano
         - label: Request - 250m cpu, 256Mi memory. Limit - 375m cpu, 384Mi memory
-          value: micro
+          value: nano
         - label: Request - 500m cpu, 512Mi memory. Limit - 750m cpu, 768Mi memory
+          value: micro
+        - label: Request - 500m cpu, 1Gi memory. Limit - 750m cpu, 1.5Gi memory
           value: small
-        - label: Request - 500m cpu, 1024Mi memory. Limit - 750m cpu, 1536Mi memory
+        - label: Request - 1.0 cpu, 2Gi memory. Limit - 1.5 cpu, 3Gi memory
           value: medium
-        - label: Request - 1.0 cpu, 2048Mi memory. Limit - 1.5 cpu, 3072Mi memory
+        - label: Request - 1.5 cpu, 4Gi memory. Limit - 3.0 cpu, 6Gi memory
           value: large
-        - label: Request - 1.5 cpu, 4096Mi memory. Limit - 3.0 cpu, 6144Mi memory
+        - label: Request - 1.5 cpu, 4Gi memory. Limit - 6.0 cpu, 12Gi memory
           value: xlarge
-        - label: Request - 1.5 cpu, 4096Mi memory. Limit - 6.0 cpu, 12288Mi memory
-          value: 2xlarge                                                
+        - label: Request - 1.5 cpu, 4Gi memory. Limit - 12.0 cpu, 24Gi memory
+          value: 2xlarge
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -1562,6 +1562,10 @@ spec:
       type: Confirm
       saveInXlvals: true
       value: !expr "(ServerType == 'dai-release' && ProcessType == 'install') ? (RemoteRunnerInstallType != 'no-install') : (ServerType == 'dai-release-runner')"
+    - name: RemoteRunnerAdminPasswordEnvVar
+      type: Input
+      saveInXlvals: true
+      value: "ADMIN_PASSWORD"
     - name: RemoteRunnerRepositoryName
       type: Input
       saveInXlvals: true
