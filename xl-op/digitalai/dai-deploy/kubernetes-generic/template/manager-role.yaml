@@ -12,6 +12,15 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - "namespaces"
+  - "pods"
+  verbs:
+  - "get"
+  - "list"
+  - "watch"
+- apiGroups:
+  - ""
+  resources:
   - "configmaps"
   - "endpoints"
   - "persistentvolumeclaims"
@@ -53,9 +62,18 @@ rules:
   - "update"
   - "watch"
 - apiGroups:
+  - "discovery.k8s.io"
+  resources:
+  - "endpointslices"
+  verbs:
+  - "get"
+  - "list"
+  - "watch"
+- apiGroups:
   - "networking.k8s.io"
   resources:
   - "ingresses"
+  - "ingresses/status"
   - "networkpolicies"
   verbs:
   - "create"
