@@ -487,7 +487,7 @@ spec:
       type: Select
       options:
         - label: PKCS12
-          value: pkcs12
+          value: p12
         - label: JKS
           value: jks
       saveInXlvals: true
@@ -495,7 +495,7 @@ spec:
       prompt: "Provide the application server HTTPS keystore format:"
       description: Provide the HTTPS keystore type for the application server
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
-      default: "pkcs12"
+      default: "p12"
     - name: ApplicationKeystorePassword
       type: Input
       saveInXlvals: true
