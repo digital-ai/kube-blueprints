@@ -688,7 +688,7 @@ spec:
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      value: !expr "K8sSetup == 'Openshift' ? IngressKeystoreSourceOpenshift : (IngressKeystoreSourceGeneric : IngressKeystoreSourceHaproxy)"
+      value: !expr "K8sSetup == 'Openshift' ? IngressKeystoreSourceOpenshift : (IngressType == 'haproxy' ? IngressKeystoreSourceHaproxy : IngressKeystoreSourceGeneric)"
       description: Select between supported ingress keystore sources.
     - name: IngressHost
       type: Input
@@ -706,7 +706,7 @@ spec:
       overrideDefault: true
       prompt: "The access to the Release host will be secured externally with HTTPS protocol:"
       promptIf: !expr ServerType == 'dai-release' && ProcessType == "install" && IngressType == "none" && HttpProtocolRelease == "http"
-      description: "Select true if the HTTPS protocol will be used that is setup somewhere externally, the serverl URL will start with https"
+      description: "Select true if the HTTPS protocol will be used that is setup somewhere externally, the server URL will start with https"
     - name: IngressTlsSecretName
       type: Select
       options:
