@@ -6,6 +6,6 @@ export APPLY_REL_PATH=../../../apply
 export ASSERTS_REL_PATH=../../../asserts
 export SCRIPTS_REL_PATH=../../../scripts
 export BUILD_REL_PATH=../../../../../build/e2e
-export XL_CLI=xl-24.1.0-beta.7
+export XL_CLI=xl-24.1.6
 # require https://kuttl.dev/docs/cli.html#setup-the-kuttl-kubectl-plugin - `kubectl krew install kuttl`
 kubectl kuttl test --artifacts-dir $OUTPUT_DIR --config $TEST_DIR
