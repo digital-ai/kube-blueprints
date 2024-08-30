@@ -34,6 +34,7 @@ spec:
       - name: manager
         securityContext:
           allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
           capabilities:
             drop:
             - "ALL"
@@ -72,7 +73,9 @@ spec:
           limits:
             cpu: 500m
             memory: 512Mi
+            ephemeral-storage: 2Gi
           requests:
             cpu: 10m
             memory: 64Mi
+            ephemeral-storage: 50Mi
       terminationGracePeriodSeconds: 10
