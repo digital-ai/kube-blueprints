@@ -110,6 +110,7 @@ RepositoryKeystoreEditor: |-
 
 RepositoryKeystoreFile: ''
 KeystorePassphrase: '6JFsZyRcLyKYjE5k'
+ResourcesSource: 'none'
 PostgresqlPvcSize: '1'
 RabbitmqPvcSize: '1'
 HttpProtocolRelease: 'http'
