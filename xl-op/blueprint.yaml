@@ -894,6 +894,8 @@ spec:
           value: file
         - label: Copy/Paste the repository keystore to editor (the content needs to be base64 encoded)
           value: editor
+        - label: Default repository keystore
+          value: default        
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -925,14 +927,14 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       description: Provide repository keystore for the server
-      value: !expr "RepositoryKeystoreSource == 'editor' ? ifBase64(RepositoryKeystoreEditor) : ifBase64(ifFileReadBytes(RepositoryKeystoreFile))"
+      value: !expr "RepositoryKeystoreSource == 'default' ? '' : (RepositoryKeystoreSource == 'editor' ? ifBase64(RepositoryKeystoreEditor) : ifBase64(ifFileReadBytes(RepositoryKeystoreFile)))"
     - name: KeystorePassphrase
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide repository keystore passphrase:"
-      promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
+      promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && RepositoryKeystoreSource != 'default'
       description: Repository keystore passphrase for the server
       default: !expr "RepositoryKeystoreSource == 'generate' ? randPassword() : ''"
     - name: EnablePostgresql

@@ -33,10 +33,12 @@ spec:
   license: |-
 {{ .License | trim | indent 4 }}
   {{- end }}
+{{- if ne .RepositoryKeystoreSource "default" }}
   keystore:
     passphrase: {{ .KeystorePassphrase | quote }}
-    keystore: |- 
+    keystore: |-
 {{ .RepositoryKeystore | trim | indent 6 }}"
+{{- end }}
   external:
     db:
       {{- if eq .EnablePostgresql false }}

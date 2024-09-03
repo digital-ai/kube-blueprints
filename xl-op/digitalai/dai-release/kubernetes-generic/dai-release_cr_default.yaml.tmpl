@@ -43,10 +43,12 @@ spec:
   {{- end }}
   appHostname: "{{ .IngressHost }}"
   {{- end }}
+{{- if ne .RepositoryKeystoreSource "default" }}
   keystore:
     passphrase: {{ .KeystorePassphrase | quote }}
-    keystore: |- 
+    keystore: |-
 {{ .RepositoryKeystore | trim | indent 6 }}
+{{- end }}
   replicaCount: {{ .XlrReplicaCount }}
   external:
     db:
