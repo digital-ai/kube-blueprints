@@ -102,3 +102,4 @@ IsRemoteRunnerTruststoreEnabled: false
 RemoteRunnerTruststore: |-
 
 RemoteRunnerTruststorePassword:
+RemoteRunnerClean: false
