@@ -174,6 +174,15 @@ spec:
       saveInXlvals: true
       default: ReadWriteOnce
       description: Select between supported Access Modes to define if the volume can be mounted as read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany). For all Deploy pods ReadWriteOnce access mode is enough, the pods are not sharing the volumes.
+    - name: EnableSCC
+      type: Confirm
+      saveInXlvals: true
+      overrideDefault: true
+      ignoreIfSkipped: true
+      default: false
+      promptIf: !expr "K8sSetup == 'Openshift' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Do you want to enable Security Context Constraints (SCC)?"
+      description: "Type yes to enable Security Context Constraints (SCC) for your Kubernetes deployment, which define pod restrictions specific to the OpenShift Kubernetes Engine."
     - name: XldWorkerCount
       type: Input
       saveInXlvals: true
