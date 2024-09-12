@@ -1,5 +1,5 @@
 RepositoryName: xebialabsearlyaccess
 ImageTag: 24.3.0-beta.7
 OperatorImageTag: 24.3.0-beta.7
-RemoteRunnerRepositoryName: xebialabsunsupported
-ImageTagRemoteRunner: 24.3.0-912.113
+RemoteRunnerRepositoryName: xebialabsearlyaccess
+ImageTagRemoteRunner: 24.3.0-beta.7
