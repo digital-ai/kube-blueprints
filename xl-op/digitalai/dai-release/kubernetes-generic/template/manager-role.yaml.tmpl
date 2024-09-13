@@ -122,3 +122,29 @@ rules:
   - patch
   - update
   - watch
+{{- if eq .RemoteRunnerInstallType "cluster-install" }}
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+  - list
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - list
+  - get
+{{- end }}
