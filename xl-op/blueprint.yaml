@@ -181,8 +181,8 @@ spec:
       ignoreIfSkipped: true
       default: false
       promptIf: !expr "K8sSetup == 'Openshift' && (ProcessType == 'install' || ProcessType == 'upgrade')"
-      prompt: "Do you want to enable Security Context Constraints (SCC)?"
-      description: "Type yes to enable Security Context Constraints (SCC) for your Kubernetes deployment, which define pod restrictions specific to the OpenShift Kubernetes Engine."
+      prompt: "Do you want to create Security Context Constraints (SCCs)?"
+      description: "Choose yes to create Security Context Constraints (SCCs), which define security-related pod restrictions. If you're upgrading and previously used SCCs, make sure to select this option or create them manually. Otherwise, pods may fail to start due to permission issues."
     - name: XldWorkerCount
       type: Input
       saveInXlvals: true
