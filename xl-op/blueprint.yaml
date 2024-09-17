@@ -1199,6 +1199,7 @@ spec:
           0.0: .spec.AdminPassword
           23.3: .
         .spec.centralConfiguration.replicaCount: .
+        .spec.centralConfiguration.persistence.paths: .
         .spec.centralConfiguration.persistence.accessModes[0]:
           0.0: .spec.Persistence.AccessMode
           23.3:
@@ -1217,6 +1218,7 @@ spec:
         .spec.master.replicaCount:
           0.0: .spec.XldMasterCount
           23.3: .
+        .spec.master.persistence.paths: .
         .spec.master.persistence.accessModes[0]:
           0.0: .spec.Persistence.AccessMode
           23.3:
@@ -1234,6 +1236,7 @@ spec:
         .spec.worker.replicaCount:
           0.0: .spec.XldWorkerCount
           23.3: .
+        .spec.worker.persistence.paths: .
         .spec.worker.persistence.accessModes[0]:
           0.0: .spec.Persistence.AccessMode
           23.3:
@@ -1308,6 +1311,7 @@ spec:
         .spec.keystore.keystore:
           0.0: .spec.RepositoryKeystore
           23.3: .
+        .spec.truststore: .
         .spec.postgresql.install: .
         .spec.postgresql.primary.persistence.size:
           0.0: .spec.postgresql.persistence.size
@@ -1396,6 +1400,7 @@ spec:
           0.0:
           23.3: .
         .spec.replicaCount: .
+        .spec.persistence.paths: .
         .spec.persistence.accessModes.[0]:
           0.0: .spec.Persistence.AccessMode
           23.3:
@@ -1470,6 +1475,7 @@ spec:
         .spec.keystore.keystore:
           0.0: .spec.RepositoryKeystore
           23.3: .
+        .spec.truststore: .
         .spec.postgresql.install: .
         .spec.postgresql.primary.persistence.size:
           0.0: .spec.postgresql.persistence.size
