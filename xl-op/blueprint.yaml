@@ -1399,19 +1399,22 @@ spec:
         .spec.securityContextConstraints: .
         .spec.centralConfiguration.podSecurityContext: .
         .spec.centralConfiguration.containerSecurityContext: .
-        .spec.centralConfiguration.volumePermissions.containerSecurityContext: .
+        .spec.centralConfiguration.volumePermissions: .
         .spec.master.podSecurityContext: .
         .spec.master.containerSecurityContext: .
-        .spec.master.volumePermissions.containerSecurityContext: .
+        .spec.master.volumePermissions: .
         .spec.worker.podSecurityContext: .
         .spec.worker.containerSecurityContext: .
-        .spec.worker.volumePermissions.containerSecurityContext: .
+        .spec.worker.volumePermissions: .
         .spec.haproxy-ingress.controller.securityContext: .
         .spec.postgresql.primary.securityContextConstraints: .
-        .spec.postgresql.volumePermissions.containerSecurityContext: .
+        .spec.postgresql.primary.containerSecurityContext: .
+        .spec.postgresql.primary.podSecurityContext: .
+        .spec.postgresql.volumePermissions: .
         .spec.rabbitmq.containerSecurityContext: .
         .spec.rabbitmq.securityContextConstraints: .
-        .spec.rabbitmq.volumePermissions.containerSecurityContext: .
+        .spec.rabbitmq.podSecurityContext: .
+        .spec.rabbitmq.volumePermissions: .
     - name: PreserveCrValuesRelease
       type: Editor
       prompt: "Edit list of custom resource keys that will migrate to the new Release CR:"
@@ -1581,13 +1584,16 @@ spec:
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
         .spec.securityContextConstraints: .
-        .spec.volumePermissions.containerSecurityContext: .
+        .spec.volumePermissions: .
         .spec.haproxy-ingress.controller.securityContext: .
         .spec.postgresql.primary.securityContextConstraints: .
-        .spec.postgresql.volumePermissions.containerSecurityContext: .
+        .spec.postgresql.primary.containerSecurityContext: .
+        .spec.postgresql.primary.podSecurityContext: .
+        .spec.postgresql.volumePermissions: .
         .spec.rabbitmq.containerSecurityContext: .
         .spec.rabbitmq.securityContextConstraints: .
-        .spec.rabbitmq.volumePermissions.containerSecurityContext: .
+        .spec.rabbitmq.podSecurityContext: .
+        .spec.rabbitmq.volumePermissions: .
     - name: PreservePvc
       type: Confirm
       saveInXlvals: true
