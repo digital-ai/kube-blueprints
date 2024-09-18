@@ -160,7 +160,7 @@ PreserveCrValuesRelease: |-
         .spec.resourcesPreset: .
         .spec.resources: .
         .spec.defaultInitContainers.resources: .
-        .spec.volumePermissions.resources: .
+        .spec.volumePermissions: .
         .spec.haproxy-ingress.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resourcesPreset: .
@@ -173,13 +173,16 @@ PreserveCrValuesRelease: |-
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
         .spec.securityContextConstraints: .
-        .spec.volumePermissions.containerSecurityContext: .
+        .spec.volumePermissions: .
         .spec.haproxy-ingress.controller.securityContext: .
         .spec.postgresql.primary.securityContextConstraints: .
-        .spec.postgresql.volumePermissions.containerSecurityContext: .
+        .spec.postgresql.primary.containerSecurityContext: .
+        .spec.postgresql.primary.podSecurityContext: .
+        .spec.postgresql.volumePermissions: .
         .spec.rabbitmq.containerSecurityContext: .
         .spec.rabbitmq.securityContextConstraints: .
-        .spec.rabbitmq.volumePermissions.containerSecurityContext: .
+        .spec.rabbitmq.podSecurityContext: .
+        .spec.rabbitmq.volumePermissions: .
 PostgresqlExternalConfigRelease: |-
   main:
     url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
