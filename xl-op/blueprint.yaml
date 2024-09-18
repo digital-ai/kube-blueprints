@@ -1362,13 +1362,25 @@ spec:
           23.3: .
         .spec.ssl: .
         .spec.hooks: .
-        .spec.hooks.genSelfSigned.enabled: .
+        .spec.centralConfiguration.configuration: .
+        .spec.centralConfiguration.extraConfiguration: .
+        .spec.master.configuration: .
+        .spec.master.extraConfiguration: .
+        .spec.worker.configuration: .
+        .spec.worker.extraConfiguration: .
+        .spec.postgresql.primary.configuration: .
+        .spec.postgresql.primary.extraConfiguration: .
+        .spec.rabbitmq.configuration: .
+        .spec.rabbitmq.extraConfiguration: .
         .spec.centralConfiguration.resourcesPreset: .
         .spec.centralConfiguration.resources: .
+        .spec.centralConfiguration.defaultInitContainers.resources: .
         .spec.master.resourcesPreset: .
         .spec.master.resources: .
+        .spec.master.defaultInitContainers.resources: .
         .spec.worker.resourcesPreset: .
         .spec.worker.resources: .
+        .spec.worker.defaultInitContainers.resources: .
         .spec.haproxy-ingress.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resourcesPreset: .
@@ -1378,6 +1390,25 @@ spec:
         .spec.postgresql.primary.resourcesPreset: .
         .spec.rabbitmq.resources: .
         .spec.rabbitmq.resourcesPreset: .
+        .spec.securityContextConstraints: .
+        .spec.centralConfiguration.podSecurityContext: .
+        .spec.centralConfiguration.containerSecurityContext: .
+        .spec.centralConfiguration.volumePermissions: .
+        .spec.master.podSecurityContext: .
+        .spec.master.containerSecurityContext: .
+        .spec.master.volumePermissions: .
+        .spec.worker.podSecurityContext: .
+        .spec.worker.containerSecurityContext: .
+        .spec.worker.volumePermissions: .
+        .spec.haproxy-ingress.controller.securityContext: .
+        .spec.postgresql.primary.securityContextConstraints: .
+        .spec.postgresql.primary.containerSecurityContext: .
+        .spec.postgresql.primary.podSecurityContext: .
+        .spec.postgresql.volumePermissions: .
+        .spec.rabbitmq.containerSecurityContext: .
+        .spec.rabbitmq.securityContextConstraints: .
+        .spec.rabbitmq.podSecurityContext: .
+        .spec.rabbitmq.volumePermissions: .
     - name: PreserveCrValuesRelease
       type: Editor
       prompt: "Edit list of custom resource keys that will migrate to the new Release CR:"
@@ -1523,9 +1554,16 @@ spec:
           23.3: .
         .spec.http2.enabled: .
         .spec.ssl: .
-        .spec.hooks.genSelfSigned.enabled: .
+        .spec.hooks: .
+        .spec.configuration: .
+        .spec.extraConfiguration: .
+        .spec.postgresql.primary.configuration: .
+        .spec.postgresql.primary.extraConfiguration: .
+        .spec.rabbitmq.configuration: .
+        .spec.rabbitmq.extraConfiguration: .
         .spec.resourcesPreset: .
         .spec.resources: .
+        .spec.defaultInitContainers.resources: .
         .spec.haproxy-ingress.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resourcesPreset: .
@@ -1535,6 +1573,19 @@ spec:
         .spec.postgresql.primary.resourcesPreset: .
         .spec.rabbitmq.resources: .
         .spec.rabbitmq.resourcesPreset: .
+        .spec.podSecurityContext: .
+        .spec.containerSecurityContext: .
+        .spec.securityContextConstraints: .
+        .spec.volumePermissions: .
+        .spec.haproxy-ingress.controller.securityContext: .
+        .spec.postgresql.primary.securityContextConstraints: .
+        .spec.postgresql.primary.containerSecurityContext: .
+        .spec.postgresql.primary.podSecurityContext: .
+        .spec.postgresql.volumePermissions: .
+        .spec.rabbitmq.containerSecurityContext: .
+        .spec.rabbitmq.securityContextConstraints: .
+        .spec.rabbitmq.podSecurityContext: .
+        .spec.rabbitmq.volumePermissions: .
     - name: PreservePvc
       type: Confirm
       saveInXlvals: true
