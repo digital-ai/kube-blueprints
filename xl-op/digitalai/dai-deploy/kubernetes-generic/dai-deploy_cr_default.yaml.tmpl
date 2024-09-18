@@ -101,7 +101,7 @@ spec:
       {{- end }}
   {{- if eq .K8sSetup "Openshift" }}
   securityContextConstraints:
-    enabled: true    
+    enabled: {{ .EnableSCC }}
   {{- end }}
   centralConfiguration:
     replicaCount: 1
@@ -116,9 +116,28 @@ spec:
         - {{ .AccessModeDeploy }}
       size: 1Gi
     podSecurityContext:
-      enabled: true
+        {{- if eq .K8sSetup "Openshift" }}
+        {{- if eq .EnableSCC true }}
+        enabled: true
+        {{- else }}
+        runAsUser: null
+        runAsGroup: null
+        fsGroup: null
+        {{- end }}
+        {{- else }}
+        enabled: true
+        {{- end }}
     containerSecurityContext:
-      enabled: true      
+        {{- if eq .K8sSetup "Openshift" }}
+        {{- if eq .EnableSCC true }}
+        enabled: true
+        {{- else }}
+        runAsUser: null
+        runAsGroup: null
+        {{- end }}
+        {{- else }}
+        enabled: true
+        {{- end }}
     volumePermissions:
       enabled: false
     diagnosticMode:
@@ -141,9 +160,28 @@ spec:
         - {{ .AccessModeDeploy }}
       size: {{ .PvcSizeDeploy }}Gi
     podSecurityContext:
-      enabled: true
+        {{- if eq .K8sSetup "Openshift" }}
+        {{- if eq .EnableSCC true }}
+        enabled: true
+        {{- else }}
+        runAsUser: null
+        runAsGroup: null
+        fsGroup: null
+        {{- end }}
+        {{- else }}
+        enabled: true
+        {{- end }}
     containerSecurityContext:
-      enabled: true
+        {{- if eq .K8sSetup "Openshift" }}
+        {{- if eq .EnableSCC true }}
+        enabled: true
+        {{- else }}
+        runAsUser: null
+        runAsGroup: null
+        {{- end }}
+        {{- else }}
+        enabled: true
+        {{- end }}
     volumePermissions:
       enabled: false
     image:
@@ -170,9 +208,28 @@ spec:
         - {{ .AccessModeDeploy }}
       size: {{ .PvcSizeDeployTaskEngine }}Gi
     podSecurityContext:
+      {{- if eq .K8sSetup "Openshift" }}
+      {{- if eq .EnableSCC true }}
       enabled: true
+      {{- else }}
+      runAsUser: null
+      runAsGroup: null
+      fsGroup: null
+      {{- end }}
+      {{- else }}
+      enabled: true
+      {{- end }}
     containerSecurityContext:
-      enabled: true      
+      {{- if eq .K8sSetup "Openshift" }}
+      {{- if eq .EnableSCC true }}
+      enabled: true
+      {{- else }}
+      runAsUser: null
+      runAsGroup: null
+      {{- end }}
+      {{- else }}
+      enabled: true
+      {{- end }}
     volumePermissions:
       enabled: false
     image:
@@ -189,7 +246,7 @@ spec:
     {{- else if eq .ResourcesSource "none" }}
     resourcesPreset: "none"
     resources: {}
-    {{- end }}   
+    {{- end }}
 
   {{- if eq .IsCustomImageRegistry true }}
   busyBox:
@@ -415,7 +472,7 @@ spec:
     {{- else if eq .ResourcesSource "none" }}
     resourcesPreset: "none"
     resources: {}
-    {{- end }}    
+    {{- end }}
   postgresql:
     global:
       {{- /*  global overrides the other occurences */}}
@@ -447,14 +504,38 @@ spec:
         size: {{ .PostgresqlPvcSize }}Gi
         storageClass: "{{ .PostgresqlStorageClass }}"
       podSecurityContext:
+        {{- if eq .K8sSetup "Openshift" }}
+        {{- if eq .EnableSCC true }}
         enabled: true
+        {{- else }}
+        enabled: false
+        runAsUser: null
+        runAsGroup: null
+        fsGroup: null
+        {{- end }}
+        {{- else }}
+        enabled: true
+        {{- end }}
       containerSecurityContext:
+        {{- if eq .K8sSetup "Openshift" }}
+        {{- if eq .EnableSCC true }}
         enabled: true
+        {{- else }}
+        enabled: false
+        runAsUser: null
+        runAsGroup: null
+        {{- end }}
+        {{- else }}
+        enabled: true
+        {{- end }}
       {{- if eq .K8sSetup "Openshift" }}
       securityContextConstraints:
-        enabled: true
+        enabled: {{ .EnableSCC }}
       {{- end }}
-    {{- if eq .IsCustomImageRegistry true }}
+    {{- if and (eq .K8sSetup "Openshift") (eq .EnableSCC false) }}
+    volumePermissions:
+      enabled: false
+    {{- else if eq .IsCustomImageRegistry true }}
     volumePermissions:
       image:
         {{- /* registry name defined in global section */}}
@@ -482,8 +563,8 @@ spec:
     replicaCount: {{ .RabbitmqReplicaCount }}
     {{- if eq .K8sSetup "Openshift" }}
     securityContextConstraints:
-      enabled: true    
-    {{- end }}    
+      enabled: {{ .EnableSCC }}
+    {{- end }}
     {{- if eq .ResourcesSource "preset" }}
     resourcesPreset: {{ .RabbitmqResourcesPreset }}
     resources: {}
@@ -494,13 +575,38 @@ spec:
     resources: {}
     {{- end }}
     volumePermissions:
+      {{- if and (eq .K8sSetup "Openshift") (eq .EnableSCC false) }}
+      enabled: false
+      {{- else }}
       enabled: true
       {{- if eq .IsCustomImageRegistry true }}
       image:
         {{- /* registry name defined in global section */}}
         repository: {{ .RepositoryName }}/os-shell
       {{- end }}
+      {{- end }}
     podSecurityContext:
+      {{- if eq .K8sSetup "Openshift" }}
+      {{- if eq .EnableSCC true }}
       enabled: true
+      {{- else }}
+      enabled: false
+      runAsUser: null
+      runAsGroup: null
+      fsGroup: null
+      {{- end }}
+      {{- else }}
+      enabled: true
+      {{- end }}
     containerSecurityContext:
+      {{- if eq .K8sSetup "Openshift" }}
+      {{- if eq .EnableSCC true }}
       enabled: true
+      {{- else }}
+      enabled: false
+      runAsUser: null
+      runAsGroup: null
+      {{- end }}
+      {{- else }}
+      enabled: true
+      {{- end }}
