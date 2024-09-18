@@ -209,15 +209,12 @@ PreserveCrValuesDeploy: |-
         .spec.centralConfiguration.resourcesPreset: .
         .spec.centralConfiguration.resources: .
         .spec.centralConfiguration.defaultInitContainers.resources: .
-        .spec.centralConfiguration.volumePermissions.resources: .
         .spec.master.resourcesPreset: .
         .spec.master.resources: .
         .spec.master.defaultInitContainers.resources: .
-        .spec.master.volumePermissions.resources: .
         .spec.worker.resourcesPreset: .
         .spec.worker.resources: .
         .spec.worker.defaultInitContainers.resources: .
-        .spec.worker.volumePermissions.resources: .
         .spec.haproxy-ingress.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resourcesPreset: .
