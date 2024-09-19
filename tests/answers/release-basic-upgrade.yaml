@@ -172,15 +172,12 @@ PreserveCrValuesRelease: |-
         .spec.rabbitmq.resourcesPreset: .
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
-        .spec.securityContextConstraints: .
         .spec.volumePermissions: .
         .spec.haproxy-ingress.controller.securityContext: .
-        .spec.postgresql.primary.securityContextConstraints: .
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
         .spec.postgresql.volumePermissions: .
         .spec.rabbitmq.containerSecurityContext: .
-        .spec.rabbitmq.securityContextConstraints: .
         .spec.rabbitmq.podSecurityContext: .
         .spec.rabbitmq.volumePermissions: .
 PostgresqlExternalConfigRelease: |-

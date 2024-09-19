@@ -99,10 +99,6 @@ spec:
         registry: {{ .CustomImageRegistryName }}
         repository: {{ .RepositoryName }}/kubectl
       {{- end }}
-  {{- if eq .K8sSetup "Openshift" }}
-  securityContextConstraints:
-    enabled: {{ .EnableSCC }}
-  {{- end }}
   centralConfiguration:
     replicaCount: 1
     image:
@@ -528,10 +524,6 @@ spec:
         {{- else }}
         enabled: true
         {{- end }}
-      {{- if eq .K8sSetup "Openshift" }}
-      securityContextConstraints:
-        enabled: {{ .EnableSCC }}
-      {{- end }}
     {{- if and (eq .K8sSetup "Openshift") (eq .EnableSCC false) }}
     volumePermissions:
       enabled: false
@@ -561,10 +553,6 @@ spec:
       size: {{ .RabbitmqPvcSize }}Gi
       storageClass: {{ .RabbitmqStorageClass }}
     replicaCount: {{ .RabbitmqReplicaCount }}
-    {{- if eq .K8sSetup "Openshift" }}
-    securityContextConstraints:
-      enabled: {{ .EnableSCC }}
-    {{- end }}
     {{- if eq .ResourcesSource "preset" }}
     resourcesPreset: {{ .RabbitmqResourcesPreset }}
     resources: {}
