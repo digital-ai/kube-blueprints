@@ -3,8 +3,8 @@ replicaCount: {{ .RemoteRunnerCount }}
   {{- if eq .IsRemoteRunnerTruststoreEnabled true }}
 runner:
   truststore: |-
-  {{ .RemoteRunnerTruststore | indent 4 }}
-truststorePassword: {{ .RemoteRunnerTruststorePassword }}
+{{ .RemoteRunnerTruststore | indent 4 }}
+  truststorePassword: {{ .RemoteRunnerTruststorePassword }}
   {{- end }}
 
 release:
