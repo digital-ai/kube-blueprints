@@ -954,7 +954,7 @@ spec:
       overrideDefault: true
       prompt: "Do you want to install a new PostgreSQL on the cluster:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Select 'yes' to install a new PostgreSQL instance using the subchart, or no to configure an existing supported database instance."
+      description: "Select 'yes' to install a new PostgreSQL instance using the subchart, or 'no' to configure an existing supported database instance."
     - name: PostgresqlStorageClass
       type: Select
       options:
@@ -1058,7 +1058,7 @@ spec:
       overrideDefault: true
       prompt: "Do you want to install a new RabbitMQ on the cluster:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Select 'yes' to install a new RabbitMQ instance using the subchart, or no to configure an existing supported MQ instance."
+      description: "Select 'yes' to install a new RabbitMQ instance using the subchart, or 'no' to configure an existing supported MQ instance."
     - name: RabbitmqReplicaCount
       type: Input
       saveInXlvals: true
