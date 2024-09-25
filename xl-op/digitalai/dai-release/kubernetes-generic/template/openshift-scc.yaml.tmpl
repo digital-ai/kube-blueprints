@@ -1,0 +1,37 @@
+{{- if eq .K8sSetup "Openshift" }}
+  {{- if eq .EnableSCC true }}
+---
+  {{- $releaseFullName := printf "dai-ocp-%s-%s-release" .ShortServerName .Namespace }}
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: {{ $releaseFullName }}-privileged
+allowHostNetwork: false
+allowHostPID: false
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostPorts: false
+allowPrivilegeEscalation: false
+allowPrivilegedContainer: false
+allowedCapabilities: null
+seccompProfiles:
+  - runtime/default
+defaultAddCapabilities: null
+fsGroup:
+  type: RunAsAny
+groups: []
+priority: 100
+readOnlyRootFilesystem: false
+requiredDropCapabilities: []
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+supplementalGroups:
+  type: RunAsAny
+users:
+  - system:serviceaccount:{{ .Namespace }}:{{ $releaseFullName }}
+volumes:
+  - '*'
+  {{- end }}
+{{- end }}
