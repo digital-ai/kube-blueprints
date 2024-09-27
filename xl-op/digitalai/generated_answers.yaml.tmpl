@@ -9,6 +9,7 @@ CustomPrivateImageRegistrySecret: {{ .CustomPrivateImageRegistrySecret }}
 RepositoryName: {{ .RepositoryName }}
 ImageTag: {{ .ImageTag }}
 OperatorImageTag: {{ .OperatorImageTag }}
+EnableSCC: "{{ .EnableSCC }}"
 {{- if eq .ServerType "dai-deploy" }}
 ImageNameDeploy: {{ .ImageNameDeploy }}
 ImageNameDeployTaskEngine: {{ .ImageNameDeployTaskEngine }}
