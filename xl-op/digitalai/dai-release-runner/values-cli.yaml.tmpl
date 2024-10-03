@@ -1,12 +1,5 @@
 replicaCount: {{ .RemoteRunnerCount }}
 
-  {{- if eq .IsRemoteRunnerTruststoreEnabled true }}
-runner:
-  truststore: |-
-{{ .RemoteRunnerTruststore | indent 4 }}
-  truststorePassword: {{ .RemoteRunnerTruststorePassword }}
-  {{- end }}
-
 release:
   url: {{ .RemoteRunnerReleaseUrl }}
   registrationToken: "{{ .RemoteRunnerToken }}"
@@ -22,3 +15,10 @@ image:
   pullSecrets:
     - {{ .CustomPrivateImageRegistrySecret }}
   {{- end }}
+
+{{- if eq .IsRemoteRunnerTruststoreEnabled true }}
+runner:
+  truststorePassword: {{ .RemoteRunnerTruststorePassword }}
+  truststore: |-
+{{ .RemoteRunnerTruststore | indent 4 }}
+{{- end }}
