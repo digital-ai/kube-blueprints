@@ -6,7 +6,7 @@ class GitUtil {
     companion object {
 
         fun getCurrentBranch(project: Project): String {
-            return project.findProperty("branch") as String? ?: "master"
+            return project.findProperty("branch") as String? ?: "24.1.x-maintenance"
         }
 
         fun getGithubProtocol(project: Project): String {
