@@ -1781,7 +1781,7 @@ spec:
     - name: RemoteRunnerClean
       type: Confirm
       saveInXlvals: true
-      promptIf: !expr ServerType == 'dai-release' && ProcessType == 'clean' && length(k8sResources(Namespace, 'sts', RemoteRunnerReleaseName)) > '0'
+      promptIf: !expr ServerType == 'dai-release' && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'sts', RemoteRunnerReleaseName)) > '0'
       prompt: "Clean Release Runner from Digital.ai Release?:"
       description: "Type yes to delete Digital.ai Release Runner. The cleanup will be performed alongside Release cleanup."
       default: false
