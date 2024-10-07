@@ -476,6 +476,14 @@ spec:
       prompt: "Provide the generic secret name with the application server HTTPS keystore added in PKCS12 (as ssl-keystore.pkcs12) or JKS (as ssl-keystore.jks) format:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && ApplicationKeystoreSource == 'secret'
       description: Provide the Generic secret name with the HTTPS keystore for the application server. It must be in PKCS12 or JKS format.
+    - name: ApplicationKeystoreSecretKey
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      prompt: "Provide the key from the provided secret that has HTTPS keystore:"
+      promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && ApplicationKeystoreSource == 'secret'
+      description: From the provided Generic secret provide key under which is the HTTPS keystore. It must be in PKCS12 or JKS format.
     - name: ApplicationKeystore
       type: Input
       saveInXlvals: true
