@@ -79,7 +79,7 @@ spec:
       valueFrom:
         secretKeyRef:
           name: {{ .ApplicationKeystoreSecretName }}
-          key: ssl-keystore.{{ .ApplicationKeystoreType }}
+          key: {{ .ApplicationKeystoreSecretKey }}
     {{- else }}
     {{- if or (eq .ApplicationKeystoreSource "editor") (eq .ApplicationKeystoreSource "file") }}
     keystore: |-
