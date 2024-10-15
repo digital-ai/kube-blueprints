@@ -15,6 +15,7 @@ pipeline {
     environment {
         REPOSITORY_NAME = 'kube-blueprints'
         RELEASE_EXPLICIT = "25.1.0-${getBranch()}"
+        LINUX_JDK_NAME = 'OpenJDK 17.0.2'
     }
 
     stages {
