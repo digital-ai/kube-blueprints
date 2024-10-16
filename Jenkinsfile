@@ -6,7 +6,7 @@ pipeline {
     agent none
 
     options {
-        buildDiscarder(logRotator(numToKeepStr: '20', artifactDaysToKeepStr: '7', artifactNumToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '5', artifactDaysToKeepStr: '7', artifactNumToKeepStr: '5'))
         timeout(time: 1, unit: 'HOURS')
         timestamps()
         ansiColor('xterm')
@@ -34,7 +34,7 @@ pipeline {
 
                     steps {
                         checkout scm
-                        sh "./gradlew clean uploadArchives devSnapshot -x updateDocs -x test --info"
+                        sh "./gradlew clean uploadArchives devSnapshot -x updateDocs -x test --info --stacktrace"
                         script {
                             if (fileExists('build/version.dump') == true) {
                                 currentVersion = readFile 'build/version.dump'
@@ -51,14 +51,14 @@ pipeline {
         success {
             script {
                 if (env.BRANCH_NAME == 'master') {
-                    slackSend color: "good", tokenCredentialId: "slack-token", message: "Kube Blueprints master build *SUCCESS* - <${env.BUILD_URL}|click to open>", channel: 'team-apollo'
+                    slackSend color: "good", tokenCredentialId: "slack-token", message: "Kube Blueprints master build *SUCCESS* - <${env.BUILD_URL}|click to open>", channel: 'team-apollo-internal'
                 }
             }
         }
         failure {
             script {
                 if (env.BRANCH_NAME == 'master') {
-                    slackSend color: "danger", tokenCredentialId: "slack-token", message: "Kube Blueprints master build *FAILED* - <${env.BUILD_URL}|click to open>", channel: 'team-apollo'
+                    slackSend color: "danger", tokenCredentialId: "slack-token", message: "Kube Blueprints master build *FAILED* - <${env.BUILD_URL}|click to open>", channel: 'team-apollo-internal'
                 }
             }
         }
