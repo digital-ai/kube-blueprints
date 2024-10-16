@@ -1,6 +1,8 @@
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.github.gradle.node.yarn.task.YarnTask
+import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
+import org.apache.commons.lang.SystemUtils.*
 
 buildscript {
     repositories {
@@ -48,6 +50,32 @@ project.extra.set("releasedVersion", releasedVersion)
 val os = detectOs()
 val arch = detectHostArch()
 val helmVersion = properties["helmVersion"]
+
+enum class Os {
+    DARWIN {
+        override fun toString(): String = "darwin"
+    },
+    LINUX {
+        override fun toString(): String = "linux"
+    },
+    WINDOWS {
+        override fun packaging(): String = "zip"
+        override fun toString(): String = "windows"
+    };
+    open fun packaging(): String = "tar.gz"
+    fun toStringCamelCase(): String = toString().replaceFirstChar { it.uppercaseChar() }
+}
+
+enum class Arch {
+    AMD64 {
+        override fun toString(): String = "amd64"
+    },
+    ARM64 {
+        override fun toString(): String = "arm64"
+    };
+
+    fun toStringCamelCase(): String = toString().replaceFirstChar { it.uppercaseChar() }
+}
 
 repositories {
     mavenLocal()
@@ -288,4 +316,34 @@ node {
     version.set("20.14.0")
     yarnVersion.set("1.22.22")
     download.set(true)
+}
+
+fun detectOs(): Os {
+
+    val osDetectionMap = mapOf(
+        Pair(Os.LINUX, IS_OS_LINUX),
+        Pair(Os.WINDOWS, IS_OS_WINDOWS),
+        Pair(Os.DARWIN, IS_OS_MAC_OSX),
+    )
+
+    return osDetectionMap
+        .filter { it.value }
+        .firstNotNullOfOrNull { it.key } ?: throw IllegalStateException("Unrecognized os")
+}
+
+fun detectHostArch(): Arch {
+
+    val archDetectionMap = mapOf(
+        Pair("x86_64", Arch.AMD64),
+        Pair("x64", Arch.AMD64),
+        Pair("amd64", Arch.AMD64),
+        Pair("aarch64", Arch.ARM64),
+        Pair("arm64", Arch.ARM64),
+    )
+
+    val arch: String = System.getProperty("os.arch")
+    if (archDetectionMap.containsKey(arch)) {
+        return archDetectionMap[arch]!!
+    }
+    throw IllegalStateException("Unrecognized architecture: $arch")
 }
