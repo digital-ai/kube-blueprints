@@ -24,7 +24,7 @@ pipeline {
                 stage('Build Kube Blueprints') {
                     agent {
                         node {
-                            label 'xld'
+                            label 'xld && linux'
                         }
                     }
 
@@ -67,5 +67,5 @@ pipeline {
 
 def getBranch() {
     // on simple Jenkins pipeline job the BRANCH_NAME is not filled in, and we run it only on master
-    return env.BRANCH_NAME ?: 'master'
+    return env.BRANCH_NAME ? env.BRANCH_NAME.toLowerCase() : 'master'
 }
