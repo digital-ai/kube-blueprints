@@ -41,7 +41,7 @@ pipeline {
                                 env.version = currentVersion
                             }
                         }
-                        archiveArtifacts artifacts: 'build/distributions/xl-op-blueprints-*', fingerprint: true
+                        archiveArtifacts artifacts: 'build/distributions/xl-op-blueprints-*.zip', fingerprint: true
                     }
                 }
             }
