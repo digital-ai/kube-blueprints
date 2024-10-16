@@ -6,7 +6,7 @@ pipeline {
     agent none
 
     options {
-        buildDiscarder(logRotator(numToKeepStr: '20', artifactDaysToKeepStr: '7', artifactNumToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '5', artifactDaysToKeepStr: '7', artifactNumToKeepStr: '5'))
         timeout(time: 1, unit: 'HOURS')
         timestamps()
         ansiColor('xterm')
@@ -15,6 +15,7 @@ pipeline {
     environment {
         REPOSITORY_NAME = 'kube-blueprints'
         RELEASE_EXPLICIT = "25.1.0-${getBranch()}"
+        LINUX_JDK_NAME = 'OpenJDK 17.0.2'
     }
 
     stages {
@@ -23,7 +24,7 @@ pipeline {
                 stage('Build Kube Blueprints') {
                     agent {
                         node {
-                            label 'xld'
+                            label 'xld && linux'
                         }
                     }
 
@@ -33,14 +34,14 @@ pipeline {
 
                     steps {
                         checkout scm
-                        sh "./gradlew clean uploadArchives devSnapshot -x updateDocs -x test --info"
+                        sh "./gradlew clean uploadArchives devSnapshot -x updateDocs -x test --info --stacktrace"
                         script {
                             if (fileExists('build/version.dump') == true) {
                                 currentVersion = readFile 'build/version.dump'
                                 env.version = currentVersion
                             }
                         }
-                        archiveArtifacts artifacts: 'build/distributions/xl-op-blueprints-*', fingerprint: true
+                        archiveArtifacts artifacts: 'build/distributions/xl-op-blueprints-*.zip', fingerprint: true
                     }
                 }
             }
@@ -50,14 +51,14 @@ pipeline {
         success {
             script {
                 if (env.BRANCH_NAME == 'master') {
-                    slackSend color: "good", tokenCredentialId: "slack-token", message: "Kube Blueprints master build *SUCCESS* - <${env.BUILD_URL}|click to open>", channel: 'team-apollo'
+                    slackSend color: "good", tokenCredentialId: "slack-token", message: "Kube Blueprints master build *SUCCESS* - <${env.BUILD_URL}|click to open>", channel: 'team-apollo-internal'
                 }
             }
         }
         failure {
             script {
                 if (env.BRANCH_NAME == 'master') {
-                    slackSend color: "danger", tokenCredentialId: "slack-token", message: "Kube Blueprints master build *FAILED* - <${env.BUILD_URL}|click to open>", channel: 'team-apollo'
+                    slackSend color: "danger", tokenCredentialId: "slack-token", message: "Kube Blueprints master build *FAILED* - <${env.BUILD_URL}|click to open>", channel: 'team-apollo-internal'
                 }
             }
         }
@@ -66,5 +67,5 @@ pipeline {
 
 def getBranch() {
     // on simple Jenkins pipeline job the BRANCH_NAME is not filled in, and we run it only on master
-    return env.BRANCH_NAME ?: 'master'
+    return env.BRANCH_NAME ? env.BRANCH_NAME.toLowerCase() : 'master'
 }
