@@ -45,6 +45,10 @@ val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?: if (project.version
 }
 project.extra.set("releasedVersion", releasedVersion)
 
+val os = detectOs()
+val arch = detectHostArch()
+val helmVersion = properties["helmVersion"]
+
 repositories {
     mavenLocal()
     gradlePluginPortal()
@@ -84,6 +88,26 @@ subprojects {
 
 tasks {
 
+    val helmDir = layout.buildDirectory.dir("helm").get()
+    val helmCli = helmDir.dir("$os-$arch").file("helm")
+
+    register<Download>("installHelm") {
+        group = "helm"
+        src("https://get.helm.sh/helm-v$helmVersion-$os-$arch.tar.gz")
+        dest(helmDir.file("helm.tar.gz").getAsFile())
+        doLast {
+            copy {
+                from(tarTree(helmDir.file("helm.tar.gz")))
+                into(helmDir)
+                fileMode = 0b111101101
+            }
+            exec {
+                workingDir(helmDir)
+                commandLine(helmCli, "version")
+            }
+        }
+    }
+
     register<CleanChartsTask>(CleanChartsTask.NAME) {
         group = "blueprint"
     }
@@ -91,6 +115,8 @@ tasks {
     register<GetHelmChartTask>("getRemoteRunnerHelmChart") {
         group = "blueprint"
         helmChartName = "release-runner-helm-chart"
+        helmChartCli = helmCli.toString()
+        dependsOn(named("installHelm"))
     }
 
     register<Zip>("blueprintsArchives") {
