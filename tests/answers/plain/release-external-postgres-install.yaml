@@ -5,25 +5,25 @@ ServerType: dai-release
 ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
-CustomPrivateImageRegistrySecret: 
+CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 24.3.0-beta.6
-OperatorImageTag: 24.3.0-beta.6
+ImageTag: 25.1.0-1024.113
+OperatorImageTag: 25.1.0-master
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
 XlrReplicaCount: 1
 PostgresqlExternalConfigRelease: |-
   main:
-    url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
-    username: <xlr-username>
+    url: jdbc:postgresql://psql-test-xlr-postgresql.${NAMESPACE}.svc.cluster.local:5432/main
+    username: postgres
     password: |-
-      <xlr-password>
+      admin123
     maxPoolSize: 10
   report:
-    url: jdbc:postgresql://<xlr-report-db-host>:5432/<xlr-report-database-name>
-    username: <xlr-report-username>
+    url: jdbc:postgresql://psql-test-xlr-postgresql.${NAMESPACE}.svc.cluster.local:5432/main
+    username: postgres
     password: |-
-      <xlr-report-password>
+      admin123
     maxPoolSize: 10
 RabbitmqExternalConfigRelease: |-
   url: <queue-url>
@@ -31,8 +31,6 @@ RabbitmqExternalConfigRelease: |-
   username: <username>
   password: |-
     <password>
-  queueType: <classic-or-quorum>
-  connector: <rabbitmq-jms-or-activemq-jms>
 OidcConfigTypeInstall: 'no-oidc'
 OidcConfigTypeUpgrade: 'existing'
 ExternalOidcConfGenericDeploy: |-
@@ -85,95 +83,49 @@ IdentityServiceConfRelease: |-
   scopes: ["openid"]
 IngressTypeGeneric: 'none'
 IngressTypeOpenshift: 'route'
-NginxResourcesPreset: 'nano'
-NginxResourcesEditor: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
-HAProxyResourcesEditor: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
 ExternalIngressClass: ''
 HttpProtocolIngress: 'http'
 IngressKeystoreSourceGeneric: 'generate'
-IngressKeystoreSourceHaproxy: 'generate'
 IngressKeystoreSourceOpenshift: 'default'
 IngressTlsSecretName: ''
-AdminPassword: 'ROw3gTNEnePun8Vw'
+AdminPassword: 'MAykkYnZocrjiM6I'
 StorageClass: 'local-path'
-IngressHost: 'test1.com'
+IngressHost: 'digitalai.release.local'
 HttpsProtocol: 'false'
-EnablePostgresql: true
-PostgresqlStorageClass: 'local-path'
-PostgresqlResourcesPreset: 'nano'
-PostgresqlResourcesEditor: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
+EnablePostgresql: false
+PostgresqlStorageClass: ''
 EnableRabbitmq: true
 RabbitmqReplicaCount: '1'
 RabbitmqStorageClass: 'local-path'
-RabbitmqResourcesPreset: 'nano'
-RabbitmqResourcesEditor: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
 LicenseSource: 'generate'
 LicenseEditor:  |-
-  
+
 LicenseFile: ''
 RepositoryKeystoreSource: 'generate'
 RepositoryKeystoreEditor: |-
-  
+
 RepositoryKeystoreFile: ''
-KeystorePassphrase: 'D6UA9H9fbujg71Ub'
-ResourcesSource: 'none'
-PostgresqlPvcSize: '1'
+KeystorePassphrase: '99B6FWkdHRFyIc89'
+PostgresqlPvcSize: '8'
 RabbitmqPvcSize: '1'
 PvcSizeRelease: '1'
 AccessModeRelease: 'ReadWriteOnce'
-ResourcesPresetRelease: 'nano'
-ResourcesEditorRelease: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
 HttpProtocolRelease: 'http'
 HttpProtocolDeploy: 'http'
 ApplicationKeystoreSource: 'generate'
 ApplicationKeystoreEditor: |-
-  
+
 ApplicationKeystoreFile: ''
 ApplicationKeystoreSecretName: ''
 ApplicationKeystore: ''
 ApplicationKeystoreType: 'pkcs12'
-ApplicationKeystorePassword: 'ce7CuxlAIvm0q9Lb'
+ApplicationKeystorePassword: 'GWbbDOIj9ZV41wOn'
 CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.3.0-beta.6'
-RemoteRunnerInstallType: 'cluster-install'
+ImageTagRemoteRunner: 25.1.0-1024.113
+RemoteRunnerInstallType: 'no-install'
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
@@ -181,10 +133,8 @@ RemoteRunnerHelmChartUrl: ''
 RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
-RemoteRunnerUserPassword: '3dJBHBX9WFRNm4Jk'
+RemoteRunnerUserPassword: 'wOzcTV8zaEG0R5d7'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
-RemoteRunnerTruststore: |- 
-  
-RemoteRunnerTruststorePassword:
+RemoteRunnerTruststore: |-

@@ -1,14 +1,14 @@
-K8sSetup: PlainK8s
+K8sSetup: Openshift
 UseCustomNamespace: false
 Namespace: digitalai
 ServerType: dai-deploy
 ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
-CustomPrivateImageRegistrySecret:
+CustomPrivateImageRegistrySecret: 
 RepositoryName: xebialabsunsupported
-ImageTag: 24.1.0-beta.7
-OperatorImageTag: 24.1.0-beta.7
+ImageTag: 25.1.0-1024.113
+OperatorImageTag: 25.1.0-master
 ImageNameDeploy: xl-deploy
 ImageNameDeployTaskEngine: deploy-task-engine
 ImageNameCc: central-configuration
@@ -29,12 +29,12 @@ PostgresqlExternalConfigDeploy: |-
       <xld-report-password>
     maxPoolSize: 10
 RabbitmqExternalConfigDeploy: |-
-  url: amqp://rabbitmq-test-xld.${NAMESPACE}.svc.cluster.local:5672
-  queueName: ""
-  username: user
+  url: <queue-url>
+  queueName: <queue-name>
+  username: <username>
   password: |-
-    password
-  driverClassName: "com.rabbitmq.jms.admin.RMQConnectionFactory"
+    <password>
+  driverClassName: <driver-class-name>
 OidcConfigTypeInstall: 'no-oidc'
 OidcConfigTypeUpgrade: 'existing'
 ExternalOidcConfGenericDeploy: |-
@@ -85,43 +85,44 @@ IdentityServiceConfRelease: |-
   rolesClaim: ""
   userNameClaim: "preferred_username"
   scopes: ["openid"]
-IngressTypeGeneric: 'none'
+IngressTypeGeneric: 'nginx'
 IngressTypeOpenshift: 'route'
 ExternalIngressClass: ''
 HttpProtocolIngress: 'http'
 IngressKeystoreSourceGeneric: 'generate'
 IngressKeystoreSourceOpenshift: 'default'
 IngressTlsSecretName: ''
-AdminPassword: 'RwvnwyI7eOXR7jRX'
-StorageClass: 'local-path'
-IngressHost: ''
+AdminPassword: 'nW1HYUOjupmT4yLc'
+StorageClass: 'gp3-csi'
+IngressHost: 'digitalai.deploy.local'
 HttpsProtocol: 'false'
 EnablePostgresql: true
-PostgresqlStorageClass: 'local-path'
-EnableRabbitmq: false
-RabbitmqReplicaCount: '3'
-RabbitmqStorageClass: 'local-path'
+PostgresqlStorageClass: 'gp3-csi'
+EnableRabbitmq: true
+RabbitmqReplicaCount: '1'
+RabbitmqStorageClass: 'gp3-csi'
 LicenseSource: 'generate'
 LicenseEditor:  |-
-
+  
 LicenseFile: ''
 RepositoryKeystoreSource: 'generate'
 RepositoryKeystoreEditor: |-
-
+  
 RepositoryKeystoreFile: ''
-KeystorePassphrase: 'KIbjdKeT6Htv3HqY'
+KeystorePassphrase: '27j3g8HZ0NGz7uWT'
+ResourcesSource: 'none'
 PostgresqlPvcSize: '1'
-RabbitmqPvcSize: '8'
+RabbitmqPvcSize: '1'
 HttpProtocolRelease: 'http'
 HttpProtocolDeploy: 'http'
 ApplicationKeystoreSource: 'generate'
 ApplicationKeystoreEditor: |-
-
+  
 ApplicationKeystoreFile: ''
 ApplicationKeystoreSecretName: ''
 ApplicationKeystore: ''
 ApplicationKeystoreType: 'pkcs12'
-ApplicationKeystorePassword: 'epHDCCHhbfWuMs8E'
+ApplicationKeystorePassword: 'Aloipx0rHv9XXoj7'
 PvcSizeDeploy: '1'
 PvcSizeDeployTaskEngine: '1'
 AccessModeDeploy: 'ReadWriteOnce'
@@ -129,19 +130,20 @@ CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.1.0-beta.7'
+ImageTagRemoteRunner: 25.1.0-1024.113
 RemoteRunnerInstallType: ''
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
 RemoteRunnerHelmChartUrl: ''
-RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+RemoteRunnerReleaseUrl: 'http://dai-ocp-xlr-digitalai-release.digitalai'
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
-RemoteRunnerUserPassword: 'GICCMfVLia3S6lVU'
+RemoteRunnerUserPassword: 'vZUhHht0CzgItDTA'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
-RemoteRunnerTruststore: |-
-
+RemoteRunnerTruststore: |- 
+  
 RemoteRunnerTruststorePassword:
+EnableSCC: true

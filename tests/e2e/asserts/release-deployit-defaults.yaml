@@ -6,7 +6,7 @@ spec:
   extraConfiguration:
     default-conf_deployit-defaults:
       content: |
-         ansible.RunPlaybook.ansibleCmd=/usr/bin/ansible-playbook
+         ansible.RunPlaybook.ansibleCmd=ansible-playbook
          ansible.RunPlaybook.iconLocation=ansible/ansible_logo.svg
       mode: 432
       path: default-conf/deployit-defaults.properties
@@ -17,6 +17,4 @@ status:
     - status: "True"
       type: Deployed
       reason: UpgradeSuccessful
-    - status: "True"
-      type: Deployed
-      reason: UpgradeSuccessful
+      
