@@ -437,14 +437,14 @@ spec:
           value: file
         - label: Copy/Paste the HTTPS keystore to editor (the content needs to be base64 encoded)
           value: editor
-        - label: Generic Secret containing HTTPS keystore file in the PKCS12 (as ssl-keystore.pkcs12) or JKS (as ssl-keystore.jks) format
+        - label: Generic Secret containing HTTPS keystore file in PKCS12 or JKS format
           value: secret
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the HTTPS keystore for the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
-      description: "Provide source of the HTTPS keystore in the PKCS12 or JKS format"
+      description: "Provide source of the HTTPS keystore in PKCS12 or JKS format"
       default: "generate"
       validate: !expr "ApplicationKeystoreSource == 'secret' ? length(k8sResources(Namespace, 'secrets')) > '0' : true"
     - name: ApplicationKeystoreEditor
@@ -483,7 +483,7 @@ spec:
       overrideDefault: true
       prompt: "Provide the key from the provided secret that has HTTPS keystore:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && ApplicationKeystoreSource == 'secret'
-      description: From the provided Generic secret provide key under which is the HTTPS keystore. It must be in PKCS12 or JKS format.
+      description: From the provided Generic secret provide key which contains the HTTPS keystore. It must be in PKCS12 or JKS format.
     - name: ApplicationKeystore
       type: Input
       saveInXlvals: true
