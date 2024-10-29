@@ -122,4 +122,12 @@ docker run --rm \
     xldevdocker/kuttl:latest \
     --artifacts-dir $OUTPUT_CONTAINER_DIR/logs --config $TEST_DIR
 
+echo "TEST RESULT:"
 cat "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"
+# check for fauilure in file
+if grep -q '"failure"' "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"; then
+  echo "Tests failed"
+  exit 1
+else 
+  echo "Tests success"
+fi
