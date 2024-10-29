@@ -17,17 +17,17 @@ fi
 
 if [[ "$3" = "openshift" && "$4" == "withLogin" ]]; then
     if [ -z "$REDHAT_OC_URL" ]; then
-        echo "The '\$OC_URL4 environment variable is not set."
+        echo "The '\$REDHAT_OC_URL environment variable is not set."
         exit 1
     fi
 
     if [ -z "$REDHAT_OC_LOGIN" ]; then
-        echo "The '\$OC_LOGIN4 environment variable is not set."
+        echo "The '\$REDHAT_OC_LOGIN environment variable is not set."
         exit 1
     fi
 
     if [ -z "$REDHAT_OC_PASSWORD" ]; then
-        echo "The '\$OC_PASSWORD4 environment variable is not set."
+        echo "The '\$REDHAT_OC_PASSWORD environment variable is not set."
         exit 1
     fi
 fi
@@ -78,7 +78,7 @@ echo "  XL_RR_VERSION=$XL_RR_VERSION"
 yq eval ".ImageTag = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
 yq eval ".ImageTagRemoteRunner = \"$XL_RR_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
 
-if [[ "$APP_TARGET" = "openshift" && "$3" == "withLogin" ]]; then
+if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
 
     echo "Auth to $APP_TARGET"
 
