@@ -1,0 +1,108 @@
+K8sSetup: PlainK8s
+UseCustomNamespace: false
+Namespace: digitalai
+ServerType: dai-deploy
+ImageRegistryType: default
+IsCustomImageRegistry: false
+CustomImageRegistryName: docker.io
+CustomPrivateImageRegistrySecret:
+RepositoryName: xebialabsunsupported
+ImageTag: 25.1.0-1024.113
+OperatorImageTag: 25.1.0-master
+ImageNameDeploy: xl-deploy
+ImageNameDeployTaskEngine: deploy-task-engine
+ImageNameCc: central-configuration
+OperatorImageDeploy: deploy-operator
+XldMasterCount: 3
+XldWorkerCount: 3
+PostgresqlExternalConfigDeploy: |-
+  main:
+    url: jdbc:postgresql://<xld-db-host>:5432/<xld-database-name>
+    username: <xld-username>
+    password: |-
+      <xld-password>
+    maxPoolSize: 10
+  report:
+    url: jdbc:postgresql://<xld-report-db-host>:5432/<xld-report-database-name>
+    username: <xld-report-username>
+    password: |-
+      <xld-report-password>
+    maxPoolSize: 10
+RabbitmqExternalConfigDeploy: |-
+  url: <queue-url>
+  queueName: <queue-name>
+  username: <username>
+  password: |-
+    <password>
+  driverClassName: <driver-class-name>
+OidcConfigTypeInstall: 'no-oidc'
+OidcConfigTypeUpgrade: 'existing'
+ExternalOidcConfGenericDeploy: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaimName: ""
+  userAuthorizationUri: ""
+  userNameClaimName: ""
+  fullNameClaim: ""
+  scopes: '["openid"]'
+ExternalOidcConfGenericRelease: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  fullNameClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaim: ""
+  userAuthorizationUri: ""
+  userNameClaim: ""
+  scopes: '["openid"]'
+IdentityServiceConfDeploy: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaimName: ""
+  userNameClaimName: "preferred_username"
+  scopes: ["openid"]
+IdentityServiceConfRelease: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaim: ""
+  userNameClaim: "preferred_username"
+  scopes: ["openid"]
+CrdName: 'digitalaideploys.xld.digital.ai'
+IsCrdReused: false
+CrName: 'dai-xld'
+PreservePvc: false
+ImageNameRemoteRunner: 'release-runner'
+ImageTagRemoteRunner: 25.1.0-1024.113
+RemoteRunnerInstallType: ''
+RemoteRunnerRepositoryName: 'xebialabsunsupported'
+RemoteRunnerReleaseName: 'release-runner'
+RemoteRunnerUseDefaultLocation: true
+RemoteRunnerHelmChartUrl: ''
+RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+RemoteRunnerToken: ''
+RemoteRunnerUserEmail: 'release-runner@no.reply'
+RemoteRunnerUserPassword: 'HQTNYjCjEQklwGng'
+RemoteRunnerTokenExpiration: '0'
+RemoteRunnerCount: 1
+IsRemoteRunnerTruststoreEnabled: false
+RemoteRunnerTruststore: |-
+
+RemoteRunnerTruststorePassword:

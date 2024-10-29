@@ -1,10 +1,8 @@
 apiVersion: kuttl.dev/v1beta1
 kind: TestSuite
 testDirs:
-  - tests/e2e/basic/release
-  - tests/e2e/haproxy/release
-  - tests/e2e/nginx/release
-reportName: operator-basic
+  - tests/e2e/basic/deploy
+reportName: operator-deploy-basic
 reportFormat: json
 timeout: 30
 namespace: digitalai
