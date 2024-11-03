@@ -56,7 +56,7 @@ pipeline {
             steps {
                 checkout scm
                 sh "./scripts/image-operator-list.sh | ./scripts/scan-with-trivy.sh operator-${getBranch()}"
-                archiveArtifacts artifacts: "/build/scanResults/*.txt", fingerprint: true
+                archiveArtifacts artifacts: "build/scanResults/*.txt", fingerprint: true
             }
         }
     }
