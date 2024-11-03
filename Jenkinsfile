@@ -14,36 +14,49 @@ pipeline {
 
     environment {
         REPOSITORY_NAME = 'kube-blueprints'
-        RELEASE_EXPLICIT = "25.1.0-${getBranch()}"
+        RELEASE_EXPLICIT = "${getCurrentVersion()}-${getBranch()}"
         LINUX_JDK_NAME = 'OpenJDK 17.0.2'
     }
 
     stages {
         stage('Build Kube Blueprints') {
-            parallel {
-                stage('Build Kube Blueprints') {
-                    agent {
-                        node {
-                            label 'xld && linux'
-                        }
-                    }
+            agent {
+                node {
+                    label 'xld && linux'
+                }
+            }
 
-                    tools {
-                        jdk env.LINUX_JDK_NAME
-                    }
+            tools {
+                jdk env.LINUX_JDK_NAME
+            }
 
-                    steps {
-                        checkout scm
-                        sh "./gradlew clean uploadArchives devSnapshot -x updateDocs -x test --info --stacktrace"
-                        script {
-                            if (fileExists('build/version.dump') == true) {
-                                currentVersion = readFile 'build/version.dump'
-                                env.version = currentVersion
-                            }
-                        }
-                        archiveArtifacts artifacts: 'build/distributions/xl-op-blueprints-*.zip', fingerprint: true
+            steps {
+                checkout scm
+                sh "./gradlew clean uploadArchives devSnapshot -x updateDocs -x test --info --stacktrace"
+                script {
+                    if (fileExists('build/version.dump') == true) {
+                        currentVersion = readFile 'build/version.dump'
+                        env.version = currentVersion
                     }
                 }
+                archiveArtifacts artifacts: 'build/distributions/xl-op-blueprints-*.zip', fingerprint: true
+            }
+        }
+        stage('Scan Vulnerabilities') {
+            agent {
+                node {
+                    label 'xld && linux'
+                }
+            }
+
+            tools {
+                jdk env.LINUX_JDK_NAME
+            }
+
+            steps {
+                checkout scm
+                sh "./scripts/image-operator-list.sh | ./scripts/scan-with-trivy.sh operator-${getBranch()}"
+                archiveArtifacts artifacts: "/build/scanResults/*.txt", fingerprint: true
             }
         }
     }
@@ -63,6 +76,10 @@ pipeline {
             }
         }
     }
+}
+
+def getCurrentVersion() {
+    return '25.1.0'
 }
 
 def getBranch() {

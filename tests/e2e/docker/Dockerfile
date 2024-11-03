@@ -15,6 +15,9 @@
 # artifacts by default will land in the root of the mount point.
 
 # to build copy file to kuttl src dir and run
+# git clone https://github.com/kudobuilder/kuttl.git
+# cd kuttl
+# cp digitalai/kube-blueprints/tests/e2e/docker/Dockerfile .
 # docker build .
 # docker tag e42dec0b9174 xldevdocker/kuttl:latest
 
@@ -33,7 +36,7 @@ LABEL org.opencontainers.image.source="https://github.com/kudobuilder/kuttl"
 
 USER root
 
-RUN microdnf install -y glibc vim tar gzip
+RUN microdnf install -y glibc vim tar gzip git
 RUN echo 'alias vi=vim' >> ~/.bashrc
 
 #  kube 1.26
@@ -47,6 +50,8 @@ RUN curl -LO https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_
 
 RUN curl https://get.helm.sh/helm-v3.16.2-linux-amd64.tar.gz |\
     tar xz && mv linux-amd64/helm /usr/local/bin/helm
+
+RUN helm plugin install https://github.com/nikhilsbhat/helm-images
 
 COPY --from=builder /go/src/kuttl/bin/kubectl-kuttl /usr/bin/kubectl-kuttl
 
