@@ -26,7 +26,7 @@ do
   filename="${filename//\./_}"
   filename="${filename//:/_}${IGNORE_FIXED}.scan.txt"
   echo "===>>> Scaning: trivy image ${IGNORE_FIXED} \"${image}\" > \"${OUTPUT_DIR}/${filename}\""
-  $TRIVY_EXEC image ${IGNORE_FIXED} ${TRIVY_PROPS} "${image}" > "${OUTPUT_DIR}/${filename}"
+  $TRIVY_EXEC image ${IGNORE_FIXED} ${TRIVY_PROPS} "${image}" | sed -r "s:\x1B\[[0-9;]*[mK]::g" > "${OUTPUT_DIR}/${filename}"
   if [ $? -ne 0 ]; then
     echo "***>>> Failed: trivy image ${IGNORE_FIXED} \"${image}\" > \"${OUTPUT_DIR}/${filename}\""
     # Continue work on missing images
