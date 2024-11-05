@@ -17,6 +17,8 @@ open class GetHelmChartTask : DefaultTask() {
 
     @Input
     var helmChartName: String? = null
+    @Input
+    var helmChartCli: String = "helm"
 
     @TaskAction
     fun launch() {
@@ -33,9 +35,9 @@ open class GetHelmChartTask : DefaultTask() {
             destination
         )
 
-        HelmUtil.helmRepo(project)
-        HelmUtil.helmDeps(project, destination)
-        val packageName = HelmUtil.helmPackage(project, destination, targetDir)
+        HelmUtil.helmRepo(project, helmChartCli)
+        HelmUtil.helmDeps(project, helmChartCli, destination)
+        val packageName = HelmUtil.helmPackage(project, helmChartCli, destination, targetDir)
         File(targetDir).resolve("versions.yaml")
             .appendText("$helmChartName: $packageName")
     }
