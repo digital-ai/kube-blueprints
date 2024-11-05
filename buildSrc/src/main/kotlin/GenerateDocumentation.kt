@@ -11,7 +11,7 @@ open class GenerateDocumentation : DefaultTask() {
             executable("./gradlew")
             args(
                 "commitChanges",
-                "-PgitBranchName=master",
+                "-PgitBranchName=24.1.x-maintenance",
                 "-PgitMessage=Documentation has been updated",
                 "-PgitFileContent=docs/*"
             )

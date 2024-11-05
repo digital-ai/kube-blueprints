@@ -6,21 +6,21 @@ import java.lang.IllegalStateException
 class HelmUtil {
     companion object {
 
-        fun helmRepo(project: Project) {
+        fun helmRepo(project: Project, helmChartCli: String) {
             ProcessUtil.executeCommand(project,
-                "helm repo add bitnami-repo https://charts.bitnami.com/bitnami",
+                "\"$helmChartCli\" repo add bitnami-repo https://charts.bitnami.com/bitnami",
                 logOutput = true, throwErrorOnFailure = true)
         }
 
-        fun helmDeps(project: Project, chartDir: String) {
+        fun helmDeps(project: Project, helmChartCli: String, chartDir: String) {
             ProcessUtil.executeCommand(project,
-                "helm dependency update \"$chartDir\"",
+                "\"$helmChartCli\" dependency update \"$chartDir\"",
                 logOutput = true, throwErrorOnFailure = true)
         }
 
-        fun helmPackage(project: Project, chartDir: String, targetDir: String): String {
+        fun helmPackage(project: Project, helmChartCli: String, chartDir: String, targetDir: String): String {
             val result = ProcessUtil.executeCommand(project,
-                "helm package \"$chartDir\" --destination \"$targetDir\"",
+                "\"$helmChartCli\" package \"$chartDir\" --destination \"$targetDir\"",
                 logOutput = true, throwErrorOnFailure = true)
             val version = result.substringAfterLast("$targetDir/runner-", "")
                 .substringBefore(".tgz", "")

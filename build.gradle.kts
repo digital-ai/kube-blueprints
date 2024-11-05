@@ -1,6 +1,8 @@
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.github.gradle.node.yarn.task.YarnTask
+import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
+import org.apache.commons.lang.SystemUtils.*
 
 buildscript {
     repositories {
@@ -45,6 +47,36 @@ val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?: if (project.version
 }
 project.extra.set("releasedVersion", releasedVersion)
 
+val os = detectOs()
+val arch = detectHostArch()
+val helmVersion = properties["helmVersion"]
+
+enum class Os {
+    DARWIN {
+        override fun toString(): String = "darwin"
+    },
+    LINUX {
+        override fun toString(): String = "linux"
+    },
+    WINDOWS {
+        override fun packaging(): String = "zip"
+        override fun toString(): String = "windows"
+    };
+    open fun packaging(): String = "tar.gz"
+    fun toStringCamelCase(): String = toString().replaceFirstChar { it.uppercaseChar() }
+}
+
+enum class Arch {
+    AMD64 {
+        override fun toString(): String = "amd64"
+    },
+    ARM64 {
+        override fun toString(): String = "arm64"
+    };
+
+    fun toStringCamelCase(): String = toString().replaceFirstChar { it.uppercaseChar() }
+}
+
 repositories {
     mavenLocal()
     gradlePluginPortal()
@@ -84,6 +116,26 @@ subprojects {
 
 tasks {
 
+    val helmDir = layout.buildDirectory.dir("helm").get()
+    val helmCli = helmDir.dir("$os-$arch").file("helm")
+
+    register<Download>("installHelm") {
+        group = "helm"
+        src("https://get.helm.sh/helm-v$helmVersion-$os-$arch.tar.gz")
+        dest(helmDir.file("helm.tar.gz").getAsFile())
+        doLast {
+            copy {
+                from(tarTree(helmDir.file("helm.tar.gz")))
+                into(helmDir)
+                fileMode = 0b111101101
+            }
+            exec {
+                workingDir(helmDir)
+                commandLine(helmCli, "version")
+            }
+        }
+    }
+
     register<CleanChartsTask>(CleanChartsTask.NAME) {
         group = "blueprint"
     }
@@ -91,6 +143,8 @@ tasks {
     register<GetHelmChartTask>("getRemoteRunnerHelmChart") {
         group = "blueprint"
         helmChartName = "release-runner-helm-chart"
+        helmChartCli = helmCli.toString()
+        dependsOn(named("installHelm"))
     }
 
     register<Zip>("blueprintsArchives") {
@@ -190,27 +244,27 @@ tasks {
     }
 
     named<YarnTask>("yarn_install") {
-        group = "doc"
+        group = "docusaurus"
         args.set(listOf("--mutex", "network"))
         workingDir.set(file("${rootDir}/documentation"))
     }
 
     register<YarnTask>("yarnRunStart") {
-        group = "doc"
+        group = "docusaurus"
         dependsOn(named("yarn_install"))
         args.set(listOf("run", "start"))
         workingDir.set(file("${rootDir}/documentation"))
     }
 
     register<YarnTask>("yarnRunBuild") {
-        group = "doc"
+        group = "docusaurus"
         dependsOn(named("yarn_install"))
         args.set(listOf("run", "build"))
         workingDir.set(file("${rootDir}/documentation"))
     }
 
     register<Delete>("docCleanUp") {
-        group = "doc"
+        group = "docusaurus"
         delete(file("${rootDir}/docs"))
         delete(file("${rootDir}/documentation/build"))
         delete(file("${rootDir}/documentation/.docusaurus"))
@@ -218,14 +272,14 @@ tasks {
     }
 
     register<Copy>("docBuild") {
-        group = "doc"
+        group = "docusaurus"
         dependsOn(named("yarnRunBuild"), named("docCleanUp"))
         from(file("${rootDir}/documentation/build"))
         into(file("${rootDir}/docs"))
     }
 
     register<GenerateDocumentation>("updateDocs") {
-        group = "doc"
+        group = "docusaurus"
         dependsOn(named("docBuild"))
     }
 }
@@ -262,4 +316,34 @@ node {
     version.set("16.13.2")
     yarnVersion.set("1.22.17")
     download.set(true)
+}
+
+fun detectOs(): Os {
+
+    val osDetectionMap = mapOf(
+        Pair(Os.LINUX, IS_OS_LINUX),
+        Pair(Os.WINDOWS, IS_OS_WINDOWS),
+        Pair(Os.DARWIN, IS_OS_MAC_OSX),
+    )
+
+    return osDetectionMap
+        .filter { it.value }
+        .firstNotNullOfOrNull { it.key } ?: throw IllegalStateException("Unrecognized os")
+}
+
+fun detectHostArch(): Arch {
+
+    val archDetectionMap = mapOf(
+        Pair("x86_64", Arch.AMD64),
+        Pair("x64", Arch.AMD64),
+        Pair("amd64", Arch.AMD64),
+        Pair("aarch64", Arch.ARM64),
+        Pair("arm64", Arch.ARM64),
+    )
+
+    val arch: String = System.getProperty("os.arch")
+    if (archDetectionMap.containsKey(arch)) {
+        return archDetectionMap[arch]!!
+    }
+    throw IllegalStateException("Unrecognized architecture: $arch")
 }
