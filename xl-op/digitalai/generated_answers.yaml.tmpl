@@ -149,6 +149,7 @@ RemoteRunnerUserPassword: '{{ .RemoteRunnerUserPassword }}'
 RemoteRunnerTokenExpiration: '{{ .RemoteRunnerTokenExpiration }}'
 RemoteRunnerCount: {{ .RemoteRunnerCount }}
 IsRemoteRunnerTruststoreEnabled: {{ .IsRemoteRunnerTruststoreEnabled }}
+RemoteRunnerRestClientCa: {{ .RemoteRunnerRestClientCa }}
 RemoteRunnerTruststore: |- 
 {{ .RemoteRunnerTruststore | trim | indent 2 }}
 RemoteRunnerTruststorePassword: {{ .RemoteRunnerTruststorePassword }}

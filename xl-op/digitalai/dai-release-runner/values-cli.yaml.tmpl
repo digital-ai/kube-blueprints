@@ -21,4 +21,5 @@ runner:
   truststorePassword: {{ .RemoteRunnerTruststorePassword }}
   truststore: |-
 {{ .RemoteRunnerTruststore | indent 4 }}
+  restClientCA: {{ .RemoteRunnerRestClientCa }}
 {{- end }}
