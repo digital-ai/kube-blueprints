@@ -112,28 +112,9 @@ spec:
         - {{ .AccessModeDeploy }}
       size: 1Gi
     podSecurityContext:
-        {{- if eq .K8sSetup "Openshift" }}
-        {{- if eq .EnableSCC true }}
-        enabled: true
-        {{- else }}
-        runAsUser: null
-        runAsGroup: null
-        fsGroup: null
-        {{- end }}
-        {{- else }}
-        enabled: true
-        {{- end }}
+        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
     containerSecurityContext:
-        {{- if eq .K8sSetup "Openshift" }}
-        {{- if eq .EnableSCC true }}
-        enabled: true
-        {{- else }}
-        runAsUser: null
-        runAsGroup: null
-        {{- end }}
-        {{- else }}
-        enabled: true
-        {{- end }}
+        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
     volumePermissions:
       enabled: false
     diagnosticMode:
@@ -156,28 +137,9 @@ spec:
         - {{ .AccessModeDeploy }}
       size: {{ .PvcSizeDeploy }}Gi
     podSecurityContext:
-        {{- if eq .K8sSetup "Openshift" }}
-        {{- if eq .EnableSCC true }}
-        enabled: true
-        {{- else }}
-        runAsUser: null
-        runAsGroup: null
-        fsGroup: null
-        {{- end }}
-        {{- else }}
-        enabled: true
-        {{- end }}
+        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
     containerSecurityContext:
-        {{- if eq .K8sSetup "Openshift" }}
-        {{- if eq .EnableSCC true }}
-        enabled: true
-        {{- else }}
-        runAsUser: null
-        runAsGroup: null
-        {{- end }}
-        {{- else }}
-        enabled: true
-        {{- end }}
+        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
     volumePermissions:
       enabled: false
     image:
@@ -204,28 +166,9 @@ spec:
         - {{ .AccessModeDeploy }}
       size: {{ .PvcSizeDeployTaskEngine }}Gi
     podSecurityContext:
-      {{- if eq .K8sSetup "Openshift" }}
-      {{- if eq .EnableSCC true }}
-      enabled: true
-      {{- else }}
-      runAsUser: null
-      runAsGroup: null
-      fsGroup: null
-      {{- end }}
-      {{- else }}
-      enabled: true
-      {{- end }}
+      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
     containerSecurityContext:
-      {{- if eq .K8sSetup "Openshift" }}
-      {{- if eq .EnableSCC true }}
-      enabled: true
-      {{- else }}
-      runAsUser: null
-      runAsGroup: null
-      {{- end }}
-      {{- else }}
-      enabled: true
-      {{- end }}
+      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
     volumePermissions:
       enabled: false
     image:
@@ -500,30 +443,9 @@ spec:
         size: {{ .PostgresqlPvcSize }}Gi
         storageClass: "{{ .PostgresqlStorageClass }}"
       podSecurityContext:
-        {{- if eq .K8sSetup "Openshift" }}
-        {{- if eq .EnableSCC true }}
-        enabled: true
-        {{- else }}
-        enabled: false
-        runAsUser: null
-        runAsGroup: null
-        fsGroup: null
-        {{- end }}
-        {{- else }}
-        enabled: true
-        {{- end }}
+        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
       containerSecurityContext:
-        {{- if eq .K8sSetup "Openshift" }}
-        {{- if eq .EnableSCC true }}
-        enabled: true
-        {{- else }}
-        enabled: false
-        runAsUser: null
-        runAsGroup: null
-        {{- end }}
-        {{- else }}
-        enabled: true
-        {{- end }}
+        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
     {{- if and (eq .K8sSetup "Openshift") (eq .EnableSCC false) }}
     volumePermissions:
       enabled: false
@@ -574,27 +496,6 @@ spec:
       {{- end }}
       {{- end }}
     podSecurityContext:
-      {{- if eq .K8sSetup "Openshift" }}
-      {{- if eq .EnableSCC true }}
-      enabled: true
-      {{- else }}
-      enabled: false
-      runAsUser: null
-      runAsGroup: null
-      fsGroup: null
-      {{- end }}
-      {{- else }}
-      enabled: true
-      {{- end }}
+      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
     containerSecurityContext:
-      {{- if eq .K8sSetup "Openshift" }}
-      {{- if eq .EnableSCC true }}
-      enabled: true
-      {{- else }}
-      enabled: false
-      runAsUser: null
-      runAsGroup: null
-      {{- end }}
-      {{- else }}
-      enabled: true
-      {{- end }}
+      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
