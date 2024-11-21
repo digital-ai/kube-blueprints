@@ -18,8 +18,5 @@ image:
 
 {{- if eq .IsRemoteRunnerTruststoreEnabled true }}
 runner:
-  truststorePassword: {{ .RemoteRunnerTruststorePassword }}
-  truststore: |-
-{{ .RemoteRunnerTruststore | indent 4 }}
   restClientCA: {{ .RemoteRunnerRestClientCa }}
 {{- end }}
