@@ -130,9 +130,17 @@ spec:
       - {{ .AccessModeRelease }}
     size: {{ .PvcSizeRelease }}Gi
   podSecurityContext:
-    enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+    {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+    enabled: true
+    {{- else }}
+    enabled: false
+    {{- end }}
   containerSecurityContext:
-    enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+    {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+    enabled: true
+    {{- else }}
+    enabled: false
+    {{- end }}
   {{- if eq .ResourcesSource "preset" }}
   resourcesPreset: {{ .ResourcesPresetRelease }}
   resources: {}
@@ -406,9 +414,17 @@ spec:
         size: {{ .PostgresqlPvcSize }}Gi
         storageClass: "{{ .PostgresqlStorageClass }}"
       podSecurityContext:
-        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        enabled: true
+        {{- else }}
+        enabled: false
+        {{- end }}
       containerSecurityContext:
-        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        enabled: true
+        {{- else }}
+        enabled: false
+        {{- end }}
     {{- if and (eq .K8sSetup "Openshift") (eq .EnableSCC false) }}
     volumePermissions:
       enabled: false
@@ -459,6 +475,14 @@ spec:
       {{- end }}
       {{- end }}
     podSecurityContext:
-      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      enabled: true
+      {{- else }}
+      enabled: false
+      {{- end }}
     containerSecurityContext:
-      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      enabled: true
+      {{- else }}
+      enabled: false
+      {{- end }}

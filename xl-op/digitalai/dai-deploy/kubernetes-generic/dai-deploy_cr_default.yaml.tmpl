@@ -112,9 +112,17 @@ spec:
         - {{ .AccessModeDeploy }}
       size: 1Gi
     podSecurityContext:
-        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        enabled: true
+        {{- else }}
+        enabled: false
+        {{- end }}
     containerSecurityContext:
-        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        enabled: true
+        {{- else }}
+        enabled: false
+        {{- end }}
     volumePermissions:
       enabled: false
     diagnosticMode:
@@ -137,9 +145,17 @@ spec:
         - {{ .AccessModeDeploy }}
       size: {{ .PvcSizeDeploy }}Gi
     podSecurityContext:
-        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        enabled: true
+        {{- else }}
+        enabled: false
+        {{- end }}
     containerSecurityContext:
-        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        enabled: true
+        {{- else }}
+        enabled: false
+        {{- end }}
     volumePermissions:
       enabled: false
     image:
@@ -166,9 +182,17 @@ spec:
         - {{ .AccessModeDeploy }}
       size: {{ .PvcSizeDeployTaskEngine }}Gi
     podSecurityContext:
-      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      enabled: true
+      {{- else }}
+      enabled: false
+      {{- end }}
     containerSecurityContext:
-      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      enabled: true
+      {{- else }}
+      enabled: false
+      {{- end }}
     volumePermissions:
       enabled: false
     image:
@@ -443,9 +467,17 @@ spec:
         size: {{ .PostgresqlPvcSize }}Gi
         storageClass: "{{ .PostgresqlStorageClass }}"
       podSecurityContext:
-        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        enabled: true
+        {{- else }}
+        enabled: false
+        {{- end }}
       containerSecurityContext:
-        enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        enabled: true
+        {{- else }}
+        enabled: false
+        {{- end }}
     {{- if and (eq .K8sSetup "Openshift") (eq .EnableSCC false) }}
     volumePermissions:
       enabled: false
@@ -496,6 +528,14 @@ spec:
       {{- end }}
       {{- end }}
     podSecurityContext:
-      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      enabled: true
+      {{- else }}
+      enabled: false
+      {{- end }}
     containerSecurityContext:
-      enabled: {{ if or (ne .K8sSetup "Openshift") .EnableSCC }}true{{ else }}false{{ end }}
+      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      enabled: true
+      {{- else }}
+      enabled: false
+      {{- end }}
