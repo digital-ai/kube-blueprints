@@ -636,7 +636,7 @@ spec:
       options:
         - label: The ingress keystore will be automatically generated with self-signed key
           value: generate
-        - label: TLS Secret containing ingress keystore file with tls key and cert
+        - label: TLS Secret containing tls key and cert
           value: secret
         - label: SSL passthrough (Cannot be chosen with backend protocol as http. It will pass the traffic to the backend without decryption. Application ssl keystore should be configured)
           value: passthrough
@@ -653,7 +653,7 @@ spec:
       options:
         - label: The ingress keystore will be automatically generated with self-signed key
           value: generate
-        - label: TLS Secret containing ingress keystore file with tls key and cert
+        - label: TLS Secret containing tls key and cert
           value: secret
       saveInXlvals: true
       ignoreIfSkipped: true
@@ -670,7 +670,7 @@ spec:
           value: default
         - label: The keystore will be automatically generated with self-signed key
           value: generate
-        - label: TLS Secret containing keystore file with tls key and cert
+        - label: TLS Secret containing tls key and cert
           value: secret
         - label: SSL passthrough (Cannot be choosen with backend protocol as http. It will pass the traffic to the backend without decryption. Application ssl keystore should be configured)
           value: passthrough
