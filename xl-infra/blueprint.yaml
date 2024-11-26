@@ -38,6 +38,7 @@ spec:
       overrideDefault: true
       prompt: "The type of process command is running:"
       saveInXlvals: true
+      description: "The type of process command which is running"
 
     - name: UseCustomNamespace
       type: Confirm
