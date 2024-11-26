@@ -8,6 +8,23 @@ This website is built using [Docusaurus 2](https://docusaurus.io/), a modern sta
 $ yarn
 ```
 
+### Generate Blueprints Documentation
+```
+cd scripts/js
+yarn install
+yarn run generate-blueprint-docs
+```
+
+This command generates the blueprint documentation in `documentation/docs` directory for serving static contents. And should be run before running build for documentation site. 
+
+** Note: ** This is also incorporated in the gradle build process.
+
+### To format new code
+```
+yarn run lint
+yarn run format
+```
+
 ### Local Development
 
 ```

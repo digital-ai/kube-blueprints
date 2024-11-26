@@ -1,0 +1,25 @@
+{
+  "name": "generate-docs",
+  "version": "1.0.0",
+  "description": "Generate documentation from YAML files",
+  "main": "generate_docs.js",
+  "type": "module",
+  "scripts": {
+    "generate-blueprint-docs": "node generate-docs.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3"
+  },
+  "dependencies": {
+    "compromise": "14.14.2",
+    "install": "^0.13.0",
+    "js-yaml": "^4.1.0",
+    "minimist": "^1.2.8",
+    "sprintf-js": "^1.1.2"
+  }
+}
