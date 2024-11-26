@@ -8,7 +8,7 @@ const FeatureList = [
     Svg: require('../../static/img/1.svg').default,
     description: (
       <>
-          XL OP Blueprints are templates that are used by xl client during upgrade process.
+          Kube Blueprints are templates that are used by xl client during install and upgrade process.
       </>
     ),
   },
