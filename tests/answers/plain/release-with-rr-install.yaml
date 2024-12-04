@@ -188,3 +188,4 @@ IsRemoteRunnerTruststoreEnabled: false
 RemoteRunnerTruststore: |- 
   
 RemoteRunnerTruststorePassword:
+EnableSCC: true

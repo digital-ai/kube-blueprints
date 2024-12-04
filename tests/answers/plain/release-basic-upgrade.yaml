@@ -11,7 +11,7 @@ ImageTag: 25.1.0-1024.113
 OperatorImageTag: 25.1.0-master
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
-XlrReplicaCount: 3
+XlrReplicaCount: 1
 PreserveCrValuesRelease: |-
         .metadata.name: .
         .spec.persistence.storageClass:
@@ -269,4 +269,5 @@ RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
 RemoteRunnerTruststore: |-
-
+  
+EnableSCC: true

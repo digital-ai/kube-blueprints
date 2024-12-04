@@ -7,7 +7,7 @@ IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 25.1.0-1024.113
+ImageTag: 25.1.0
 OperatorImageTag: 25.1.0-master
 ImageNameDeploy: xl-deploy
 ImageNameDeployTaskEngine: deploy-task-engine

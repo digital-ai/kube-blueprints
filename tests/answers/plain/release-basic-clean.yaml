@@ -103,3 +103,4 @@ RemoteRunnerTruststore: |-
 
 RemoteRunnerTruststorePassword:
 RemoteRunnerClean: true
+EnableSCC: true
