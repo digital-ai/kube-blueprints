@@ -1,36 +1,40 @@
-K8sSetup: PlainK8s
+K8sSetup: Openshift
 UseCustomNamespace: false
 Namespace: digitalai
-ServerType: dai-release
+ServerType: dai-deploy
 ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 24.1.0-beta.7
-OperatorImageTag: 24.1.0-beta.7
-ImageNameRelease: xl-release
-OperatorImageRelease: release-operator
-XlrReplicaCount: 1
-PostgresqlExternalConfigRelease: |-
+ImageTag: 25.1.0-1024.113
+OperatorImageTag: 25.1.0-master
+ImageNameDeploy: xl-deploy
+ImageNameDeployTaskEngine: deploy-task-engine
+ImageNameCc: central-configuration
+OperatorImageDeploy: deploy-operator
+XldMasterCount: 1
+XldWorkerCount: 1
+PostgresqlExternalConfigDeploy: |-
   main:
-    url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
-    username: <xlr-username>
+    url: jdbc:postgresql://<xld-db-host>:5432/<xld-database-name>
+    username: <xld-username>
     password: |-
-      <xlr-password>
+      <xld-password>
     maxPoolSize: 10
   report:
-    url: jdbc:postgresql://<xlr-report-db-host>:5432/<xlr-report-database-name>
-    username: <xlr-report-username>
+    url: jdbc:postgresql://<xld-report-db-host>:5432/<xld-report-database-name>
+    username: <xld-report-username>
     password: |-
-      <xlr-report-password>
+      <xld-report-password>
     maxPoolSize: 10
-RabbitmqExternalConfigRelease: |-
-  url: amqp://rabbitmq-test-xlr.${NAMESPACE}.svc.cluster.local:5672
-  queueName: ""
-  username: user
+RabbitmqExternalConfigDeploy: |-
+  url: <queue-url>
+  queueName: <queue-name>
+  username: <username>
   password: |-
-    password
+    <password>
+  driverClassName: <driver-class-name>
 OidcConfigTypeInstall: 'no-oidc'
 OidcConfigTypeUpgrade: 'existing'
 ExternalOidcConfGenericDeploy: |-
@@ -88,15 +92,15 @@ HttpProtocolIngress: 'http'
 IngressKeystoreSourceGeneric: 'generate'
 IngressKeystoreSourceOpenshift: 'default'
 IngressTlsSecretName: ''
-AdminPassword: 'fCgBVffbSst8bjBg'
-StorageClass: 'local-path'
-IngressHost: 'digitalai.release.local'
+AdminPassword: 'OEi9o1PHyQ89mwxm'
+StorageClass: 'gp3-csi'
+IngressHost: 'digitalai.deploy.local'
 HttpsProtocol: 'false'
 EnablePostgresql: true
-PostgresqlStorageClass: 'local-path'
-EnableRabbitmq: false
-RabbitmqReplicaCount: '3'
-RabbitmqStorageClass: 'local-path'
+PostgresqlStorageClass: 'gp3-csi'
+EnableRabbitmq: true
+RabbitmqReplicaCount: '1'
+RabbitmqStorageClass: 'gp3-csi'
 LicenseSource: 'generate'
 LicenseEditor:  |-
 
@@ -105,11 +109,10 @@ RepositoryKeystoreSource: 'generate'
 RepositoryKeystoreEditor: |-
 
 RepositoryKeystoreFile: ''
-KeystorePassphrase: 'kJQV2HHddA8p6o9q'
+KeystorePassphrase: '6JFsZyRcLyKYjE5k'
+ResourcesSource: 'none'
 PostgresqlPvcSize: '1'
-RabbitmqPvcSize: '8'
-PvcSizeRelease: '1'
-AccessModeRelease: 'ReadWriteOnce'
+RabbitmqPvcSize: '1'
 HttpProtocolRelease: 'http'
 HttpProtocolDeploy: 'http'
 ApplicationKeystoreSource: 'generate'
@@ -119,24 +122,27 @@ ApplicationKeystoreFile: ''
 ApplicationKeystoreSecretName: ''
 ApplicationKeystore: ''
 ApplicationKeystoreType: 'pkcs12'
-ApplicationKeystorePassword: 'XjkB2A6OIlzyyk9K'
+ApplicationKeystorePassword: 'p3w4Mo4WlQG8GkUP'
+PvcSizeDeploy: '1'
+PvcSizeDeployTaskEngine: '1'
+AccessModeDeploy: 'ReadWriteOnce'
 CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.1.0-beta.7'
-RemoteRunnerInstallType: 'no-install'
+ImageTagRemoteRunner: 25.1.0-1024.113
+RemoteRunnerInstallType: ''
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
 RemoteRunnerHelmChartUrl: ''
-RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+RemoteRunnerReleaseUrl: 'http://dai-ocp-xlr-digitalai-release.digitalai'
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
-RemoteRunnerUserPassword: 'lGgugXBqhgdorPno'
+RemoteRunnerUserPassword: 'ZtbzSjzjHhA2giME'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
 RemoteRunnerTruststore: |-
-
-RemoteRunnerTruststorePassword:
+  
+EnableSCC: true

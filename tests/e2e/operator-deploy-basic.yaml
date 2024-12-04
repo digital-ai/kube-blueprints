@@ -1,0 +1,9 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestSuite
+testDirs:
+  - tests/e2e/basic/deploy
+reportName: operator-deploy-basic
+reportFormat: json
+timeout: 30
+namespace: digitalai
+parallel: 1

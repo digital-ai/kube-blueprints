@@ -7,7 +7,7 @@ spec:
     extraConfiguration:
       central-conf_type-defaults:
         content: |
-          aws.Cloud.allowConcurrentDeployments=true
+          aws.Cloud.allowConcurrentDeployments=false
           aws.api.Method.integrationType=AWS
         mode: 432
         path: central-conf/type-defaults.properties
@@ -15,9 +15,6 @@ status:
   conditions: 
     - status: "True"
       type: Initialized
-    - status: "True"
-      type: Deployed
-      reason: UpgradeSuccessful
     - status: "True"
       type: Deployed
       reason: UpgradeSuccessful

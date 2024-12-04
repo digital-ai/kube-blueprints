@@ -1,47 +1,89 @@
-K8sSetup: PlainK8s
+K8sSetup: Openshift
 UseCustomNamespace: false
 Namespace: digitalai
-ServerType: dai-release
+ServerType: dai-deploy
 ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 24.1.0-beta.7
-OperatorImageTag: 24.1.0-beta.7
-ImageNameRelease: xl-release
-OperatorImageRelease: release-operator
-XlrReplicaCount: 3
-PreserveCrValuesRelease: |-
+ImageTag: 25.1.0-1024.113
+OperatorImageTag: 25.1.0-master
+ImageNameDeploy: xl-deploy
+ImageNameDeployTaskEngine: deploy-task-engine
+ImageNameCc: central-configuration
+OperatorImageDeploy: deploy-operator
+XldMasterCount: 2
+XldWorkerCount: 2
+PreserveCrValuesDeploy: |-
         .metadata.name: .
-        .spec.persistence.storageClass:
+        .spec.centralConfiguration.persistence.storageClass:
+          0.0: .spec.Persistence.StorageClass
+          23.3: .
+        .spec.master.persistence.storageClass:
+          0.0: .spec.Persistence.StorageClass
+          23.3: .
+        .spec.worker.persistence.storageClass:
           0.0: .spec.Persistence.StorageClass
           23.3: .
         .spec.auth.adminPassword:
           0.0: .spec.AdminPassword
           23.3: .
-        .spec.appProtocol:
-          0.0:
-          23.3: .
-        .spec.appHostname:
-          0.0:
-          23.3: .
-        .spec.replicaCount: .
-        .spec.persistence.paths: .
-        .spec.persistence.emptyDirPaths: .
-        .spec.persistence.accessModes.[0]:
+        .spec.centralConfiguration.replicaCount: .
+        .spec.centralConfiguration.persistence.paths: .
+        .spec.centralConfiguration.persistence.emptyDirPaths: .
+        .spec.centralConfiguration.persistence.accessModes[0]:
           0.0: .spec.Persistence.AccessMode
           23.3:
-        .spec.persistence.accessModes:
+        .spec.centralConfiguration.persistence.accessModes:
           0.0:
           23.3: .
-        .spec.persistence.size:
-          0.0: .spec.Persistence.Size
+        .spec.centralConfiguration.persistence.size:
+          0.0: .spec.centralConfiguration.persistence.pvcSize
           23.3: .
-        .spec.persistence.existingClaim:
+        .spec.centralConfiguration.persistence.existingClaim:
           0.0:
-            existance: .spec.Persistence.ExistingClaim
-            expression: .spec.Persistence.ExistingClaim
+            existance: .spec.deploy.centralConfiguration.persistence.existingClaim
+            expression: .spec.deploy.centralConfiguration.persistence.existingClaim
+          23.3: .
+        .spec.centralConfiguration.migrateFromEmbedded: .
+        .spec.master.replicaCount:
+          0.0: .spec.XldMasterCount
+          23.3: .
+        .spec.master.persistence.paths: .
+        .spec.master.persistence.emptyDirPaths: .
+        .spec.master.persistence.accessModes[0]:
+          0.0: .spec.Persistence.AccessMode
+          23.3:
+        .spec.master.persistence.accessModes:
+          0.0:
+          23.3: .
+        .spec.master.persistence.size:
+          0.0: .spec.Persistence.XldMasterPvcSize
+          23.3: .
+        .spec.master.persistence.existingClaim:
+          0.0:
+            existance: .spec.deploy.master.persistence.existingClaim
+            expression: .spec.deploy.master.persistence.existingClaim
+          23.3: .
+        .spec.worker.replicaCount:
+          0.0: .spec.XldWorkerCount
+          23.3: .
+        .spec.worker.persistence.paths: .
+        .spec.worker.persistence.emptyDirPaths: .
+        .spec.worker.persistence.accessModes[0]:
+          0.0: .spec.Persistence.AccessMode
+          23.3:
+        .spec.worker.persistence.accessModes:
+          0.0:
+          23.3: .
+        .spec.worker.persistence.size:
+          0.0: .spec.Persistence.XldWorkerPvcSize
+          23.3: .
+        .spec.worker.persistence.existingClaim:
+          0.0:
+            existance: .spec.deploy.worker.persistence.existingClaim
+            expression: .spec.deploy.worker.persistence.existingClaim
           23.3: .
         .spec.oidc: .
         .spec.external.db:
@@ -51,22 +93,22 @@ PreserveCrValuesRelease: |-
           0.0: .spec.UseExistingDB.Enabled
           23.3:
         .spec.external.db.main.url:
-          0.0: .spec.UseExistingDB.XLR_DB_URL
+          0.0: .spec.UseExistingDB.XL_DB_URL
           23.3:
         .spec.external.db.main.username:
-          0.0: .spec.UseExistingDB.XLR_DB_USER
+          0.0: .spec.UseExistingDB.XL_DB_USERNAME
           23.3:
         .spec.external.db.main.password:
-          0.0: .spec.UseExistingDB.XLR_DB_PASS
+          0.0: .spec.UseExistingDB.XL_DB_PASSWORD
           23.3:
         .spec.external.db.report.url:
-          0.0: .spec.UseExistingDB.XLR_REPORT_DB_URL
+          0.0: .spec.UseExistingDB.XL_REPORT_DB_URL // .spec.UseExistingDB.XL_DB_URL
           23.3:
         .spec.external.db.report.username:
-          0.0: .spec.UseExistingDB.XLR_REPORT_DB_USER
+          0.0: .spec.UseExistingDB.XL_REPORT_DB_USER // .spec.UseExistingDB.XL_REPORT_DB_USERNAME // .spec.UseExistingDB.XL_DB_USERNAME
           23.3:
         .spec.external.db.report.password:
-          0.0: .spec.UseExistingDB.XLR_REPORT_DB_PASS
+          0.0: .spec.UseExistingDB.XL_REPORT_DB_PASS // .spec.UseExistingDB.XL_REPORT_DB_PASSWORD // .spec.UseExistingDB.XL_DB_PASSWORD
           23.3:
         .spec.external.mq:
           0.0:
@@ -75,16 +117,16 @@ PreserveCrValuesRelease: |-
           0.0: .spec.UseExistingMQ.Enabled
           23.3:
         .spec.external.mq.url:
-          0.0: .spec.UseExistingMQ.XLR_TASK_QUEUE_URL
-          23.3:
-        .spec.external.mq.queueName:
-          0.0: .spec.UseExistingMQ.XLR_TASK_QUEUE_NAME
+          0.0: .spec.UseExistingMQ.XLD_TASK_QUEUE_URL
           23.3:
         .spec.external.mq.username:
-          0.0: .spec.UseExistingMQ.XLR_TASK_QUEUE_USERNAME
+          0.0: .spec.UseExistingMQ.XLD_TASK_QUEUE_USERNAME
           23.3:
         .spec.external.mq.password:
-          0.0: .spec.UseExistingMQ.XLR_TASK_QUEUE_PASSWORD
+          0.0: .spec.UseExistingMQ.XLD_TASK_QUEUE_PASSWORD
+          23.3:
+        .spec.external.mq.driverClassName:
+          0.0: .spec.UseExistingMQ.XLD_TASK_QUEUE_DRIVER_CLASS_NAME
           23.3:
         .spec.ingress.enabled:
           0.0: .spec.ingress.Enabled
@@ -119,6 +161,9 @@ PreserveCrValuesRelease: |-
             existance: .spec.postgresql.postgresqlMaxConnections
             expression: .spec.postgresql.postgresqlMaxConnections as $maxConnection | "max_connections = " + $maxConnection
           23.3: .
+        .spec.postgresql.hasReport:
+          0.0: .spec.postgresql.hasReport // false
+          23.3: .
         # preserve current DB version
         .spec.postgresql.image.tag: .
         .spec.haproxy-ingress.install: .
@@ -144,23 +189,32 @@ PreserveCrValuesRelease: |-
           0.0: .spec.route.Enabled
           23.3: .
         .spec.license:
-          0.0: .spec.xlrLicense
+          0.0: .spec.xldLicense
           23.3: .
         .spec.licenseAcceptEula:
           0.0:
           23.3: .
-        .spec.http2.enabled: .
         .spec.ssl: .
         .spec.hooks: .
-        .spec.configuration: .
-        .spec.extraConfiguration: .
+        .spec.centralConfiguration.configuration: .
+        .spec.centralConfiguration.extraConfiguration: .
+        .spec.master.configuration: .
+        .spec.master.extraConfiguration: .
+        .spec.worker.configuration: .
+        .spec.worker.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
         .spec.postgresql.primary.extraConfiguration: .
         .spec.rabbitmq.configuration: .
         .spec.rabbitmq.extraConfiguration: .
-        .spec.resourcesPreset: .
-        .spec.resources: .
-        .spec.defaultInitContainers.resources: .
+        .spec.centralConfiguration.resourcesPreset: .
+        .spec.centralConfiguration.resources: .
+        .spec.centralConfiguration.defaultInitContainers.resources: .
+        .spec.master.resourcesPreset: .
+        .spec.master.resources: .
+        .spec.master.defaultInitContainers.resources: .
+        .spec.worker.resourcesPreset: .
+        .spec.worker.resources: .
+        .spec.worker.defaultInitContainers.resources: .
         .spec.haproxy-ingress.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resourcesPreset: .
@@ -170,9 +224,15 @@ PreserveCrValuesRelease: |-
         .spec.postgresql.primary.resourcesPreset: .
         .spec.rabbitmq.resources: .
         .spec.rabbitmq.resourcesPreset: .
-        .spec.podSecurityContext: .
-        .spec.containerSecurityContext: .
-        .spec.volumePermissions: .
+        .spec.centralConfiguration.podSecurityContext: .
+        .spec.centralConfiguration.containerSecurityContext: .
+        .spec.centralConfiguration.volumePermissions: .
+        .spec.master.podSecurityContext: .
+        .spec.master.containerSecurityContext: .
+        .spec.master.volumePermissions: .
+        .spec.worker.podSecurityContext: .
+        .spec.worker.containerSecurityContext: .
+        .spec.worker.volumePermissions: .
         .spec.haproxy-ingress.controller.securityContext: .
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
@@ -180,25 +240,26 @@ PreserveCrValuesRelease: |-
         .spec.rabbitmq.containerSecurityContext: .
         .spec.rabbitmq.podSecurityContext: .
         .spec.rabbitmq.volumePermissions: .
-PostgresqlExternalConfigRelease: |-
+PostgresqlExternalConfigDeploy: |-
   main:
-    url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
-    username: <xlr-username>
+    url: jdbc:postgresql://<xld-db-host>:5432/<xld-database-name>
+    username: <xld-username>
     password: |-
-      <xlr-password>
+      <xld-password>
     maxPoolSize: 10
   report:
-    url: jdbc:postgresql://<xlr-report-db-host>:5432/<xlr-report-database-name>
-    username: <xlr-report-username>
+    url: jdbc:postgresql://<xld-report-db-host>:5432/<xld-report-database-name>
+    username: <xld-report-username>
     password: |-
-      <xlr-report-password>
+      <xld-report-password>
     maxPoolSize: 10
-RabbitmqExternalConfigRelease: |-
+RabbitmqExternalConfigDeploy: |-
   url: <queue-url>
   queueName: <queue-name>
   username: <username>
   password: |-
     <password>
+  driverClassName: <driver-class-name>
 OidcConfigTypeInstall: 'no-oidc'
 OidcConfigTypeUpgrade: 'existing'
 ExternalOidcConfGenericDeploy: |-
@@ -250,23 +311,25 @@ IdentityServiceConfRelease: |-
   userNameClaim: "preferred_username"
   scopes: ["openid"]
 UpgradeType: operatorToOperator
-CrdName: 'digitalaireleases.xlr.digital.ai'
+CrdName: 'digitalaideploys.xld.digital.ai'
 IsCrdReused: false
-CrName: 'dai-xlr'
+CrName: 'dai-ocp-xld'
 PreservePvc: true
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.1.0-beta.7'
+ImageTagRemoteRunner: 25.1.0-1024.113
 RemoteRunnerInstallType: ''
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
 RemoteRunnerHelmChartUrl: ''
-RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+RemoteRunnerReleaseUrl: 'http://dai-ocp-xlr-digitalai-release.digitalai'
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
-RemoteRunnerUserPassword: 'rBNGELKKBks0y29A'
+RemoteRunnerUserPassword: 'pizSmJXsTQIBncQw'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
 RemoteRunnerTruststore: |-
-
+  
+RemoteRunnerTruststorePassword:
+EnableSCC: true

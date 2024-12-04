@@ -7,14 +7,14 @@ IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 24.1.0-beta.7
-OperatorImageTag: 24.1.0-beta.7
+ImageTag: 25.1.0-1024.113
+OperatorImageTag: 25.1.0-master
 ImageNameDeploy: xl-deploy
 ImageNameDeployTaskEngine: deploy-task-engine
 ImageNameCc: central-configuration
 OperatorImageDeploy: deploy-operator
-XldMasterCount: 3
-XldWorkerCount: 3
+XldMasterCount: 2
+XldWorkerCount: 2
 PreserveCrValuesDeploy: |-
         .metadata.name: .
         .spec.centralConfiguration.persistence.storageClass:
@@ -316,7 +316,7 @@ IsCrdReused: false
 CrName: 'dai-xld'
 PreservePvc: true
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.1.0-beta.7'
+ImageTagRemoteRunner: 25.1.0-1024.113
 RemoteRunnerInstallType: ''
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
@@ -332,3 +332,4 @@ IsRemoteRunnerTruststoreEnabled: false
 RemoteRunnerTruststore: |-
 
 RemoteRunnerTruststorePassword:
+EnableSCC: true
