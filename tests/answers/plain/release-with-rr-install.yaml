@@ -172,7 +172,7 @@ CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.3.0-beta.6'
+ImageTagRemoteRunner: '25.1.0'
 RemoteRunnerInstallType: 'cluster-install'
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
