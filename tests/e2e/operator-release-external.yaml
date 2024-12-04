@@ -1,0 +1,10 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestSuite
+testDirs:
+  - tests/e2e/external-mq/release
+  - tests/e2e/external-db/release
+reportName: operator-release-external
+reportFormat: json
+timeout: 30
+namespace: digitalai
+parallel: 1

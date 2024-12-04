@@ -1,0 +1,105 @@
+K8sSetup: Openshift
+UseCustomNamespace: false
+Namespace: digitalai
+ServerType: dai-release
+ImageRegistryType: default
+IsCustomImageRegistry: false
+CustomImageRegistryName: docker.io
+CustomPrivateImageRegistrySecret:
+RepositoryName: xebialabsunsupported
+ImageTag: 24.1.12
+OperatorImageTag: 24.1.0-24.1.x-maintenance
+ImageNameRelease: xl-release
+OperatorImageRelease: release-operator
+XlrReplicaCount: 3
+PostgresqlExternalConfigRelease: |-
+  main:
+    url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
+    username: <xlr-username>
+    password: |-
+      <xlr-password>
+    maxPoolSize: 10
+  report:
+    url: jdbc:postgresql://<xlr-report-db-host>:5432/<xlr-report-database-name>
+    username: <xlr-report-username>
+    password: |-
+      <xlr-report-password>
+    maxPoolSize: 10
+RabbitmqExternalConfigRelease: |-
+  url: <queue-url>
+  queueName: <queue-name>
+  username: <username>
+  password: |-
+    <password>
+OidcConfigTypeInstall: 'no-oidc'
+OidcConfigTypeUpgrade: 'existing'
+ExternalOidcConfGenericDeploy: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaimName: ""
+  userAuthorizationUri: ""
+  userNameClaimName: ""
+  fullNameClaim: ""
+  scopes: '["openid"]'
+ExternalOidcConfGenericRelease: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  fullNameClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaim: ""
+  userAuthorizationUri: ""
+  userNameClaim: ""
+  scopes: '["openid"]'
+IdentityServiceConfDeploy: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaimName: ""
+  userNameClaimName: "preferred_username"
+  scopes: ["openid"]
+IdentityServiceConfRelease: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaim: ""
+  userNameClaim: "preferred_username"
+  scopes: ["openid"]
+CrdName: 'digitalaireleases.xlr.digital.ai'
+IsCrdReused: false
+CrName: 'dai-ocp-xlr'
+PreservePvc: false
+ImageNameRemoteRunner: 'release-runner'
+ImageTagRemoteRunner: 24.1.12
+RemoteRunnerInstallType: ''
+RemoteRunnerRepositoryName: 'xebialabsunsupported'
+RemoteRunnerReleaseName: 'release-runner'
+RemoteRunnerUseDefaultLocation: true
+RemoteRunnerHelmChartUrl: ''
+RemoteRunnerReleaseUrl: 'http://dai-ocp-xlr-digitalai-release.digitalai'
+RemoteRunnerToken: ''
+RemoteRunnerUserEmail: 'release-runner@no.reply'
+RemoteRunnerUserPassword: 'R60zipP2csYYc5ca'
+RemoteRunnerTokenExpiration: '0'
+RemoteRunnerCount: 1
+IsRemoteRunnerTruststoreEnabled: false
+RemoteRunnerTruststore: |-
+
+RemoteRunnerTruststorePassword:
+RemoteRunnerClean: true

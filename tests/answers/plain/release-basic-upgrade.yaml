@@ -7,11 +7,11 @@ IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 24.1.0-beta.7
-OperatorImageTag: 24.1.0-beta.7
+ImageTag: 24.1.12
+OperatorImageTag: 24.1.0-24.1.x-maintenance
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
-XlrReplicaCount: 3
+XlrReplicaCount: 1
 PreserveCrValuesRelease: |-
         .metadata.name: .
         .spec.persistence.storageClass:
@@ -28,6 +28,7 @@ PreserveCrValuesRelease: |-
           23.3: .
         .spec.replicaCount: .
         .spec.persistence.paths: .
+        .spec.persistence.emptyDirPaths: .
         .spec.persistence.accessModes.[0]:
           0.0: .spec.Persistence.AccessMode
           23.3:
@@ -160,7 +161,6 @@ PreserveCrValuesRelease: |-
         .spec.resourcesPreset: .
         .spec.resources: .
         .spec.defaultInitContainers.resources: .
-        .spec.volumePermissions: .
         .spec.haproxy-ingress.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resources: .
         .spec.nginx-ingress-controller.defaultBackend.resourcesPreset: .
@@ -172,15 +172,12 @@ PreserveCrValuesRelease: |-
         .spec.rabbitmq.resourcesPreset: .
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
-        .spec.securityContextConstraints: .
         .spec.volumePermissions: .
         .spec.haproxy-ingress.controller.securityContext: .
-        .spec.postgresql.primary.securityContextConstraints: .
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
         .spec.postgresql.volumePermissions: .
         .spec.rabbitmq.containerSecurityContext: .
-        .spec.rabbitmq.securityContextConstraints: .
         .spec.rabbitmq.podSecurityContext: .
         .spec.rabbitmq.volumePermissions: .
 PostgresqlExternalConfigRelease: |-
@@ -258,7 +255,7 @@ IsCrdReused: false
 CrName: 'dai-xlr'
 PreservePvc: true
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.1.0-beta.7'
+ImageTagRemoteRunner: 24.1.12
 RemoteRunnerInstallType: ''
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
@@ -272,4 +269,3 @@ RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
 RemoteRunnerTruststore: |-
-

@@ -3,5 +3,3 @@ kind: TestStep
 unitTest: false
 apply:
 - $APPLY_REL_PATH/release-deployit-defaults.yaml
-assert:
-- $ASSERTS_REL_PATH/release-deployit-defaults.yaml

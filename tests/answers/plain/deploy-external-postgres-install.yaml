@@ -1,38 +1,40 @@
 K8sSetup: PlainK8s
 UseCustomNamespace: false
 Namespace: digitalai
-ServerType: dai-release
+ServerType: dai-deploy
 ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
-CustomPrivateImageRegistrySecret: 
+CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 24.1.10
-OperatorImageTag: 24.1.10
-ImageNameRelease: xl-release
-OperatorImageRelease: release-operator
-XlrReplicaCount: 1
-PostgresqlExternalConfigRelease: |-
+ImageTag: 24.1.12
+OperatorImageTag: 24.1.0-24.1.x-maintenance
+ImageNameDeploy: xl-deploy
+ImageNameDeployTaskEngine: deploy-task-engine
+ImageNameCc: central-configuration
+OperatorImageDeploy: deploy-operator
+XldMasterCount: 1
+XldWorkerCount: 1
+PostgresqlExternalConfigDeploy: |-
   main:
-    url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
-    username: <xlr-username>
+    url: jdbc:postgresql://psql-test-xld-postgresql.${NAMESPACE}.svc.cluster.local:5432/main
+    username: postgres
     password: |-
-      <xlr-password>
+      admin123
     maxPoolSize: 10
   report:
-    url: jdbc:postgresql://<xlr-report-db-host>:5432/<xlr-report-database-name>
-    username: <xlr-report-username>
+    url: jdbc:postgresql://psql-test-xld-postgresql.${NAMESPACE}.svc.cluster.local:5432/main
+    username: postgres
     password: |-
-      <xlr-report-password>
+      admin123
     maxPoolSize: 10
-RabbitmqExternalConfigRelease: |-
+RabbitmqExternalConfigDeploy: |-
   url: <queue-url>
   queueName: <queue-name>
   username: <username>
   password: |-
     <password>
-  queueType: <classic-or-quorum>
-  connector: <rabbitmq-jms-or-activemq-jms>
+  driverClassName: <driver-class-name>
 OidcConfigTypeInstall: 'no-oidc'
 OidcConfigTypeUpgrade: 'existing'
 ExternalOidcConfGenericDeploy: |-
@@ -85,95 +87,50 @@ IdentityServiceConfRelease: |-
   scopes: ["openid"]
 IngressTypeGeneric: 'none'
 IngressTypeOpenshift: 'route'
-NginxResourcesPreset: 'nano'
-NginxResourcesEditor: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
-HAProxyResourcesEditor: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
 ExternalIngressClass: ''
 HttpProtocolIngress: 'http'
 IngressKeystoreSourceGeneric: 'generate'
-IngressKeystoreSourceHaproxy: 'generate'
 IngressKeystoreSourceOpenshift: 'default'
 IngressTlsSecretName: ''
-AdminPassword: 'ROw3gTNEnePun8Vw'
+AdminPassword: 'XB4AFUxAc2i2kds3'
 StorageClass: 'local-path'
-IngressHost: 'test1.com'
+IngressHost: ''
 HttpsProtocol: 'false'
-EnablePostgresql: true
-PostgresqlStorageClass: 'local-path'
-PostgresqlResourcesPreset: 'nano'
-PostgresqlResourcesEditor: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
+EnablePostgresql: false
+PostgresqlStorageClass: ''
 EnableRabbitmq: true
 RabbitmqReplicaCount: '1'
 RabbitmqStorageClass: 'local-path'
-RabbitmqResourcesPreset: 'nano'
-RabbitmqResourcesEditor: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
 LicenseSource: 'generate'
 LicenseEditor:  |-
-  
+
 LicenseFile: ''
 RepositoryKeystoreSource: 'generate'
 RepositoryKeystoreEditor: |-
-  
+
 RepositoryKeystoreFile: ''
-KeystorePassphrase: 'D6UA9H9fbujg71Ub'
-ResourcesSource: 'none'
-PostgresqlPvcSize: '1'
+KeystorePassphrase: '4JoGrhbqhhJCCNSf'
+PostgresqlPvcSize: '8'
 RabbitmqPvcSize: '1'
-PvcSizeRelease: '1'
-AccessModeRelease: 'ReadWriteOnce'
-ResourcesPresetRelease: 'nano'
-ResourcesEditorRelease: |-
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
 HttpProtocolRelease: 'http'
 HttpProtocolDeploy: 'http'
 ApplicationKeystoreSource: 'generate'
 ApplicationKeystoreEditor: |-
-  
+
 ApplicationKeystoreFile: ''
 ApplicationKeystoreSecretName: ''
 ApplicationKeystore: ''
 ApplicationKeystoreType: 'pkcs12'
-ApplicationKeystorePassword: 'ce7CuxlAIvm0q9Lb'
+ApplicationKeystorePassword: 'aVWqYsFbMxh5S8BG'
+PvcSizeDeploy: '1'
+PvcSizeDeployTaskEngine: '1'
+AccessModeDeploy: 'ReadWriteOnce'
 CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.1.10'
-RemoteRunnerInstallType: 'cluster-install'
+ImageTagRemoteRunner: 24.1.12
+RemoteRunnerInstallType: ''
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
@@ -181,10 +138,8 @@ RemoteRunnerHelmChartUrl: ''
 RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
-RemoteRunnerUserPassword: '3dJBHBX9WFRNm4Jk'
+RemoteRunnerUserPassword: 'oj9X38dY0ItHI7B8'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
-RemoteRunnerTruststore: |- 
-  
-RemoteRunnerTruststorePassword:
+RemoteRunnerTruststore: |-

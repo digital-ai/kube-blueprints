@@ -1,0 +1,10 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestSuite
+testDirs:
+  - tests/e2e/haproxy/release
+  - tests/e2e/nginx/release
+reportName: operator-release-ingress
+reportFormat: json
+timeout: 30
+namespace: digitalai
+parallel: 1

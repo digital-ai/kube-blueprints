@@ -2,6 +2,10 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestStep
 unitTest: false
 commands:
-- command: kubectl exec -it dai-xlr-digitalai-release-0 -- /bin/sh -c "cat conf/deployit-defaults.properties | grep ansible.RunPlaybook.ansibleCmd=ansible-playbook"
-  namespaced: true
-  timeout: 10
+- command: sleep 1m
+  timeout: 70
+- command: $XL_CLI kube check --wait-for-ready 5 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-install.yaml
+  timeout: 300
+assert:
+- $ASSERTS_REL_PATH/release-running-product-pods.yaml
+- $ASSERTS_REL_PATH/release-deployit-defaults.yaml

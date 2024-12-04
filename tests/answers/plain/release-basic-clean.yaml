@@ -5,13 +5,13 @@ ServerType: dai-release
 ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
-CustomPrivateImageRegistrySecret: 
+CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 24.1.0-beta.7
-OperatorImageTag: 24.1.0-beta.7
+ImageTag: 24.1.12
+OperatorImageTag: 24.1.0-24.1.x-maintenance
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
-XlrReplicaCount: 1
+XlrReplicaCount: 3
 PostgresqlExternalConfigRelease: |-
   main:
     url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
@@ -81,52 +81,13 @@ IdentityServiceConfRelease: |-
   rolesClaim: ""
   userNameClaim: "preferred_username"
   scopes: ["openid"]
-IngressTypeGeneric: 'nginx'
-IngressTypeOpenshift: 'route'
-ExternalIngressClass: ''
-HttpProtocolIngress: 'http'
-IngressKeystoreSourceGeneric: 'generate'
-IngressKeystoreSourceOpenshift: 'default'
-IngressTlsSecretName: ''
-AdminPassword: 'PRsOjDntJbK2RcoU'
-StorageClass: 'local-path'
-IngressHost: 'digitalai.release.local'
-HttpsProtocol: 'false'
-EnablePostgresql: true
-PostgresqlStorageClass: 'local-path'
-EnableRabbitmq: true
-RabbitmqReplicaCount: '1'
-RabbitmqStorageClass: 'local-path'
-LicenseSource: 'generate'
-LicenseEditor:  |-
-  
-LicenseFile: ''
-RepositoryKeystoreSource: 'generate'
-RepositoryKeystoreEditor: |-
-  
-RepositoryKeystoreFile: ''
-KeystorePassphrase: 'R2IivyuDnj9H2amY'
-ResourcesSource: 'none'
-PostgresqlPvcSize: '1'
-RabbitmqPvcSize: '1'
-PvcSizeRelease: '1'
-AccessModeRelease: 'ReadWriteOnce'
-HttpProtocolRelease: 'http'
-HttpProtocolDeploy: 'http'
-ApplicationKeystoreSource: 'generate'
-ApplicationKeystoreEditor: |-
-  
-ApplicationKeystoreFile: ''
-ApplicationKeystoreSecretName: ''
-ApplicationKeystore: ''
-ApplicationKeystoreType: 'pkcs12'
-ApplicationKeystorePassword: 'TrJVbVoSaOyQrPiZ'
-CrdName: ''
+CrdName: 'digitalaireleases.xlr.digital.ai'
 IsCrdReused: false
-CrName: ''
+CrName: 'dai-xlr'
+PreservePvc: false
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: '24.1.0-beta.7'
-RemoteRunnerInstallType: 'no-install'
+ImageTagRemoteRunner: 24.1.12
+RemoteRunnerInstallType: ''
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
@@ -134,10 +95,11 @@ RemoteRunnerHelmChartUrl: ''
 RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
-RemoteRunnerUserPassword: 'faxnhcr9qyOIEJNO'
+RemoteRunnerUserPassword: 'R60zipP2csYYc5ca'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
-RemoteRunnerTruststore: |- 
-  
+RemoteRunnerTruststore: |-
+
 RemoteRunnerTruststorePassword:
+RemoteRunnerClean: true
