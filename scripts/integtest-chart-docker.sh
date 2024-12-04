@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-    echo "Use first argument to select app, for example: 'deploy', or 'release', or 'deploy-external', or 'release-external'."
+    echo "Use first argument to select app, for example: 'deploy', or 'release'."
     exit 1
 fi
 
@@ -53,9 +53,11 @@ XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTag" "$VERSION_FILE")
 XL_APP_VERSION=${XL_APP_VERSION:-$XL_APP_VERSION_DEFAULT}
 XL_RR_VERSION_DEFAULT=$(yq eval ".ImageTagRemoteRunner" "$VERSION_FILE")
 XL_RR_VERSION=${XL_RR_VERSION:-$XL_RR_VERSION_DEFAULT}
+EXTRA_CONTAINER_ARGS=""
 
 echo "Prepare tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
 
+rm -fr $OUTPUT_HOST_DIR/tests
 mkdir -p $OUTPUT_HOST_DIR
 cp -R ./tests $OUTPUT_HOST_DIR
 mkdir -p $OUTPUT_HOST_DIR/tools
@@ -90,6 +92,13 @@ if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
         -u $(id -u):$(id -g) \
         registry.redhat.io/openshift4/ose-cli:latest \
         oc login $REDHAT_OC_URL --username $REDHAT_OC_LOGIN --password $REDHAT_OC_PASSWORD
+
+elif [[ "$APP_TARGET" = "plain" && "$4" == "localhost" ]]; then
+
+    echo "Using exising kube context"
+
+    cp -f $HOME/.kube/config $OUTPUT_HOST_DIR/kube/    
+    EXTRA_CONTAINER_ARGS="--network=host"
 fi
 
 if [ "$APP_TARGET" = "openshift" ]; then
@@ -106,7 +115,7 @@ fi
 echo "Starting tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
 
 # tools: xl-client keytool yq helm 
-docker run --rm \
+docker run --rm $EXTRA_CONTAINER_ARGS \
     -e HOME=$OUTPUT_CONTAINER_DIR \
     -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
     -e ANSWERS_REL_PATH=../../../../answers/$APP_TARGET \
@@ -124,6 +133,8 @@ docker run --rm \
 
 echo "TEST RESULT:"
 cat "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"
+echo ""
+
 # check for fauilure in file
 if grep -q '"failure"' "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"; then
   echo "Tests failed"
