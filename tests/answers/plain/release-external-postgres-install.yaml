@@ -7,8 +7,8 @@ IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
 RepositoryName: xebialabsunsupported
-ImageTag: 25.1.0-1024.113
-OperatorImageTag: 25.1.0-master
+ImageTag: 24.3.2
+OperatorImageTag: 24.3.0-24.3.x-maintenance
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
 XlrReplicaCount: 1
@@ -124,7 +124,7 @@ CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: 25.1.0-1024.113
+ImageTagRemoteRunner: 24.3.2
 RemoteRunnerInstallType: 'no-install'
 RemoteRunnerRepositoryName: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
