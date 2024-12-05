@@ -1765,25 +1765,15 @@ spec:
       promptIf: !expr RemoteRunnerInstall && ServerType == 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enable truststore for Release Runner:"
       description: "Type yes to setup truststore for Release Runner"
-    - name: RemoteRunnerTruststore
+    - name: RemoteRunnerRestClientCa
       type: Editor
       saveInXlvals: true
       ignoreIfSkipped: true
       allowEmpty: true
       overrideDefault: true
-      prompt: "Provide base64 encoded PKCS12 truststore:"
+      prompt: "Provide base64 encoded cert in pem format:"
       promptIf: !expr IsRemoteRunnerTruststoreEnabled && RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')
-      description: The Release Runner truststore with the trusted certificates. Accepted is PKCS12 format.
-      default: ""
-    - name: RemoteRunnerTruststorePassword
-      type: Input
-      saveInXlvals: true
-      ignoreIfSkipped: true
-      allowEmpty: true
-      overrideDefault: true
-      prompt: "Provide truststore password:"
-      promptIf: !expr IsRemoteRunnerTruststoreEnabled && RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')
-      description: The Release Runner truststore password
+      description: The Release Runner trusted certificates in pem format.
       default: ""
     - name: RemoteRunnerClean
       type: Confirm
