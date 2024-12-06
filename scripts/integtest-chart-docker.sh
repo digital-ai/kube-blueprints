@@ -125,7 +125,7 @@ docker run --rm $EXTRA_CONTAINER_ARGS \
     -e BUILD_REL_PATH=../../../../../build/e2e \
     -e XL_SKIP_TOOL_CHECK=true \
     -e XL_CLI=$OUTPUT_CONTAINER_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin \
-    -e XL_CLI_CLEAN_EXTRA="--clean-force --clean-grace-period 1" \
+    -e XL_CLI_CLEAN_EXTRA="" \
     -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
     -u $(id -u):$(id -g) \
     xldevdocker/kuttl:latest \
