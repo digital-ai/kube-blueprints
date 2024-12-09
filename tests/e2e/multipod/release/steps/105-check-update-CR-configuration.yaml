@@ -1,0 +1,12 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+unitTest: false
+commands: 
+- script: kubectl exec -n $NAMESPACE -c release -it dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.general.clusterNodeActive' | grep '^true$'
+  timeout: 15
+- script: kubectl exec -n $NAMESPACE -c release -it dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.cluster.clusterNumberOfNodes' | grep '^3$'
+  timeout: 15
+- script: kubectl exec -n $NAMESPACE -c release -it dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.cluster.clusterDbNodes | length' | grep '^3$'
+  timeout: 15
+- script: kubectl exec -n $NAMESPACE -c release -it dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.cluster.clusterPekkoNodes | length' | grep '^3$'
+  timeout: 15  

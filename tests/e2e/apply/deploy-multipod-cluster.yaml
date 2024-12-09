@@ -1,0 +1,9 @@
+apiVersion: xld.digital.ai/v1alpha1
+kind: DigitalaiDeploy
+metadata: 
+  name: dai-xld
+spec:
+  master:
+    replicaCount: 3
+  worker: 
+    replicaCount: 3

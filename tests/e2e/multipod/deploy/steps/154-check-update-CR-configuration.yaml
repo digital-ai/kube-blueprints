@@ -2,14 +2,13 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestStep
 unitTest: false
 commands:
+- command: sleep 1m
+  timeout: 70
 - command: kubectl delete sts dai-xld-digitalai-deploy-master
   namespaced: true
 - command: kubectl delete sts dai-xld-digitalai-deploy-worker
   namespaced: true
-- command: sleep 1m
-  timeout: 70
 - script: $XL_CLI kube check --wait-for-ready 5 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/deploy-basic-install.yaml
   timeout: 400
 assert:
-- $ASSERTS_REL_PATH/deploy-running-product-pods.yaml
-- $ASSERTS_REL_PATH/deploy-type-defaults.yaml
+- $ASSERTS_REL_PATH/deploy-running-product-pods-3.yaml

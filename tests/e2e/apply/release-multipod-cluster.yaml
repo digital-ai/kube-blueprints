@@ -1,0 +1,8 @@
+apiVersion: xlr.digital.ai/v1alpha1
+kind: DigitalaiRelease
+metadata: 
+  name: dai-xlr
+spec:
+  replicaCount: 3
+  persistence:
+    enabled: true

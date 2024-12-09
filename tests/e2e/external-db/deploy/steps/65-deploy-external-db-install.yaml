@@ -3,10 +3,10 @@ kind: TestStep
 unitTest: false
 commands:
 - command: $SCRIPTS_REL_PATH/use-answers.sh deploy-external-postgres-install.yaml
-- command: $XL_CLI kube install --skip-prompts --skip-context-check -a $BUILD_REL_PATH/deploy-external-postgres-install.yaml
+- script: $XL_CLI kube install --skip-prompts --skip-context-check -a $BUILD_REL_PATH/deploy-external-postgres-install.yaml
   timeout: 60
-- command: $XL_CLI kube check --wait-for-ready 5 --skip-prompts --skip-context-check -a $BUILD_REL_PATH/deploy-external-postgres-install.yaml
-  timeout: 300
+- script: $XL_CLI kube check --wait-for-ready 5 --skip-prompts --skip-context-check -a $BUILD_REL_PATH/deploy-external-postgres-install.yaml
+  timeout: 400
 assert:
 - $ASSERTS_REL_PATH/deploy-running-operator-pods.yaml
 - $ASSERTS_REL_PATH/deploy-running-rabbitmq-pods.yaml

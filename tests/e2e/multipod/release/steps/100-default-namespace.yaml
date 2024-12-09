@@ -1,0 +1,7 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+unitTest: false
+apply:
+- $APPLY_REL_PATH/default-namespace.yaml
+assert:
+- $ASSERTS_REL_PATH/default-namespace.yaml
