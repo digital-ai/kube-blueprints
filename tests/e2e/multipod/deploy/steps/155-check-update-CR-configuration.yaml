@@ -1,0 +1,12 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+unitTest: false
+commands:
+- script: kubectl exec -n $NAMESPACE -c deploy-master -it dai-xld-digitalai-deploy-master-0 -- curl 'http://localhost:4516/xldeploy/support/system-information' --user 'admin:OEi9o1PHyQ89mwxm' | jq '.general.isNodeActive' | grep '^true$'
+  timeout: 15
+- script: kubectl exec -n $NAMESPACE -c deploy-master -it dai-xld-digitalai-deploy-master-0 -- curl 'http://localhost:4516/xldeploy/support/system-information' --user 'admin:OEi9o1PHyQ89mwxm' | jq '.cluster.numberOfNodes' | grep '^3$'
+  timeout: 15
+- script: kubectl exec -n $NAMESPACE -c deploy-master -it dai-xld-digitalai-deploy-master-0 -- curl 'http://localhost:4516/xldeploy/support/system-information' --user 'admin:OEi9o1PHyQ89mwxm' | jq '.cluster.seedNodes | length' | grep '^3$'
+  timeout: 15
+- script: kubectl exec -n $NAMESPACE -c deploy-master -it dai-xld-digitalai-deploy-master-0 -- curl 'http://localhost:4516/xldeploy/support/system-information' --user 'admin:OEi9o1PHyQ89mwxm' | jq '.cluster.pekkoNodes | length' | grep '^3$'
+  timeout: 15  

@@ -36,7 +36,7 @@ LABEL org.opencontainers.image.source="https://github.com/kudobuilder/kuttl"
 
 USER root
 
-RUN microdnf install -y glibc vim tar gzip git
+RUN microdnf install -y glibc vim tar gzip git jq 
 RUN echo 'alias vi=vim' >> ~/.bashrc
 
 #  kube 1.26

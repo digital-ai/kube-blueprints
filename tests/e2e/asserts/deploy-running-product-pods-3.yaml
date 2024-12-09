@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dai-xld-digitalai-deploy-cc-server-0
+status:
+  phase: Running
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dai-xld-digitalai-deploy-master-0
+status:
+  phase: Running
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dai-xld-digitalai-deploy-master-1
+status:
+  phase: Running
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dai-xld-digitalai-deploy-master-2
+status:
+  phase: Running
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dai-xld-digitalai-deploy-worker-0
+status:
+  phase: Running
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dai-xld-digitalai-deploy-worker-1
+status:
+  phase: Running
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dai-xld-digitalai-deploy-worker-2
+status:
+  phase: Running
