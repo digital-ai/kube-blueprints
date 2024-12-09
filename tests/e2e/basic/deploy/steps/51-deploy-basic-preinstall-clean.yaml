@@ -2,7 +2,7 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestStep
 unitTest: false
 commands:
-- command: $XL_CLI kube clean --skip-prompts --skip-context-check $XL_CLI_CLEAN_EXTRA -a $ANSWERS_REL_PATH/deploy-basic-clean.yaml
+- command: $XL_CLI kube clean --verbose --skip-prompts --skip-context-check $XL_CLI_CLEAN_EXTRA -a $ANSWERS_REL_PATH/deploy-basic-clean.yaml
   timeout: 120
 error:
 - $ASSERTS_REL_PATH/deploy-running-operator-pods.yaml
