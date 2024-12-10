@@ -5,7 +5,7 @@ commands:
 - command: $XL_CLI kube install --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/deploy-nginx-install.yaml
   timeout: 60
 - command: $XL_CLI kube check --wait-for-ready 5 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/deploy-nginx-install.yaml
-  timeout: 300
+  timeout: 400
 assert:
 - $ASSERTS_REL_PATH/deploy-running-operator-pods.yaml
 - $ASSERTS_REL_PATH/deploy-running-nginx-pods.yaml
