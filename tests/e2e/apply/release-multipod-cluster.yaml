@@ -5,4 +5,16 @@ metadata:
 spec:
   replicaCount: 3
   persistence:
-    enabled: true
+    enabled: false
+    emptyDirPaths:
+    - /opt/xebialabs/xl-release-server/cache
+    - /opt/xebialabs/xl-release-server/conf
+    - /opt/xebialabs/xl-release-server/driver/jdbc
+    - /opt/xebialabs/xl-release-server/driver/mq
+    - /opt/xebialabs/xl-release-server/log
+    - /opt/xebialabs/xl-release-server/node-conf
+    - /opt/xebialabs/xl-release-server/plugins
+    - /opt/xebialabs/xl-release-server/work
+    - /opt/xebialabs/xl-release-server/reports
+    - /tmp
+
