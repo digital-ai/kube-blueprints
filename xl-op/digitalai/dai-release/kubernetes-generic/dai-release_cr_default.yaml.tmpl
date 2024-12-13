@@ -208,14 +208,14 @@ spec:
       haproxy-ingress.github.io/timeout-http-request: "120s"
       {{- if eq .HttpProtocolRelease "https" }}
       haproxy-ingress.github.io/config-backend: |
-        option httpchk GET / HTTP/1.0
+        option httpchk GET /ha/health HTTP/1.0
         http-check send hdr Host {{ .IngressHost }}
       haproxy-ingress.github.io/backend-protocol: "h1-ssl"
       haproxy-ingress.github.io/secure-backends: "true"
       haproxy-ingress.github.io/secure-sni: host
       {{- else }}
       haproxy-ingress.github.io/config-backend: |
-        option httpchk GET / HTTP/1.0
+        option httpchk GET /ha/health HTTP/1.0
       {{- end }}
       {{- if eq .HttpProtocolIngress "https" }}
       haproxy-ingress.github.io/ssl-redirect: "true"
