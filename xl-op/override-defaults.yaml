@@ -1,5 +1,5 @@
 RepositoryName: xebialabsunsupported
-ImageTag: 25.1.0-1216.113
-OperatorImageTag: 25.1.0-1216.113
+ImageTag: 25.1.0-1216.1406
+OperatorImageTag: 25.1.0-1216.1406
 RemoteRunnerRepositoryName: xebialabsunsupported
 ImageTagRemoteRunner: 25.1.0-1216.113
