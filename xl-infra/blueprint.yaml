@@ -14,6 +14,8 @@ spec:
       options:
         - label: Openshift
           value: Openshift
+        - label: Openshift Certified needs installed operator on cluster
+          value: OpenshiftCertified
         - label: AWS EKS
           value: AWSEKS
         - label: Plain multi-node K8s cluster
@@ -23,8 +25,7 @@ spec:
         - label: Google Kubernetes Engine
           value: GoogleGKE
       saveInXlvals: true
-      description: "The flavour of Kubernetes to deploy or undeploy the Digital.ai Devops Platform to. Only the listed options are supported."
-
+      description: The flavour of Kubernetes to deploy or undeploy the Digital.ai Devops Platform to. Only the listed options are supported.
     - name: OsType
       type: Input
       prompt: "The type of operating system where the xl command is running:"

@@ -1,4 +1,4 @@
-{{- if eq .K8sSetup "Openshift" }}
+{{- if hasPrefix "Openshift" .K8sSetup }}
   {{- if eq .EnableSCC true }}
 ---
   {{- $releaseFullName := printf "dai-ocp-%s-%s-release" .ShortServerName .Namespace }}
