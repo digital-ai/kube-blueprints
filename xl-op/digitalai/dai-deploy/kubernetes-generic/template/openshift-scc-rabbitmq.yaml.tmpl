@@ -1,4 +1,4 @@
-{{- if eq .K8sSetup "Openshift" }}
+{{- if hasPrefix "Openshift" .K8sSetup }}
   {{- if and .EnableRabbitmq .EnableSCC }}
 ---
   {{- $rabbitmqFullName := printf "dai-ocp-%s-rabbitmq" .ShortServerName }}
