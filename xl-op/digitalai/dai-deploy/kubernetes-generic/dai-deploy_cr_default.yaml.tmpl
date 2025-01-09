@@ -36,7 +36,7 @@ spec:
   keystore:
     passphrase: "{{ .KeystorePassphrase }}"
     keystore: |- 
-{{ .RepositoryKeystore | trim | indent 6 }}"
+{{ .RepositoryKeystore | trim | indent 6 }}
   external:
     db:
       {{- if eq .EnablePostgresql false }}
