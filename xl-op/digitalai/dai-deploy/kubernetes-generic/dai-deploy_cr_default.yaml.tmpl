@@ -37,7 +37,7 @@ spec:
   keystore:
     passphrase: {{ .KeystorePassphrase | quote }}
     keystore: |-
-{{ .RepositoryKeystore | trim | indent 6 }}"
+{{ .RepositoryKeystore | trim | indent 6 }}
 {{- end }}
   external:
     db:
