@@ -156,7 +156,7 @@ spec:
     image:
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified" }}
-      repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
+      repository: {{ .RepositoryName }}/{{ .ImageNameRelease }}
       tag: "{{ .ImageTag }}"
       override: true
       {{- else }}
@@ -175,7 +175,7 @@ spec:
     image:
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified"}}
-      repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
+      repository: {{ .RepositoryName }}/{{ .ImageNameRelease }}
       tag: "{{ .ImageTag }}"
       override: true
       {{- else }}
