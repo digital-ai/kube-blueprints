@@ -1,7 +1,7 @@
 apiVersion: xld.digital.ai/v1alpha1
 kind: DigitalaiDeploy
 metadata:
-  {{- if eq .K8sSetup "Openshift" }}
+  {{- if hasPrefix "Openshift" .K8sSetup }}
   {{- if eq .UseCustomNamespace true }}
   name: dai-ocp-xld-{{ .Namespace }}
   {{- else }}
@@ -105,6 +105,9 @@ spec:
       repository: {{ .RepositoryName }}/{{ .ImageNameCc }}
       tag: "{{ .ImageTag }}"
       pullPolicy: IfNotPresent
+      {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
+      override: true
+      {{- end }}
     persistence:
       enabled: false
       storageClass: "{{ .StorageClass }}"
@@ -112,19 +115,30 @@ spec:
         - {{ .AccessModeDeploy }}
       size: 1Gi
     podSecurityContext:
-        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
         enabled: true
         {{- else }}
         enabled: false
         {{- end }}
     containerSecurityContext:
-        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
         enabled: true
         {{- else }}
         enabled: false
         {{- end }}
     volumePermissions:
       enabled: false
+      {{- if eq .IsCustomImageRegistry true }}
+      image:
+        registry: {{ .CustomImageRegistryName }}
+        {{- if eq .K8sSetup "OpenshiftCertified" }}
+        repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTag }}"
+        override: true
+        {{- else }}
+        repository: {{ .RepositoryName }}/os-shell
+        {{- end }}
+      {{- end }}
     diagnosticMode:
       enabled: false
     {{- if eq .ResourcesSource "preset" }}
@@ -145,23 +159,37 @@ spec:
         - {{ .AccessModeDeploy }}
       size: {{ .PvcSizeDeploy }}Gi
     podSecurityContext:
-        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
         enabled: true
         {{- else }}
         enabled: false
         {{- end }}
     containerSecurityContext:
-        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
         enabled: true
         {{- else }}
         enabled: false
         {{- end }}
     volumePermissions:
       enabled: false
+      {{- if eq .IsCustomImageRegistry true }}
+      image:
+        registry: {{ .CustomImageRegistryName }}
+        {{- if eq .K8sSetup "OpenshiftCertified" }}
+        repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTag }}"
+        override: true
+        {{- else }}
+        repository: {{ .RepositoryName }}/os-shell
+        {{- end }}
+      {{- end }}
     image:
       repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
       tag: "{{ .ImageTag }}"
       pullPolicy: IfNotPresent
+      {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
+      override: true
+      {{- end }}
     diagnosticMode:
       enabled: false
     {{- if eq .ResourcesSource "preset" }}
@@ -182,23 +210,37 @@ spec:
         - {{ .AccessModeDeploy }}
       size: {{ .PvcSizeDeployTaskEngine }}Gi
     podSecurityContext:
-      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
       enabled: true
       {{- else }}
       enabled: false
       {{- end }}
     containerSecurityContext:
-      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
       enabled: true
       {{- else }}
       enabled: false
       {{- end }}
     volumePermissions:
       enabled: false
+      {{- if eq .IsCustomImageRegistry true }}
+      image:
+        registry: {{ .CustomImageRegistryName }}
+        {{- if eq .K8sSetup "OpenshiftCertified" }}
+        repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTag }}"
+        override: true
+        {{- else }}
+        repository: {{ .RepositoryName }}/os-shell
+        {{- end }}
+      {{- end }}
     image:
       repository: {{ .RepositoryName }}/{{ .ImageNameDeployTaskEngine }}
       tag: "{{ .ImageTag }}"
       pullPolicy: IfNotPresent
+      {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
+      override: true
+      {{- end }}
     diagnosticMode:
       enabled: false
     {{- if eq .ResourcesSource "preset" }}
@@ -215,7 +257,13 @@ spec:
   busyBox:
     image:
       registry: {{ .CustomImageRegistryName }}
+      {{- if eq .K8sSetup "OpenshiftCertified" }}
+      repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
+      tag: "{{ .ImageTag }}"
+      override: true
+      {{- else }}
       repository: {{ .RepositoryName }}/busybox
+      {{- end }}
   {{- end }}
 
   ingress:
@@ -467,18 +515,18 @@ spec:
         size: {{ .PostgresqlPvcSize }}Gi
         storageClass: "{{ .PostgresqlStorageClass }}"
       podSecurityContext:
-        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
         enabled: true
         {{- else }}
         enabled: false
         {{- end }}
       containerSecurityContext:
-        {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+        {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
         enabled: true
         {{- else }}
         enabled: false
         {{- end }}
-    {{- if and (eq .K8sSetup "Openshift") (eq .EnableSCC false) }}
+    {{- if and (hasPrefix "Openshift" .K8sSetup) (eq .EnableSCC false) }}
     volumePermissions:
       enabled: false
     {{- else if eq .IsCustomImageRegistry true }}
@@ -517,7 +565,7 @@ spec:
     resources: {}
     {{- end }}
     volumePermissions:
-      {{- if and (eq .K8sSetup "Openshift") (eq .EnableSCC false) }}
+      {{- if and (hasPrefix "Openshift" .K8sSetup) (eq .EnableSCC false) }}
       enabled: false
       {{- else }}
       enabled: true
@@ -528,13 +576,13 @@ spec:
       {{- end }}
       {{- end }}
     podSecurityContext:
-      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
       enabled: true
       {{- else }}
       enabled: false
       {{- end }}
     containerSecurityContext:
-      {{- if or (ne .K8sSetup "Openshift") .EnableSCC }}
+      {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
       enabled: true
       {{- else }}
       enabled: false
