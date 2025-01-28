@@ -86,7 +86,7 @@ IdentityServiceConfRelease: |-
   rolesClaim: ""
   userNameClaim: "preferred_username"
   scopes: ["openid"]
-IngressTypeGeneric: 'nginx'
+IngressTypeGeneric: 'none'
 IngressTypeOpenshift: 'route'
 ExternalIngressClass: ''
 HttpProtocolIngress: 'http'
@@ -95,7 +95,7 @@ IngressKeystoreSourceOpenshift: 'default'
 IngressTlsSecretName: ''
 AdminPassword: 'OEi9o1PHyQ89mwxm'
 StorageClass: 'my-efs'
-IngressHost: 'digitalai.deploy.local'
+IngressHost: ''
 HttpsProtocol: 'false'
 EnablePostgresql: true
 PostgresqlStorageClass: 'my-efs'

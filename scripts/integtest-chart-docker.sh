@@ -15,7 +15,6 @@ if [ -z "$3" ]; then
     exit 1
 fi
 
-
 APP_TYPE="$1"
 APP_TESTS="$2"
 APP_TARGET="$3"
@@ -26,7 +25,7 @@ if [ "$APP_TYPE" = "deploy" ]; then
 fi
 
 APP_OPERATOR="operator-${APP_TYPE}-${APP_TESTS}"
-OUTPUT_HOST_DIR=./build/integtest/$APP_TARGET
+OUTPUT_HOST_DIR=$(pwd)/build/integtest
 OUTPUT_CONTAINER_DIR="/opt/project"
 TEST_DIR="${OUTPUT_CONTAINER_DIR}/tests/e2e/${APP_OPERATOR}.yaml"
 VERSION_FILE=./xl-op/override-defaults.yaml
@@ -64,7 +63,7 @@ yq eval ".ImageTag = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_T
 yq eval ".ImageTagRemoteRunner = \"$XL_RR_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
 
 if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
-    if [ -z "$REDHAT_OC_URL" || -z "$REDHAT_OC_LOGIN" || -z "$REDHAT_OC_PASSWORD" || $REDHAT_REGISTRY_SA || $REDHAT_REGISTRY_SA_TOKEN ]; then
+    if [[ -z "$REDHAT_OC_URL" || -z "$REDHAT_OC_LOGIN" || -z "$REDHAT_OC_PASSWORD" || -z "$REDHAT_REGISTRY_SA" || -z "$REDHAT_REGISTRY_SA_TOKEN" ]]; then
         echo "Openshift environment variables are not set. Please set REDHAT_OC_URL, REDHAT_OC_LOGIN, REDHAT_OC_PASSWORD, REDHAT_REGISTRY_SA and REDHAT_REGISTRY_SA_TOKEN."
         exit 1
     fi
@@ -82,8 +81,8 @@ if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
 elif [[ "$APP_TARGET" = "aws" && "$4" == "withLogin" ]]; then
     echo "Setting up for AWS"
 
-    if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" || -z "$AWS_DEFAULT_REGION" || -z "$EKS_CLUSTER_NAME" ]]; then
-        echo "AWS environment variables are not set. Please set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION and EKS_CLUSTER_NAME."
+    if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" || -z "$AWS_REGION" || -z "$AWS_CLUSTER_NAME" || -z "$AWS_SESSION_TOKEN" ]]; then
+        echo "AWS environment variables are not set. Please set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION and AWS_CLUSTER_NAME."
         exit 1
     fi
     echo "Auth to $APP_TARGET"
@@ -91,12 +90,18 @@ elif [[ "$APP_TARGET" = "aws" && "$4" == "withLogin" ]]; then
     docker run --rm \
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-        -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION \
+        -e AWS_REGION=$AWS_REGION \
+        -e AWS_CLUSTER_NAME=$AWS_CLUSTER_NAME \
+        -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+        -e K8S_AUTH_TOKEN=$TOKEN \
         -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
         -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
         -u $(id -u):$(id -g) \
         amazon/aws-cli:latest \
-        aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_DEFAULT_REGION
+        eks --region $AWS_REGION update-kubeconfig --name $AWS_CLUSTER_NAME
+    TOKEN=$(aws eks get-token --region $AWS_REGION --cluster-name $AWS_CLUSTER_NAME --output json | jq -r '.status.token')
+    kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-credentials kuttl-user --token=$TOKEN
+    kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-context --current --user=kuttl-user
 
 elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
     echo "Setting up for Azure"
@@ -149,7 +154,7 @@ elif [[ "$APP_TARGET" = "plain" && "$4" == "localhost" ]]; then
 
     echo "Using exising kube context"
 
-    cp -f $HOME/.kube/config $OUTPUT_HOST_DIR/kube/    
+    cp -f $HOME/.kube/config $OUTPUT_HOST_DIR/kube/
     EXTRA_CONTAINER_ARGS="--network=host"
 fi
 
@@ -166,7 +171,7 @@ fi
 
 echo "Starting tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
 
-# tools: xl-client keytool yq helm 
+# tools: xl-client keytool yq helm
 docker run --rm $EXTRA_CONTAINER_ARGS \
     -e HOME=$OUTPUT_CONTAINER_DIR \
     -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
@@ -189,8 +194,8 @@ echo ""
 
 # check for failure in file
 if grep -q '"failure"' "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"; then
-  echo "Tests failed"
-  exit 1
-else 
-  echo "Tests success"
+    echo "Tests failed"
+    exit 1
+else
+    echo "Tests success"
 fi

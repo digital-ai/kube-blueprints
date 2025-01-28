@@ -329,7 +329,4 @@ RemoteRunnerUserPassword: 'pizSmJXsTQIBncQw'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
-RemoteRunnerTruststore: |-
-
-RemoteRunnerTruststorePassword:
-EnableSCC: true
+RemoteRunnerRestClientCa:
