@@ -8,24 +8,24 @@ while IFS=: read -r key value; do
 done < ./xl-op/override-defaults.yaml
 
 cat <<EOF
-docker.io/${RepositoryName}/release-operator:${OperatorImageTag}
-docker.io/${RepositoryName}/deploy-operator:${OperatorImageTag}
-docker.io/${RepositoryName}/xl-release:${ImageTag}-ubuntu
-docker.io/${RepositoryName}/xl-release:${ImageTag}-ubuntu-slim
-docker.io/${RepositoryName}/xl-release:${ImageTag}-redhat
-docker.io/${RepositoryName}/xl-release:${ImageTag}-redhat-slim
-docker.io/${RepositoryName}/central-configuration:${ImageTag}-ubuntu
-docker.io/${RepositoryName}/central-configuration:${ImageTag}-ubuntu-slim
-docker.io/${RepositoryName}/central-configuration:${ImageTag}-redhat
-docker.io/${RepositoryName}/central-configuration:${ImageTag}-redhat-slim
-docker.io/${RepositoryName}/xl-deploy:${ImageTag}-ubuntu
-docker.io/${RepositoryName}/xl-deploy:${ImageTag}-ubuntu-slim
-docker.io/${RepositoryName}/xl-deploy:${ImageTag}-redhat
-docker.io/${RepositoryName}/xl-deploy:${ImageTag}-redhat-slim
-docker.io/${RepositoryName}/deploy-task-engine:${ImageTag}-ubuntu
-docker.io/${RepositoryName}/deploy-task-engine:${ImageTag}-ubuntu-slim
-docker.io/${RepositoryName}/deploy-task-engine:${ImageTag}-redhat
-docker.io/${RepositoryName}/deploy-task-engine:${ImageTag}-redhat-slim
-docker.io/${RepositoryName}/xl-client:${ImageTag}
-docker.io/${RemoteRunnerRepositoryName}/release-runner:${ImageTagRemoteRunner}
+docker.io/${RepositoryNameRelease}/release-operator:${OperatorImageTagRelease}
+docker.io/${RepositoryNameDeploy}/deploy-operator:${OperatorImageTagDeploy}
+docker.io/${RepositoryNameRelease}/xl-release:${ImageTagRelease}-ubuntu
+docker.io/${RepositoryNameRelease}/xl-release:${ImageTagRelease}-ubuntu-slim
+docker.io/${RepositoryNameRelease}/xl-release:${ImageTagRelease}-redhat
+docker.io/${RepositoryNameRelease}/xl-release:${ImageTagRelease}-redhat-slim
+docker.io/${RepositoryNameDeploy}/central-configuration:${ImageTagDeploy}-ubuntu
+docker.io/${RepositoryNameDeploy}/central-configuration:${ImageTagDeploy}-ubuntu-slim
+docker.io/${RepositoryNameDeploy}/central-configuration:${ImageTagDeploy}-redhat
+docker.io/${RepositoryNameDeploy}/central-configuration:${ImageTagDeploy}-redhat-slim
+docker.io/${RepositoryNameDeploy}/xl-deploy:${ImageTagDeploy}-ubuntu
+docker.io/${RepositoryNameDeploy}/xl-deploy:${ImageTagDeploy}-ubuntu-slim
+docker.io/${RepositoryNameDeploy}/xl-deploy:${ImageTagDeploy}-redhat
+docker.io/${RepositoryNameDeploy}/xl-deploy:${ImageTagDeploy}-redhat-slim
+docker.io/${RepositoryNameDeploy}/deploy-task-engine:${ImageTagDeploy}-ubuntu
+docker.io/${RepositoryNameDeploy}/deploy-task-engine:${ImageTagDeploy}-ubuntu-slim
+docker.io/${RepositoryNameDeploy}/deploy-task-engine:${ImageTagDeploy}-redhat
+docker.io/${RepositoryNameDeploy}/deploy-task-engine:${ImageTagDeploy}-redhat-slim
+docker.io/${RepositoryNameRelease}/xl-client:${ImageTagRelease}
+docker.io/${RepositoryNameReleaseRunner}/release-runner:${ImageTagReleaseRunner}
 EOF

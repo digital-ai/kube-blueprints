@@ -36,6 +36,7 @@ fi
 APP_TYPE="$1"
 APP_TESTS="$2"
 APP_TARGET="$3"
+XL_APP_VERSION_DEFAULT=""
 
 APP_SHORT_TYPE=xlr
 if [ "$APP_TYPE" = "deploy" ]; then
@@ -49,9 +50,14 @@ TEST_DIR="${OUTPUT_CONTAINER_DIR}/tests/e2e/${APP_OPERATOR}.yaml"
 VERSION_FILE=./xl-op/override-defaults.yaml
 XL_CLIENT_VERSION_DEFAULT=25.1.0-master
 XL_CLIENT_VERSION=${XL_CLIENT_VERSION:-$XL_CLIENT_VERSION_DEFAULT}
-XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTag" "$VERSION_FILE")
+if [ "$APP_TYPE" = "deploy" ]; then
+  XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTagDeploy" "$VERSION_FILE")
+fi
+if [ "$APP_TYPE" = "release" ]; then
+  XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTagRelease" "$VERSION_FILE")
+fi
 XL_APP_VERSION=${XL_APP_VERSION:-$XL_APP_VERSION_DEFAULT}
-XL_RR_VERSION_DEFAULT=$(yq eval ".ImageTagRemoteRunner" "$VERSION_FILE")
+XL_RR_VERSION_DEFAULT=$(yq eval ".ImageTagReleaseRunner" "$VERSION_FILE")
 XL_RR_VERSION=${XL_RR_VERSION:-$XL_RR_VERSION_DEFAULT}
 EXTRA_CONTAINER_ARGS=""
 
@@ -77,8 +83,13 @@ echo "  XL_CLIENT_VERSION=$XL_CLIENT_VERSION"
 echo "  XL_APP_VERSION=$XL_APP_VERSION"
 echo "  XL_RR_VERSION=$XL_RR_VERSION"
 
-yq eval ".ImageTag = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
-yq eval ".ImageTagRemoteRunner = \"$XL_RR_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
+if [ "$APP_TYPE" = "deploy" ]; then
+  yq eval ".ImageTagDeploy = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
+fi
+if [ "$APP_TYPE" = "release" ]; then
+  yq eval ".ImageTagRelease = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
+fi
+yq eval ".ImageTagReleaseRunner = \"$XL_RR_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
 
 if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
 

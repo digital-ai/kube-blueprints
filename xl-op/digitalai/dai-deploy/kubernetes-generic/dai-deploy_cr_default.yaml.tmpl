@@ -86,7 +86,7 @@ spec:
       {{- if eq .IsCustomImageRegistry true }}
       image:
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryName }}/kubectl
+        repository: {{ .RepositoryNameDeploy }}/kubectl
       {{- end }}
     getLicense:
       {{- if eq .LicenseSource "generate" }}
@@ -97,13 +97,13 @@ spec:
       {{- if eq .IsCustomImageRegistry true }}
       image:
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryName }}/kubectl
+        repository: {{ .RepositoryNameDeploy }}/kubectl
       {{- end }}
   centralConfiguration:
     replicaCount: 1
     image:
-      repository: {{ .RepositoryName }}/{{ .ImageNameCc }}
-      tag: "{{ .ImageTag }}"
+      repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameCc }}
+      tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
       {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
       override: true
@@ -132,11 +132,11 @@ spec:
       image:
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
-        repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
-        tag: "{{ .ImageTag }}"
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
         override: true
         {{- else }}
-        repository: {{ .RepositoryName }}/os-shell
+        repository: {{ .RepositoryNameDeploy }}/os-shell
         {{- end }}
       {{- end }}
     diagnosticMode:
@@ -176,16 +176,16 @@ spec:
       image:
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
-        repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
-        tag: "{{ .ImageTag }}"
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
         override: true
         {{- else }}
-        repository: {{ .RepositoryName }}/os-shell
+        repository: {{ .RepositoryNameDeploy }}/os-shell
         {{- end }}
       {{- end }}
     image:
-      repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
-      tag: "{{ .ImageTag }}"
+      repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+      tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
       {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
       override: true
@@ -227,16 +227,16 @@ spec:
       image:
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
-        repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
-        tag: "{{ .ImageTag }}"
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
         override: true
         {{- else }}
-        repository: {{ .RepositoryName }}/os-shell
+        repository: {{ .RepositoryNameDeploy }}/os-shell
         {{- end }}
       {{- end }}
     image:
-      repository: {{ .RepositoryName }}/{{ .ImageNameDeployTaskEngine }}
-      tag: "{{ .ImageTag }}"
+      repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeployTaskEngine }}
+      tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
       {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
       override: true
@@ -258,11 +258,11 @@ spec:
     image:
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified" }}
-      repository: {{ .RepositoryName }}/{{ .ImageNameDeploy }}
-      tag: "{{ .ImageTag }}"
+      repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+      tag: "{{ .ImageTagDeploy }}"
       override: true
       {{- else }}
-      repository: {{ .RepositoryName }}/busybox
+      repository: {{ .RepositoryNameDeploy }}/busybox
       {{- end }}
   {{- end }}
 
@@ -404,7 +404,7 @@ spec:
     controller:
       {{- if eq .IsCustomImageRegistry true }}
       image:
-        repository: {{ .CustomImageRegistryName }}/{{ .RepositoryName }}/haproxy-ingress
+        repository: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/haproxy-ingress
       {{- end }}
       {{- if eq .ImageRegistryType "private" }}
       imagePullSecrets:
@@ -430,7 +430,7 @@ spec:
       {{- if eq .IsCustomImageRegistry true }}
       image:
         {{- /* registry name defined in global section */}}
-        repository: {{ .RepositoryName }}/nginx
+        repository: {{ .RepositoryNameDeploy }}/nginx
       {{- end }}
       {{- if eq .ResourcesSource "preset" }}
       resourcesPreset: {{ .NginxResourcesPreset }}
@@ -459,7 +459,7 @@ spec:
     {{- if eq .IsCustomImageRegistry true }}
     image:
       {{- /* registry name defined in global section */}}
-      repository: {{ .RepositoryName }}/nginx-ingress-controller
+      repository: {{ .RepositoryNameDeploy }}/nginx-ingress-controller
     {{- end }}
     {{- if eq .UseCustomNamespace true }}
     ingressClassResource:
@@ -498,7 +498,7 @@ spec:
     {{- if eq .IsCustomImageRegistry true }}
     image:
       {{- /* registry name defined in global section */}}
-      repository: {{ .RepositoryName }}/postgresql
+      repository: {{ .RepositoryNameDeploy }}/postgresql
     {{- end }}
     install: {{ .EnablePostgresql }}
     primary:
@@ -533,7 +533,7 @@ spec:
     volumePermissions:
       image:
         {{- /* registry name defined in global section */}}
-        repository: {{ .RepositoryName }}/os-shell
+        repository: {{ .RepositoryNameDeploy }}/os-shell
     {{- end }}
   rabbitmq:
     {{- if (eq .IsCustomImageRegistry true) }}
@@ -548,7 +548,7 @@ spec:
     {{- if eq .IsCustomImageRegistry true }}
     image:
       {{- /* registry name defined in global section */}}
-      repository: {{ .RepositoryName }}/rabbitmq
+      repository: {{ .RepositoryNameDeploy }}/rabbitmq
     {{- end }}
     install: {{ .EnableRabbitmq }}
     persistence:
@@ -572,7 +572,7 @@ spec:
       {{- if eq .IsCustomImageRegistry true }}
       image:
         {{- /* registry name defined in global section */}}
-        repository: {{ .RepositoryName }}/os-shell
+        repository: {{ .RepositoryNameDeploy }}/os-shell
       {{- end }}
       {{- end }}
     podSecurityContext:
