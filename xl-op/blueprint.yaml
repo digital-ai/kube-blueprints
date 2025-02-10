@@ -49,14 +49,22 @@ spec:
       prompt: "Provide the custom docker image registry secret:"
       promptIf: !expr "(ImageRegistryType == 'private') && (ProcessType == 'install' || ProcessType == 'upgrade')"
       description: Provide the imagePullSecrets name for the custom image registry
-    - name: RepositoryName
+    - name: RepositoryNameRelease
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
-      prompt: "Enter the repository name for the application and operator images (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the repository name to use for the application and operator images
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Enter the repository name for the Release application and operator images (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the repository name to use for the Release application and operator images
+    - name: RepositoryNameDeploy
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Enter the repository name for the Deploy application and operator images (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the repository name to use for the Deploy application and operator images
     - name: ImageNameDeploy
       type: Input
       saveInXlvals: true
@@ -75,20 +83,28 @@ spec:
       prompt: "Enter the Release image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: xl-release
       description: Enter the Release server image name to use
-    - name: ImageTag
+    - name: ImageTagRelease
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
-      prompt: "Enter the application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the application server image tag to use
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Enter the Release application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the Release application server image tag to use
+    - name: ImageTagDeploy
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Enter the Deploy application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the Deploy application server image tag to use
     - name: ImageNameDeployTaskEngine
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTag) && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Deploy task engine image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: deploy-task-engine
       description: Enter the Deploy task engine image name to use
@@ -97,7 +113,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTag) && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Central Configuration image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: central-configuration
       description: Enter the Central Configuration image name to use
@@ -875,7 +891,7 @@ spec:
       prompt: "Enter the operator image to use (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       promptIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
       default: deploy-operator
-      description: Enter the operator image to use
+      description: Enter the Deploy operator image to use
     - name: OperatorImageRelease
       type: Input
       saveInXlvals: true
@@ -884,15 +900,23 @@ spec:
       prompt: "Enter the operator image to use (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       promptIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
       default: release-operator
-      description: Enter the operator image to use
-    - name: OperatorImageTag
+      description: Enter the Release operator image to use
+    - name: OperatorImageTagRelease
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
-      prompt: "Enter the operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the operator image tag to use
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Enter the Release operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the Release operator image tag to use
+    - name: OperatorImageTagDeploy
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Enter the Deploy operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the Deploy operator image tag to use
     - name: RepositoryKeystoreSource
       type: Select
       options:
@@ -1633,7 +1657,7 @@ spec:
       type: Input
       saveInXlvals: true
       value: "ADMIN_PASSWORD"
-    - name: RemoteRunnerRepositoryName
+    - name: RepositoryNameReleaseRunner
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
@@ -1641,7 +1665,7 @@ spec:
       promptIf: !expr "RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release Runner repository name (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
       description: Enter the Release Runner repository name to use
-    - name: ImageNameRemoteRunner
+    - name: ImageNameReleaseRunner
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
@@ -1650,7 +1674,7 @@ spec:
       prompt: "Enter the Release Runner image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: release-runner
       description: Enter the Release Runner image name to use
-    - name: ImageTagRemoteRunner
+    - name: ImageTagReleaseRunner
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
