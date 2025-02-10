@@ -138,7 +138,7 @@ CrName: '{{ .CrName }}'
 {{- if and (or (eq .ProcessType "clean") .CleanBefore) (ne .ServerType "dai-release-runner") }}
 PreservePvc: {{ .PreservePvc }}
 {{- end }}
-ImageNameRemoteRunner: '{{ .ImageNameRemoteRunner }}'
+ImageNameReleaseRunner: '{{ .ImageNameReleaseRunner }}'
 ImageTagReleaseRunner: '{{ .ImageTagReleaseRunner }}'
 RemoteRunnerInstallType: '{{ .RemoteRunnerInstallType }}'
 RepositoryNameReleaseRunner: '{{ .RepositoryNameReleaseRunner }}'

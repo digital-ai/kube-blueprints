@@ -171,7 +171,7 @@ ApplicationKeystorePassword: 'ce7CuxlAIvm0q9Lb'
 CrdName: ''
 IsCrdReused: false
 CrName: ''
-ImageNameRemoteRunner: 'release-runner'
+ImageNameReleaseRunner: 'release-runner'
 ImageTagReleaseRunner: '25.1.0'
 RemoteRunnerInstallType: 'cluster-install'
 RepositoryNameReleaseRunner: 'xebialabsunsupported'

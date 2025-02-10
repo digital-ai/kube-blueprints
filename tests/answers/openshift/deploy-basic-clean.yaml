@@ -89,8 +89,8 @@ CrdName: 'digitalaideploys.xld.digital.ai'
 IsCrdReused: false
 CrName: 'dai-ocp-xld'
 PreservePvc: false
-ImageNameRemoteRunner: 'release-runner'
-ImageTagDeployRemoteRunner: 25.1.0-1024.113
+ImageNameReleaseRunner: 'release-runner'
+ImageTagReleaseRunner: 25.1.0-1024.113
 RemoteRunnerInstallType: ''
 RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'

@@ -123,7 +123,7 @@ ApplicationKeystorePassword: 'GWbbDOIj9ZV41wOn'
 CrdName: ''
 IsCrdReused: false
 CrName: ''
-ImageNameRemoteRunner: 'release-runner'
+ImageNameReleaseRunner: 'release-runner'
 ImageTagReleaseRunner: 25.1.0-1024.113
 RemoteRunnerInstallType: 'no-install'
 RepositoryNameReleaseRunner: 'xebialabsunsupported'

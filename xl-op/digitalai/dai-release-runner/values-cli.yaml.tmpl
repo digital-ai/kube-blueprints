@@ -9,7 +9,7 @@ image:
   registry: {{ .CustomImageRegistryName }}
   {{- end }}
   repository: {{ .RepositoryNameReleaseRunner }}
-  name: {{ .ImageNameRemoteRunner }}
+  name: {{ .ImageNameReleaseRunner }}
   tag: {{ .ImageTagReleaseRunner }}
   {{- if eq .ImageRegistryType "private" }}
   pullSecrets:

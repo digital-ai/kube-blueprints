@@ -1672,7 +1672,7 @@ spec:
       promptIf: !expr "RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release Runner repository name (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
       description: Enter the Release Runner repository name to use
-    - name: ImageNameRemoteRunner
+    - name: ImageNameReleaseRunner
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
