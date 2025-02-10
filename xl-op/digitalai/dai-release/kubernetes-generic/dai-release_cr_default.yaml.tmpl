@@ -97,7 +97,7 @@ spec:
       {{- if eq .IsCustomImageRegistry true }}
       image:
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryName }}/kubectl
+        repository: {{ .RepositoryNameRelease }}/kubectl
       {{- end }}
     getLicense:
       {{- if eq .LicenseSource "generate" }}
@@ -108,7 +108,7 @@ spec:
       {{- if eq .IsCustomImageRegistry true }}
       image:
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryName }}/kubectl
+        repository: {{ .RepositoryNameRelease }}/kubectl
       {{- end }}
     installReleaseRunner:
       {{- if eq .RemoteRunnerInstallType "cluster-install" }}
@@ -119,10 +119,10 @@ spec:
       enabled: false
       {{- end }}
       image:
-        tag: "{{ .ImageTag }}"
+        tag: "{{ .ImageTagRelease }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryName }}/xl-client
+        repository: {{ .RepositoryNameRelease }}/xl-client
         {{- end }}
   persistence:
     storageClass: "{{ .StorageClass }}"
@@ -153,14 +153,14 @@ spec:
   volumePermissions:
     enabled: false
   image:
-    repository: {{ .RepositoryName }}/{{ .ImageNameRelease }}
-    tag: "{{ .ImageTag }}"
+    repository: {{ .RepositoryNameRelease }}/{{ .ImageNameRelease }}
+    tag: "{{ .ImageTagRelease }}"
     pullPolicy: IfNotPresent
   {{- if eq .IsCustomImageRegistry true }}
   busyBox:
     image:
       registry: {{ .CustomImageRegistryName }}
-      repository: {{ .RepositoryName }}/busybox
+      repository: {{ .RepositoryNameRelease }}/busybox
   {{- end }}
   diagnosticMode:
     enabled: false
@@ -303,7 +303,7 @@ spec:
     controller:
       {{- if eq .IsCustomImageRegistry true }}
       image:
-        repository: {{ .CustomImageRegistryName }}/{{ .RepositoryName }}/haproxy-ingress
+        repository: {{ .CustomImageRegistryName }}/{{ .RepositoryNameRelease }}/haproxy-ingress
       {{- end }}
       {{- if eq .ImageRegistryType "private" }}
       imagePullSecrets:
@@ -329,7 +329,7 @@ spec:
       {{- if eq .IsCustomImageRegistry true }}
       image:
         {{- /* registry name defined in global section */}}
-        repository: {{ .RepositoryName }}/nginx
+        repository: {{ .RepositoryNameRelease }}/nginx
       {{- end }}
       {{- if eq .ResourcesSource "preset" }}
       resourcesPreset: {{ .NginxResourcesPreset }}
@@ -358,7 +358,7 @@ spec:
     {{- if eq .IsCustomImageRegistry true }}
     image:
       {{- /* registry name defined in global section */}}
-      repository: {{ .RepositoryName }}/nginx-ingress-controller
+      repository: {{ .RepositoryNameRelease }}/nginx-ingress-controller
     {{- end }}
     {{- if eq .UseCustomNamespace true }}
     ingressClassResource:
@@ -397,7 +397,7 @@ spec:
     {{- if eq .IsCustomImageRegistry true }}
     image:
       {{- /* registry name defined in global section */}}
-      repository: {{ .RepositoryName }}/postgresql
+      repository: {{ .RepositoryNameRelease }}/postgresql
     {{- end }}
     install: {{ .EnablePostgresql }}
     primary:
@@ -432,7 +432,7 @@ spec:
     volumePermissions:
       image:
         {{- /* registry name defined in global section */}}
-        repository: {{ .RepositoryName }}/os-shell
+        repository: {{ .RepositoryNameRelease }}/os-shell
     {{- end }}
   rabbitmq:
     {{- if eq .IsCustomImageRegistry true }}
@@ -447,7 +447,7 @@ spec:
     {{- if eq .IsCustomImageRegistry true }}
     image:
       {{- /* registry name defined in global section */}}
-      repository: {{ .RepositoryName }}/rabbitmq
+      repository: {{ .RepositoryNameRelease }}/rabbitmq
     {{- end }}
     install: {{ .EnableRabbitmq }}
     persistence:
@@ -471,7 +471,7 @@ spec:
       {{- if eq .IsCustomImageRegistry true }}
       image:
         {{- /* registry name defined in global section */}}
-        repository: {{ .RepositoryName }}/os-shell
+        repository: {{ .RepositoryNameRelease }}/os-shell
       {{- end }}
       {{- end }}
     podSecurityContext:

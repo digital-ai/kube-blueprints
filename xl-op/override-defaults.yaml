@@ -1,5 +1,8 @@
-RepositoryName: xebialabsunsupported
-ImageTag: 24.3.4
-OperatorImageTag: 24.3.4
-RemoteRunnerRepositoryName: xebialabsunsupported
-ImageTagRemoteRunner: 24.3.4
+RepositoryNameDeploy: xebialabsunsupported
+OperatorImageTagDeploy: 24.3.4
+ImageTagDeploy: 24.3.4
+RepositoryNameRelease: xebialabsunsupported
+OperatorImageTagRelease: 24.3.4
+ImageTagRelease: 24.3.4
+RepositoryNameReleaseRunner: xebialabsunsupported
+ImageTagReleaseRunner: 24.3.4
