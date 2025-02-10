@@ -915,7 +915,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
       description: Enter the Release operator image tag to use
     - name: OperatorImageTagDeploy
