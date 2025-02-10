@@ -6,9 +6,9 @@ ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
-RepositoryName: xebialabsunsupported
-ImageTag: 24.3.2
-OperatorImageTag: 24.3.0-24.3.x-maintenance
+RepositoryNameRelease: xebialabsunsupported
+ImageTagRelease: 24.3.2
+OperatorImageTagRelease: 24.3.0-24.3.x-maintenance
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
 XlrReplicaCount: 1
@@ -124,10 +124,10 @@ ApplicationKeystorePassword: '8BBCBhig3gNvrFcR'
 CrdName: ''
 IsCrdReused: false
 CrName: ''
-ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: 24.3.2
+ImageNameReleaseRunner: 'release-runner'
+ImageTagReleaseRunner: 24.3.2
 RemoteRunnerInstallType: 'no-install'
-RemoteRunnerRepositoryName: 'xebialabsunsupported'
+RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
 RemoteRunnerHelmChartUrl: ''
