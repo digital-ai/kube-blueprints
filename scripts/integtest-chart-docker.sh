@@ -141,15 +141,6 @@ elif [[ "$APP_TARGET" = "gcp" && "$4" == "withLogin" ]]; then
         google/cloud-sdk:latest \
         gcloud auth activate-service-account --key-file=/tmp/keyfile.json && gcloud container clusters get-credentials $GCP_CLUSTER_NAME --zone $GCP_ZONE --project $GCP_PROJECT
 
-elif [[ "$APP_TARGET" = "gcp" && "$4" == "withLogin" ]]; then
-    echo "Setting up for GCP"
-
-    if [[ -z "$GCP_PROJECT" || -z "$GCP_CLUSTER_NAME" || -z "$GCP_ZONE" || -z "$GCP_ACCOUNT_CRED_FILE" || -z "$GCP_SERVICE_ACCOUNT_EMAIL" ]]; then
-        echo "GCP environment variables are not set. Please set GCP_PROJECT, GCP_CLUSTER_NAME, GCP_ZONE, GCP_SERVICE_ACCOUNT_KEY, and GCP_SERVICE_ACCOUNT_EMAIL."
-        exit 1
-    fi
-    echo "Auth to $APP_TARGET"
-
 elif [[ "$APP_TARGET" = "plain" && "$4" == "localhost" ]]; then
 
     echo "Using exising kube context"
@@ -186,7 +177,7 @@ docker run --rm $EXTRA_CONTAINER_ARGS \
     -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
     -u $(id -u):$(id -g) \
     xldevdocker/kuttl:latest \
-    --artifacts-dir $OUTPUT_CONTAINER_DIR/logs --config $TEST_DIR
+    --artifacts-dir $OUTPUT_CONTAINER_DIR/logs --config $TEST_DIR --verbose
 
 echo "TEST RESULT:"
 cat "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"

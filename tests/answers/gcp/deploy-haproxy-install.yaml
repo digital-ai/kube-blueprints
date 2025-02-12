@@ -1,0 +1,212 @@
+K8sSetup: GoogleGKE
+UseCustomNamespace: false
+Namespace: digitalai
+ServerType: dai-deploy
+ImageRegistryType: default
+IsCustomImageRegistry: false
+CustomImageRegistryName: docker.io
+CustomPrivateImageRegistrySecret: 
+RepositoryName: xebialabsunsupported
+ImageTag: 25.1.0-211.113
+OperatorImageTag: 25.1.0-211.113
+EnableSCC: "false"
+ImageNameDeploy: xl-deploy
+ImageNameDeployTaskEngine: deploy-task-engine
+ImageNameCc: central-configuration
+OperatorImageDeploy: deploy-operator
+XldMasterCount: 1
+XldWorkerCount: 1
+PostgresqlExternalConfigDeploy: |-
+  main:
+    url: jdbc:postgresql://<xld-db-host>:5432/<xld-database-name>
+    username: <xld-username>
+    password: |-
+      <xld-password>
+    maxPoolSize: 10
+  report:
+    url: jdbc:postgresql://<xld-report-db-host>:5432/<xld-report-database-name>
+    username: <xld-report-username>
+    password: |-
+      <xld-report-password>
+    maxPoolSize: 10
+RabbitmqExternalConfigDeploy: |-
+  url: <queue-url>
+  queueName: <queue-name>
+  username: <username>
+  password: |-
+    <password>
+  driverClassName: <driver-class-name>
+  queueType: <classic-or-quorum>
+OidcConfigTypeInstall: 'no-oidc'
+OidcConfigTypeUpgrade: 'existing'
+ExternalOidcConfGenericDeploy: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaimName: ""
+  userAuthorizationUri: ""
+  userNameClaimName: ""
+  fullNameClaim: ""
+  scopes: '["openid"]'
+ExternalOidcConfGenericRelease: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  fullNameClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaim: ""
+  userAuthorizationUri: ""
+  userNameClaim: ""
+  scopes: '["openid"]'
+IdentityServiceConfDeploy: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaimName: ""
+  userNameClaimName: "preferred_username"
+  scopes: ["openid"]
+IdentityServiceConfRelease: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaim: ""
+  userNameClaim: "preferred_username"
+  scopes: ["openid"]
+IngressTypeGeneric: 'haproxy'
+IngressTypeOpenshift: 'route'
+NginxResourcesPreset: 'nano'
+NginxResourcesEditor: |-
+  resources:
+    requests:
+      cpu:
+      memory:
+    limits:
+      cpu:
+      memory:
+HAProxyResourcesEditor: |-
+  resources:
+    requests:
+      cpu:
+      memory:
+    limits:
+      cpu:
+      memory:
+ExternalIngressClass: ''
+HttpProtocolIngress: 'http'
+IngressKeystoreSourceGeneric: 'generate'
+IngressKeystoreSourceHaproxy: 'generate'
+IngressKeystoreSourceOpenshift: 'default'
+IngressTlsSecretName: ''
+AdminPassword: '2zGNxPrB5BgFA9Pv'
+StorageClass: 'nfs-client'
+IngressHost: 'digitalai.deploy.local'
+HttpsProtocol: 'false'
+EnablePostgresql: true
+PostgresqlStorageClass: 'nfs-client'
+PostgresqlResourcesPreset: 'nano'
+PostgresqlResourcesEditor: |-
+  resources:
+    requests:
+      cpu:
+      memory:
+    limits:
+      cpu:
+      memory:
+EnableRabbitmq: true
+RabbitmqReplicaCount: '1'
+RabbitmqStorageClass: 'nfs-client'
+RabbitmqResourcesPreset: 'nano'
+RabbitmqResourcesEditor: |-
+  resources:
+    requests:
+      cpu:
+      memory:
+    limits:
+      cpu:
+      memory:
+LicenseSource: 'generate'
+LicenseEditor:  |-
+  
+LicenseFile: ''
+RepositoryKeystoreSource: 'generate'
+RepositoryKeystoreEditor: |-
+  
+RepositoryKeystoreFile: ''
+KeystorePassphrase: 'eUYO3HUeLSNE33Qw'
+ResourcesSource: 'none'
+PostgresqlPvcSize: '1'
+RabbitmqPvcSize: '1'
+HttpProtocolRelease: 'http'
+HttpProtocolDeploy: 'http'
+ApplicationKeystoreSource: 'generate'
+ApplicationKeystoreEditor: |-
+  
+ApplicationKeystoreFile: ''
+ApplicationKeystoreSecretName: ''
+ApplicationKeystoreSecretKey: ''
+ApplicationKeystore: ''
+ApplicationKeystoreType: 'pkcs12'
+ApplicationKeystorePassword: 'fBgCMgR5iyNJN9Xv'
+PvcSizeDeploy: '1'
+PvcSizeDeployTaskEngine: '1'
+AccessModeDeploy: 'ReadWriteOnce'
+ResourcesPresetDeploy: 'nano'
+ResourcesEditorDeploy: |- 
+  resources:
+    requests:
+      cpu:
+      memory:
+    limits:
+      cpu:
+      memory:
+ResourcesPresetDeployCc: 'nano'
+ResourcesEditorDeployCc: |-
+  resources:
+    requests:
+      cpu:
+      memory:
+    limits:
+      cpu:
+      memory:
+ResourcesPresetDeployTaskEngine: 'nano'
+ResourcesEditorDeployTaskEngine: |-
+  resources:
+    requests:
+      cpu:
+      memory:
+    limits:
+      cpu:
+      memory:
+CrdName: ''
+IsCrdReused: false
+CrName: ''
+ImageNameRemoteRunner: 'release-runner'
+ImageTagRemoteRunner: '25.1.0-211.113'
+RemoteRunnerInstallType: ''
+RemoteRunnerRepositoryName: 'xebialabsunsupported'
+RemoteRunnerReleaseName: 'release-runner'
+RemoteRunnerUseDefaultLocation: true
+RemoteRunnerHelmChartUrl: ''
+RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+RemoteRunnerToken: ''
+RemoteRunnerUserEmail: 'release-runner@no.reply'
+RemoteRunnerUserPassword: 'iTw2Rt83HpmvW9Ix'
+RemoteRunnerTokenExpiration: '0'
+RemoteRunnerCount: 1
+IsRemoteRunnerTruststoreEnabled: false
+RemoteRunnerRestClientCa:

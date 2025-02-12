@@ -15,7 +15,6 @@ assert:
 - $ASSERTS_REL_PATH/deploy-running-postgres-pods.yaml
 - $ASSERTS_REL_PATH/deploy-running-rabbitmq-pods.yaml
 - $ASSERTS_REL_PATH/deploy-running-product-pods.yaml
-- $ASSERTS_REL_PATH/deploy-running-haproxy-pods.yaml
 error:
 - $ASSERTS_REL_PATH/deploy-running-haproxy-pods.yaml
 - $ASSERTS_REL_PATH/deploy-running-nginx-pods.yaml
