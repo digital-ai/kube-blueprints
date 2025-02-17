@@ -49,20 +49,28 @@ spec:
       prompt: "Provide the custom docker image registry secret:"
       promptIf: !expr "(ImageRegistryType == 'private') && (ProcessType == 'install' || ProcessType == 'upgrade')"
       description: Provide the imagePullSecrets name for the custom image registry
-    - name: RepositoryName
+    - name: RepositoryNameRelease
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
-      prompt: "Enter the repository name for the application and operator images (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the repository name to use for the application and operator images
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
+      prompt: "Enter the repository name for the Release application and operator images (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the repository name to use for the Release application and operator images
+    - name: RepositoryNameDeploy
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
+      prompt: "Enter the repository name for the Deploy application and operator images (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the repository name to use for the Deploy application and operator images
     - name: ImageNameDeploy
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy server image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: xl-deploy
       description: Enter the Deploy server image name to use
@@ -71,24 +79,32 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Release image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: xl-release
       description: Enter the Release server image name to use
-    - name: ImageTag
+    - name: ImageTagRelease
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
-      prompt: "Enter the application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the application server image tag to use
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
+      prompt: "Enter the Release application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the Release application server image tag to use
+    - name: ImageTagDeploy
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
+      prompt: "Enter the Deploy application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the Deploy application server image tag to use
     - name: ImageNameDeployTaskEngine
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTag) && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy task engine image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: deploy-task-engine
       description: Enter the Deploy task engine image name to use
@@ -97,7 +113,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTag) && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Central Configuration image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: central-configuration
       description: Enter the Central Configuration image name to use
@@ -180,7 +196,7 @@ spec:
       overrideDefault: true
       ignoreIfSkipped: true
       default: false
-      promptIf: !expr "K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Do you want to enable Security Context Constraints (SCCs)?"
       description: "Security Context Constraints are disabled by default. If you are upgrading from a setup that had SCCs enabled, select 'yes' or configure them manually to avoid pod failures."
     - name: XldWorkerCount
@@ -535,7 +551,7 @@ spec:
           value: external
         - label: None - Ingress will not be set up during installation
           value: none
-      promptIf: !expr "K8sSetup != 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == 'install'"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
       default: nginx
       description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
@@ -554,7 +570,7 @@ spec:
           value: external
         - label: None - Ingress will not be set up during installation
           value: none
-      promptIf: !expr "K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == 'install'"
+      promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
       default: route
       description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
@@ -563,7 +579,7 @@ spec:
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      value: !expr "K8sSetup == 'Openshift' ? IngressTypeOpenshift : IngressTypeGeneric"
+      value: !expr "regex('^Openshift.*', K8sSetup) ? IngressTypeOpenshift : IngressTypeGeneric"
       description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
     - name: NginxResourcesPreset
       type: Select
@@ -644,7 +660,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr K8sSetup != 'Openshift' && ServerType != 'dai-release-runner'&& ProcessType == "install" && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != "http"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != 'http'"
       description: "Provide source of the ingress keystore"
       default: "generate"
       validate: !expr "IngressKeystoreSourceGeneric == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceGeneric == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
@@ -659,7 +675,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr K8sSetup != 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == 'haproxy' && HttpProtocolIngress != "http"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == install' && IngressType == 'haproxy' && HttpProtocolIngress != 'http'"
       description: "Provide source of the ingress keystore"
       default: "generate"
       validate: !expr "IngressKeystoreSourceHaproxy == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : true"
@@ -678,7 +694,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the keystore for the route:"
-      promptIf: !expr "K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease == 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')"
+      promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease == 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')"
       description: "Provide source of the keystore"
       default: "default"
       validate: !expr "IngressKeystoreSourceOpenshiftHttp == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttp == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
@@ -691,7 +707,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the keystore for the secure route (only passthrough is supported in case of the secure backend):"
-      promptIf: !expr "K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http')"
+      promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http')"
       description: "Provide source of the keystore"
       default: "passthrough"
       validate: !expr "IngressKeystoreSourceOpenshiftHttps == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttps == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
@@ -699,13 +715,13 @@ spec:
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      value: !expr "K8sSetup == 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http') ? IngressKeystoreSourceOpenshiftHttps : IngressKeystoreSourceOpenshiftHttp"
+      value: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http') ? IngressKeystoreSourceOpenshiftHttps : IngressKeystoreSourceOpenshiftHttp"
       description: "Provide source of the keystore"
     - name: IngressKeystoreSource
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      value: !expr "K8sSetup == 'Openshift' ? IngressKeystoreSourceOpenshift : (IngressType == 'haproxy' ? IngressKeystoreSourceHaproxy : IngressKeystoreSourceGeneric)"
+      value: !expr "regex('^Openshift.*', K8sSetup) ? IngressKeystoreSourceOpenshift : (IngressType == 'haproxy' ? IngressKeystoreSourceHaproxy : IngressKeystoreSourceGeneric)"
       description: Select between supported ingress keystore sources.
     - name: IngressHost
       type: Input
@@ -882,26 +898,34 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Enter the operator image to use (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
-      promptIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       default: deploy-operator
-      description: Enter the operator image to use
+      description: Enter the Deploy operator image to use
     - name: OperatorImageRelease
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Enter the operator image to use (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
-      promptIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       default: release-operator
-      description: Enter the operator image to use
-    - name: OperatorImageTag
+      description: Enter the Release operator image to use
+    - name: OperatorImageTagRelease
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
-      prompt: "Enter the operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the operator image tag to use
+      promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Enter the Release operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the Release operator image tag to use
+    - name: OperatorImageTagDeploy
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
+      prompt: "Enter the Deploy operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Enter the Deploy operator image tag to use
     - name: RepositoryKeystoreSource
       type: Select
       options:
@@ -1177,7 +1201,7 @@ spec:
     - name: IsCrdReused
       type: Confirm
       saveInXlvals: true
-      promptIf: !expr "ServerType != 'dai-release-runner' && (CleanBefore || ProcessType == 'clean' || ProcessType == 'upgrade') && CrdName != ''"
+      promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType != 'dai-release-runner' && (CleanBefore || ProcessType == 'clean' || ProcessType == 'upgrade') && CrdName != ''"
       prompt: !expr "'Should CRD be reused, if No we will delete the CRD ' + CrdName + ', and all related CRs will be deleted with it:'"
       ignoreIfSkipped: true
       overrideDefault: true
@@ -1640,7 +1664,7 @@ spec:
       type: Input
       saveInXlvals: true
       value: "ADMIN_PASSWORD"
-    - name: RemoteRunnerRepositoryName
+    - name: RepositoryNameReleaseRunner
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
@@ -1648,7 +1672,7 @@ spec:
       promptIf: !expr "RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release Runner repository name (eg: <repositoryName> from <repositoryName>/<imageName>:<tagName>):"
       description: Enter the Release Runner repository name to use
-    - name: ImageNameRemoteRunner
+    - name: ImageNameReleaseRunner
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
@@ -1657,7 +1681,7 @@ spec:
       prompt: "Enter the Release Runner image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: release-runner
       description: Enter the Release Runner image name to use
-    - name: ImageTagRemoteRunner
+    - name: ImageTagReleaseRunner
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
@@ -1788,10 +1812,10 @@ spec:
       renameTo: !expr "'digitalai/generated_answers_' + ServerType + '_' +  Namespace + '_' + ProcessType + '-' + GenerationDateTime + '.yaml.tmpl'"
     # Deploy
     - path: digitalai/dai-deploy/kubernetes-generic/template/leader-election-role.yaml
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-role.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/leader-election-rolebinding.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-rolebinding.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/manager-clusterrole.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
@@ -1800,35 +1824,35 @@ spec:
       writeIf: !expr ServerType == 'dai-deploy' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrolebinding.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-postgresql.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc-rabbitmq.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-rabbitmq.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/manager-role.yaml
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-role.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/manager-rolebinding.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-rolebinding.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/custom-resource-definition.yaml
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/custom-resource-definition.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/dai-deploy_cr_default.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/dai-deploy_cr_default.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/deployment.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/deployment.yaml.tmpl'"
     # Release
     - path: digitalai/dai-release/kubernetes-generic/template/leader-election-role.yaml
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-role.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/template/leader-election-rolebinding.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-rolebinding.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/manager-clusterrole.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
@@ -1837,28 +1861,28 @@ spec:
       writeIf: !expr ServerType == 'dai-release' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrolebinding.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/openshift-scc.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-postgresql.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/openshift-scc-rabbitmq.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-rabbitmq.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/manager-role.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-role.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/manager-rolebinding.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-rolebinding.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/custom-resource-definition.yaml
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/custom-resource-definition.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/dai-release_cr_default.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/dai-release_cr_default.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/deployment.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/deployment.yaml.tmpl'"
     # Runner
     - path: digitalai/dai-release-runner/values-cli.yaml.tmpl

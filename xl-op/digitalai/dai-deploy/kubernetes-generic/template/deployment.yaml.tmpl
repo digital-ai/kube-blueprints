@@ -47,9 +47,9 @@ spec:
         #- "--zap-encoder=console"
         #- "--zap-log-level=debug"
         {{- if eq .IsCustomImageRegistry true }}
-        image: {{ .CustomImageRegistryName }}/{{ .RepositoryName }}/{{ .OperatorImageDeploy }}:{{ .OperatorImageTag }}
+        image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/{{ .OperatorImageDeploy }}:{{ .OperatorImageTagDeploy }}
         {{- else }}
-        image: docker.io/{{ .RepositoryName }}/{{ .OperatorImageDeploy }}:{{ .OperatorImageTag }}
+        image: docker.io/{{ .RepositoryNameDeploy }}/{{ .OperatorImageDeploy }}:{{ .OperatorImageTagDeploy }}
         {{- end }}
         imagePullPolicy: Always
         env:
@@ -71,7 +71,7 @@ spec:
           periodSeconds: 10
         resources:
           limits:
-            cpu: 500m
+            cpu: 750m
             memory: 512Mi
             ephemeral-storage: 2Gi
           requests:

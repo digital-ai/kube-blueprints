@@ -6,9 +6,9 @@ ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
-RepositoryName: xebialabsunsupported
-ImageTag: 25.1.0-1024.113
-OperatorImageTag: 25.1.0-master
+RepositoryNameRelease: xebialabsunsupported
+ImageTagRelease: 25.1.0-1024.113
+OperatorImageTagRelease: 25.1.0-master
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
 XlrReplicaCount: 1
@@ -254,10 +254,10 @@ CrdName: 'digitalaireleases.xlr.digital.ai'
 IsCrdReused: false
 CrName: 'dai-ocp-xlr'
 PreservePvc: true
-ImageNameRemoteRunner: 'release-runner'
-ImageTagRemoteRunner: 25.1.0-1024.113
+ImageNameReleaseRunner: 'release-runner'
+ImageTagReleaseRunner: 25.1.0-1024.113
 RemoteRunnerInstallType: ''
-RemoteRunnerRepositoryName: 'xebialabsunsupported'
+RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
 RemoteRunnerHelmChartUrl: ''
