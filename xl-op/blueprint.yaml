@@ -675,7 +675,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == install' && IngressType == 'haproxy' && HttpProtocolIngress != 'http'"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType == 'haproxy' && HttpProtocolIngress != 'http'"
       description: "Provide source of the ingress keystore"
       default: "generate"
       validate: !expr "IngressKeystoreSourceHaproxy == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : true"
