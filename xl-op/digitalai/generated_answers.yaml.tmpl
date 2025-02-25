@@ -6,11 +6,11 @@ ImageRegistryType: {{ .ImageRegistryType }}
 IsCustomImageRegistry: {{ .IsCustomImageRegistry }}
 CustomImageRegistryName: {{ .CustomImageRegistryName }}
 CustomPrivateImageRegistrySecret: {{ .CustomPrivateImageRegistrySecret }}
-RepositoryName: {{ .RepositoryName }}
-ImageTag: {{ .ImageTag }}
-OperatorImageTag: {{ .OperatorImageTag }}
 EnableSCC: "{{ .EnableSCC }}"
 {{- if eq .ServerType "dai-deploy" }}
+RepositoryNameDeploy: {{ .RepositoryNameDeploy }}
+ImageTagDeploy: {{ .ImageTagDeploy }}
+OperatorImageTagDeploy: {{ .OperatorImageTagDeploy }}
 ImageNameDeploy: {{ .ImageNameDeploy }}
 ImageNameDeployTaskEngine: {{ .ImageNameDeployTaskEngine }}
 ImageNameCc: {{ .ImageNameCc }}
@@ -27,6 +27,9 @@ RabbitmqExternalConfigDeploy: |-
 {{ .RabbitmqExternalConfigDeploy | indent 2 }}
 {{- end }}
 {{- if eq .ServerType "dai-release" }}
+RepositoryNameRelease: {{ .RepositoryNameRelease }}
+ImageTagRelease: {{ .ImageTagRelease }}
+OperatorImageTagRelease: {{ .OperatorImageTagRelease }}
 ImageNameRelease: {{ .ImageNameRelease }}
 OperatorImageRelease: {{ .OperatorImageRelease }}
 XlrReplicaCount: {{ .XlrReplicaCount }}
@@ -135,10 +138,10 @@ CrName: '{{ .CrName }}'
 {{- if and (or (eq .ProcessType "clean") .CleanBefore) (ne .ServerType "dai-release-runner") }}
 PreservePvc: {{ .PreservePvc }}
 {{- end }}
-ImageNameRemoteRunner: '{{ .ImageNameRemoteRunner }}'
-ImageTagRemoteRunner: '{{ .ImageTagRemoteRunner }}'
+ImageNameReleaseRunner: '{{ .ImageNameReleaseRunner }}'
+ImageTagReleaseRunner: '{{ .ImageTagReleaseRunner }}'
 RemoteRunnerInstallType: '{{ .RemoteRunnerInstallType }}'
-RemoteRunnerRepositoryName: '{{ .RemoteRunnerRepositoryName }}'
+RepositoryNameReleaseRunner: '{{ .RepositoryNameReleaseRunner }}'
 RemoteRunnerReleaseName: '{{ .RemoteRunnerReleaseName }}'
 RemoteRunnerUseDefaultLocation: {{ .RemoteRunnerUseDefaultLocation }}
 RemoteRunnerHelmChartUrl: '{{ .RemoteRunnerHelmChartUrl }}'
