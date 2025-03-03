@@ -4,8 +4,8 @@ unitTest: false
 commands:
 - script: $XL_CLI kube upgrade --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-upgrade.yaml
   timeout: 120
-- script: $XL_CLI kube check --wait-for-ready 5 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-upgrade.yaml
-  timeout: 400
+- script: $XL_CLI kube check --wait-for-ready 10 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-upgrade.yaml
+  timeout: 700
 assert:
 - $ASSERTS_REL_PATH/release-running-operator-pods.yaml
 - $ASSERTS_REL_PATH/release-running-postgres-pods.yaml

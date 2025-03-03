@@ -1,0 +1,45 @@
+ImageTagDeploy: 25.1.0-1024.113
+OperatorImageTagDeploy: 25.1.0-master
+XldMasterCount: 1
+XldWorkerCount: 1
+IngressTypeGeneric: 'none'
+IngressTypeOpenshift: 'route'
+ExternalIngressClass: ''
+HttpProtocolIngress: 'http'
+IngressKeystoreSourceGeneric: 'generate'
+IngressKeystoreSourceOpenshift: 'default'
+IngressTlsSecretName: ''
+AdminPassword: 'OEi9o1PHyQ89mwxm'
+IngressHost: 'digitalai.deploy.local'
+HttpsProtocol: 'false'
+EnablePostgresql: true
+EnableRabbitmq: true
+RabbitmqReplicaCount: '1'
+LicenseSource: 'generate'
+LicenseEditor:  |-
+
+LicenseFile: ''
+RepositoryKeystoreSource: 'generate'
+RepositoryKeystoreEditor: |-
+
+RepositoryKeystoreFile: ''
+KeystorePassphrase: '6JFsZyRcLyKYjE5k'
+ResourcesSource: 'none'
+PostgresqlPvcSize: '1'
+RabbitmqPvcSize: '1'
+HttpProtocolRelease: 'http'
+HttpProtocolDeploy: 'http'
+ApplicationKeystoreSource: 'generate'
+ApplicationKeystoreEditor: |-
+
+ApplicationKeystoreFile: ''
+ApplicationKeystoreSecretName: ''
+ApplicationKeystore: ''
+ApplicationKeystoreType: 'pkcs12'
+ApplicationKeystorePassword: 'p3w4Mo4WlQG8GkUP'
+PvcSizeDeploy: '1'
+PvcSizeDeployTaskEngine: '1'
+AccessModeDeploy: 'ReadWriteOnce'
+CrdName: ''
+CrName: ''
+ImageTagReleaseRunner: 25.1.0-1024.113

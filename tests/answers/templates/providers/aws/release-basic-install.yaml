@@ -1,0 +1,5 @@
+K8sSetup: AWSEKS
+StorageClass: my-efs
+PostgresqlStorageClass: my-efs
+RabbitmqStorageClass: my-efs
+RemoteRunnerReleaseUrl: http://dai-xlr-digitalai-release.digitalai

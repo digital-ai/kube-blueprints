@@ -33,24 +33,29 @@ VERSION_FILE=./xl-op/override-defaults.yaml
 XL_CLIENT_VERSION_DEFAULT=25.1.0-master
 XL_CLIENT_VERSION=${XL_CLIENT_VERSION:-$XL_CLIENT_VERSION_DEFAULT}
 if [ "$APP_TYPE" = "deploy" ]; then
-  XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTagDeploy" "$VERSION_FILE")
+    XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTagDeploy" "$VERSION_FILE")
 fi
 if [ "$APP_TYPE" = "release" ]; then
-  XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTagRelease" "$VERSION_FILE")
+    XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTagRelease" "$VERSION_FILE")
 fi
 XL_APP_VERSION=${XL_APP_VERSION:-$XL_APP_VERSION_DEFAULT}
 XL_RR_VERSION_DEFAULT=$(yq eval ".ImageTagReleaseRunner" "$VERSION_FILE")
 XL_RR_VERSION=${XL_RR_VERSION:-$XL_RR_VERSION_DEFAULT}
 EXTRA_CONTAINER_ARGS=""
 
+# Validate required environment variables
+if [[ -z "$APP_TARGET" || -z "$APP_SHORT_TYPE" || -z "$APP_TYPE" || -z "$APP_OPERATOR" ]]; then
+    echo "Error: Required environment variables not set"
+    echo "Required: APP_TARGET, APP_SHORT_TYPE, APP_TYPE, APP_OPERATOR"
+    exit 1
+fi
+
 echo "Prepare tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
 
 rm -fr $OUTPUT_HOST_DIR/tests
 mkdir -p $OUTPUT_HOST_DIR
 cp -R ./tests $OUTPUT_HOST_DIR
-mkdir -p $OUTPUT_HOST_DIR/tools
-mkdir -p $OUTPUT_HOST_DIR/logs
-mkdir -p $OUTPUT_HOST_DIR/kube
+mkdir -p "$OUTPUT_HOST_DIR"/{tools,logs,kube}
 chmod -R 777 $OUTPUT_HOST_DIR
 
 echo "Download latest xl-cli ${XL_CLIENT_VERSION}"
@@ -66,12 +71,12 @@ echo "  XL_APP_VERSION=$XL_APP_VERSION"
 echo "  XL_RR_VERSION=$XL_RR_VERSION"
 
 if [ "$APP_TYPE" = "deploy" ]; then
-  yq eval ".ImageTagDeploy = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
+    yq eval ".ImageTagDeploy = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}/*.yaml -i
 fi
 if [ "$APP_TYPE" = "release" ]; then
-  yq eval ".ImageTagRelease = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
+    yq eval ".ImageTagRelease = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}/*.yaml -i
 fi
-yq eval ".ImageTagReleaseRunner = \"$XL_RR_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
+yq eval ".ImageTagReleaseRunner = \"$XL_RR_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}/*.yaml -i
 
 if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
     if [[ -z "$REDHAT_OC_URL" || -z "$REDHAT_OC_LOGIN" || -z "$REDHAT_OC_PASSWORD" || -z "$REDHAT_REGISTRY_SA" || -z "$REDHAT_REGISTRY_SA_TOKEN" ]]; then
@@ -114,43 +119,48 @@ elif [[ "$APP_TARGET" = "aws" && "$4" == "withLogin" ]]; then
     kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-credentials kuttl-user --token=$TOKEN
     kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-context --current --user=kuttl-user
 
-elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
-    echo "Setting up for Azure"
-
-    if [[ -z "$AZURE_SUBSCRIPTION_ID" || -z "$AZURE_CLIENT_ID" || -z "$AZURE_CLIENT_SECRET" || -z "$AZURE_TENANT_ID" || -z "$AKS_CLUSTER_NAME" || -z "$AZURE_RESOURCE_GROUP" ]]; then
-        echo "Azure environment variables are not set. Please set AZURE_SUBSCRIPTION_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID, AKS_CLUSTER_NAME, and AZURE_RESOURCE_GROUP."
-        exit 1
-    fi
-    echo "Auth to $APP_TARGET"
-
-    docker run --rm \
-        -e AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID \
-        -e AZURE_CLIENT_ID=$AZURE_CLIENT_ID \
-        -e AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET \
-        -e AZURE_TENANT_ID=$AZURE_TENANT_ID \
-        -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
-        -u $(id -u):$(id -g) \
-        mcr.microsoft.com/azure-cli:latest \
-        # bash -c "az login -u $AZURE_USERNAME -p $AZURE_PASSWORD && az aks get-credentials --resource-group $AZURE_RESOURCE_GROUP --name $AKS_CLUSTER_NAME --overwrite-existing" \
-        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID && az aks get-credentials --name $AKS_CLUSTER_NAME --resource-group $AZURE_RESOURCE_GROUP
+#elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
+#    echo "Setting up for Azure"
+#
+#    if [[ -z "$AZURE_SUBSCRIPTION_ID" || -z "$AZURE_CLIENT_ID" || -z "$AZURE_CLIENT_SECRET" || -z "$AZURE_TENANT_ID" || -z "$AKS_CLUSTER_NAME" || -z "$AZURE_RESOURCE_GROUP" ]]; then
+#        echo "Azure environment variables are not set. Please set AZURE_SUBSCRIPTION_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID, AKS_CLUSTER_NAME, and AZURE_RESOURCE_GROUP."
+#        exit 1
+#    fi
+#    echo "Auth to $APP_TARGET"
+#
+#    docker run --rm \
+#        -e AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID \
+#        -e AZURE_CLIENT_ID=$AZURE_CLIENT_ID \
+#        -e AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET \
+#        -e AZURE_TENANT_ID=$AZURE_TENANT_ID \
+#        -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
+#        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+#        -u $(id -u):$(id -g) \
+#        mcr.microsoft.com/azure-cli:latest \
+#        \
+#        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID && az aks get-credentials --name $AKS_CLUSTER_NAME --resource-group $AZURE_RESOURCE_GROUP
 
 elif [[ "$APP_TARGET" = "gcp" && "$4" == "withLogin" ]]; then
     echo "Setting up for GCP"
 
-    if [[ -z "$GCP_PROJECT" || -z "$GCP_CLUSTER_NAME" || -z "$GCP_ZONE" || -z "$GCP_SERVICE_ACCOUNT_KEY" ]]; then
-        echo "GCP environment variables are not set. Please set GCP_PROJECT, GCP_CLUSTER_NAME, GCP_ZONE, and GCP_SERVICE_ACCOUNT_KEY."
+    if [[ -z "$GCP_PROJECT" || -z "$GCP_CLUSTER_NAME" || -z "$GCP_ZONE" || -z "$GCP_KEYFILE_JSON" ]]; then
+        echo "GCP environment variables are not set. Please set GCP_PROJECT, GCP_CLUSTER_NAME, GCP_ZONE, and GCP_KEYFILE_JSON."
         exit 1
     fi
     echo "Auth to $APP_TARGET"
 
     docker run --rm \
+        -e HOME=$OUTPUT_CONTAINER_DIR \
+        -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
         -e CLOUDSDK_CORE_PROJECT=$GCP_PROJECT \
-        -v $GCP_SERVICE_ACCOUNT_KEY:/tmp/keyfile.json \
         -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
         -u $(id -u):$(id -g) \
         google/cloud-sdk:latest \
-        gcloud auth activate-service-account --key-file=/tmp/keyfile.json && gcloud container clusters get-credentials $GCP_CLUSTER_NAME --zone $GCP_ZONE --project $GCP_PROJECT
+        sh -c "gcloud auth activate-service-account --key-file=$GCP_KEYFILE_JSON && \
+           gcloud container clusters get-credentials $GCP_CLUSTER_NAME --zone $GCP_ZONE --project $GCP_PROJECT && \
+           TOKEN=\$(gcloud auth print-access-token) && \
+           kubectl config set-credentials kuttl-user --token=\$TOKEN && \
+           kubectl config set-context --current --user=kuttl-user"
 
 elif [[ "$APP_TARGET" = "plain" && "$4" == "localhost" ]]; then
 
@@ -177,7 +187,7 @@ echo "Starting tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
 docker run --rm $EXTRA_CONTAINER_ARGS \
     -e HOME=$OUTPUT_CONTAINER_DIR \
     -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-    -e ANSWERS_REL_PATH=../../../../answers/$APP_TARGET \
+    -e ANSWERS_REL_PATH=../../../../answers/generated/$APP_TARGET \
     -e APPLY_REL_PATH=../../../apply \
     -e ASSERTS_REL_PATH=../../../asserts \
     -e SCRIPTS_REL_PATH=../../../scripts \
@@ -188,7 +198,7 @@ docker run --rm $EXTRA_CONTAINER_ARGS \
     -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
     -u $(id -u):$(id -g) \
     xldevdocker/kuttl:latest \
-    --artifacts-dir $OUTPUT_CONTAINER_DIR/logs --config $TEST_DIR --verbose
+    --artifacts-dir $OUTPUT_CONTAINER_DIR/logs --config $TEST_DIR
 
 echo "TEST RESULT:"
 cat "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"
