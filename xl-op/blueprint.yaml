@@ -82,7 +82,7 @@ spec:
       overrideDefault: true
       promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the application server image tag to use
+      description: Enter the application server image tag to use. The default value is the latest version. The available versions can be seen from docker hub repository tags for the image.
     - name: ImageNameDeployTaskEngine
       type: Input
       saveInXlvals: true
@@ -115,7 +115,7 @@ spec:
       overrideDefault: true
       prompt: "Select source of the license:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Provide source of the license file"
+      description: "Provide source of the license file. Using generate option, the license is a temporary evaluation license and should not be used for production. The license file/content can be plain text or base64 encoded."
       default: generate
     - name: LicenseEditor
       type: Editor
@@ -123,7 +123,7 @@ spec:
       ignoreIfSkipped: true
       prompt: "Provide license for the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && LicenseSource == "editor"
-      description: "Provide license for the server"
+      description: "Provide license for the server in the editor"
       default: ""
     - name: LicenseFile
       type: Input
@@ -132,7 +132,7 @@ spec:
       overrideDefault: true
       prompt: "Provide license file for the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && LicenseSource == "file"
-      description: "Provide license file for the server"
+      description: "Provide license file for the server. Input the path to the license file."
       validate: !expr "isFile(LicenseFile)"
       default: ""
     - name: License
@@ -260,7 +260,7 @@ spec:
       overrideDefault: true
       prompt: "Select source of the resource values (CPU and memory):"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Provide source of the resources (CPU and memory) requests and limits values for various containers. This selection will be used for specifying resources for all the installation components"
+      description: "Provide source of the resources (CPU and memory) requests and limits values for various containers. This selection will be used for specifying resources for all the installation components. You can choose to enter the resources values either as a preset or define the custom resources values through the editor. If none is selected, resources will not be specified and will need to be done manually. Based on the selection, the resource values are prompted during installation. For example, if you select a preset, the following prompts for resource values will follow the preset configuration. Similarly, if you select custom resource values, the prompts will be based on the custom editor settings."
       default: none
     - name: ResourcesPresetDeploy
       type: Select
@@ -616,7 +616,7 @@ spec:
       overrideDefault: true
       prompt: "Provide external ingress class:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "external"
-      description: External ingress class
+      description: Select from an already available External ingress class
     - name: HttpProtocolIngress
       type: Select
       options:
@@ -679,7 +679,7 @@ spec:
       overrideDefault: true
       prompt: "Select source of the keystore for the route:"
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease == 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')"
-      description: "Provide source of the keystore"
+      description: "Provide source of the ingress keystore"
       default: "default"
       validate: !expr "IngressKeystoreSourceOpenshiftHttp == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttp == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
     - name: IngressKeystoreSourceOpenshiftHttps
@@ -692,7 +692,7 @@ spec:
       overrideDefault: true
       prompt: "Select source of the keystore for the secure route (only passthrough is supported in case of the secure backend):"
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http')"
-      description: "Provide source of the keystore"
+      description: "Provide source of the ingress keystore"
       default: "passthrough"
       validate: !expr "IngressKeystoreSourceOpenshiftHttps == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttps == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
     - name: IngressKeystoreSourceOpenshift
@@ -700,7 +700,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       value: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http') ? IngressKeystoreSourceOpenshiftHttps : IngressKeystoreSourceOpenshiftHttp"
-      description: "Provide source of the keystore"
+      description: "Provide source of the ingress keystore"
     - name: IngressKeystoreSource
       type: Input
       saveInXlvals: true
@@ -804,6 +804,7 @@ spec:
         userNameClaimName: ""
         fullNameClaim: ""
         scopes: '["openid"]'
+      description: The external OIDC configuration
     - name: ExternalOidcConfGenericRelease
       type: Editor
       prompt: "Configure external oidc setup:"
@@ -826,12 +827,13 @@ spec:
         userAuthorizationUri: ""
         userNameClaim: ""
         scopes: '["openid"]'
+      description: The external OIDC configuration
     - name: ExternalOidcConfGeneric
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       value: !expr "OidcConfigType == 'external' ? (ServerType == 'dai-deploy' ? ExternalOidcConfGenericDeploy : ExternalOidcConfGenericRelease) : ''"
-      description: The type of the OIDC configuration
+      description: The external OIDC configuration
     - name: IdentityServiceConfDeploy
       type: Editor
       prompt: "Configure Identity Service setup:"
@@ -848,6 +850,7 @@ spec:
         rolesClaimName: ""
         userNameClaimName: "preferred_username"
         scopes: ["openid"]
+      description: The identity service OIDC configuration
     - name: IdentityServiceConfRelease
       type: Editor
       prompt: "Configure Identity Service setup:"
@@ -864,12 +867,13 @@ spec:
         rolesClaim: ""
         userNameClaim: "preferred_username"
         scopes: ["openid"]
+      description: The identity service OIDC configuration
     - name: IdentityServiceConf
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       value: !expr "OidcConfigType == 'identity-service' ? (ServerType == 'dai-deploy' ? IdentityServiceConfDeploy : IdentityServiceConfRelease) : ''"
-      description: The type of the OIDC configuration
+      description: The identity service OIDC configuration
     - name: ExternalOidcConf
       type: Input
       saveInXlvals: true
@@ -901,7 +905,7 @@ spec:
       overrideDefault: true
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the operator image tag to use
+      description: Enter the operator image tag to use. The default is the latest tag. The available versions can be seen from docker hub repository tags for the image.
     - name: RepositoryKeystoreSource
       type: Select
       options:
@@ -962,7 +966,7 @@ spec:
       overrideDefault: true
       prompt: "Do you want to install a new PostgreSQL on the cluster:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Select 'yes' to install a new PostgreSQL instance using the subchart, or 'no' to configure an existing supported database instance."
+      description: "Select 'yes' to install a new PostgreSQL instance using the subchart, or 'no' to configure an existing supported database instance. If you enter No, you will need to provide connection parameters of external database, check #Using an Existing PostgreSQL Database# section in the documentation."
     - name: PostgresqlStorageClass
       type: Select
       options:
@@ -972,7 +976,7 @@ spec:
       overrideDefault: true
       prompt: "Provide Storage Class to be defined for PostgreSQL:"
       promptIf: !expr ProcessType == "install" && EnablePostgresql
-      description: Provide Storage Class to be defined for PostgreSQL
+      description: Provide Storage Class to be defined for PostgreSQL that should be available in the cluster. The storage class needs to support minimally ReadWriteOnce access mode.
     - name: PostgresqlPvcSize
       type: Input
       saveInXlvals: true
@@ -1066,7 +1070,7 @@ spec:
       overrideDefault: true
       prompt: "Do you want to install a new RabbitMQ on the cluster:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Select 'yes' to install a new RabbitMQ instance using the subchart, or 'no' to configure an existing supported MQ instance."
+      description: "Select 'yes' to install a new RabbitMQ instance using the subchart, or 'no' to configure an existing supported MQ instance.If you enter No, you will need to provide connection parameters for the Deploy, check #Using an Existing Message Queue# section in the documentation."
     - name: RabbitmqReplicaCount
       type: Input
       saveInXlvals: true
@@ -1087,7 +1091,7 @@ spec:
       prompt: "Storage Class to be defined for RabbitMQ:"
       default: !expr StorageClass
       promptIf: !expr "ProcessType == 'install' && EnableRabbitmq"
-      description: Storage Class to be defined for RabbitMQ
+      description: Storage Class to be defined for RabbitMQ. The storage class needs to support minimally ReadWriteOnce access mode.
     - name: RabbitmqPvcSize
       type: Input
       saveInXlvals: true

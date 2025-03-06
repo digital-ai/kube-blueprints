@@ -155,17 +155,22 @@ export function processFieldPromptIf(field, parameters) {
  * @returns {Array<string>}
  */
 export function extractPlatform(promptIf) {
-  const platforms = ['EKS', 'AKS', 'GKE', 'Openshift', 'PlainK8s'];
-  let validPlatforms = [];
-
-  for (let platform of platforms) {
-    if (promptIf.includes(sprintf("K8sSetup == '%s'", platform))) {
-      return [platform];
-    } else if (promptIf.includes(sprintf("K8sSetup != '%s'", platform))) {
-      validPlatforms = platforms.filter((p) => p !== platform);
-      return validPlatforms;
-    }
+  const platforms = ['EKS', 'AKS', 'GKE', 'Openshift', 'OpenshiftCertified', 'PlainK8s'];
+  let validPlatforms = platforms;
+  const regexPattern = /regex\('\^Openshift\.\*', K8sSetup\)/;
+  if (regexPattern.test(promptIf)) {
+    validPlatforms = platforms.filter((p) => /^Openshift.*/.test(p));
   }
 
   return platforms;
+}
+
+/**
+ * Convert PascalCase to space-separated words
+ *
+ * @param {string} pascalCaseString
+ * @returns {string}
+ */
+export function pascalCaseToWords(pascalCaseString) {
+  return pascalCaseString.replace(/([A-Z][a-z]+)/g, ' $1').trim();
 }
