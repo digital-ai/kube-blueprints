@@ -5,6 +5,7 @@ import {
   processExprField,
   processExprFieldWithConcatenation,
   processFieldPromptIf,
+  pascalCaseToWords,
 } from './field-utils.js';
 
 /**
@@ -14,14 +15,14 @@ import {
  * @param {string} outputFilePath
  */
 export function generateMarkdown(parameters, outputFile) {
-  let markdownContent = '# Blueprint Parameters Documentation\n\n';
+  let markdownContent = '# Kube Blueprint Parameters Documentation\n\n';
 
   parameters.forEach((param) => {
     // skip the param for doc if prompt is not present
     if (!param.prompt) {
       return;
     }
-    markdownContent += sprintf('## %s\n', param.name);
+    markdownContent += sprintf('## %s\n', pascalCaseToWords(param.name));
 
     markdownContent += sprintf(
       '**Prompt:** `%s`\n\n',
@@ -29,11 +30,11 @@ export function generateMarkdown(parameters, outputFile) {
     );
     markdownContent += sprintf('**Type of Prompt:** %s\n\n', param.type);
 
-    let promptIf = param.promptIf || 'N/A';
-    if (promptIf !== 'N/A') {
-      promptIf = processFieldPromptIf(promptIf, parameters);
-    }
-    markdownContent += sprintf('**Prompt Condition:** %s\n\n', promptIf);
+    // let promptIf = param.promptIf || 'N/A';
+    // if (promptIf !== 'N/A') {
+    //   promptIf = processFieldPromptIf(promptIf, parameters);
+    // }
+    // markdownContent += sprintf('**Prompt Condition:** %s\n\n', promptIf);
 
     const platform = extractPlatform(param.promptIf || '');
     markdownContent += sprintf('**Platform:** %s\n\n', platform.join(', '));
@@ -59,7 +60,7 @@ export function generateMarkdown(parameters, outputFile) {
       markdownContent += 'N/A\n';
     }
 
-    let defaultValue = String(param.default || 'N/A');
+    let defaultValue = (param.default !== undefined && param.default !== null) ? String(param.default) : 'N/A';
     if (defaultValue.startsWith('!expr')) {
       markdownContent += '\n**Default Value:** N/A\n\n';
     } else if (defaultValue.split('\n').length > 1) {

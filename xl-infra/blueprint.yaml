@@ -25,7 +25,7 @@ spec:
         - label: Google Kubernetes Engine
           value: GoogleGKE
       saveInXlvals: true
-      description: The flavour of Kubernetes to deploy or undeploy the Digital.ai Devops Platform to. Only the listed options are supported.
+      description: The flavour of Kubernetes to deploy or undeploy the Digital.ai Devops Platform to. Only the listed options are supported. You must have your cluster ready.
     - name: OsType
       type: Input
       prompt: "The type of operating system where the xl command is running:"
@@ -38,7 +38,7 @@ spec:
       overrideDefault: true
       prompt: "The type of process command is running:"
       saveInXlvals: true
-      description: "The type of process command which is running"
+      description: "The type of process command which is running. Such as install, upgrade or clean."
 
     - name: UseCustomNamespace
       type: Confirm
@@ -95,6 +95,7 @@ spec:
       overrideDefault: true
       prompt: "Should clean occur before the apply files to cluster:"
       saveInXlvals: true
+      description: !expr "'Select yes to clean the existing setup before applying the files to the cluster.'"
 
     - name: UpgradeType
       type: Select
