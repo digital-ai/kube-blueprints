@@ -2,6 +2,5 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestStep
 unitTest: false
 commands:
-- command: kubectl exec -c release -it dai-xlr-digitalai-release-0 -- grep ansible.RunPlaybook.ansibleCmd=ansible-playbook /opt/xebialabs/xl-release-server/conf/deployit-defaults.properties
-  namespaced: true
+- command: kubectl exec -n $NAMESPACE -c release -it dai-xlr-digitalai-release-0 -- grep ansible.RunPlaybook.ansibleCmd=ansible-playbook /opt/xebialabs/xl-release-server/conf/deployit-defaults.properties
   timeout: 30

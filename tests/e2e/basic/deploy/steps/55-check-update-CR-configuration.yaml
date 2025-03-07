@@ -2,6 +2,5 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestStep
 unitTest: false
 commands:
-- command: kubectl exec -c deploy -it dai-xld-digitalai-deploy-cc-server-0 -- grep aws.Cloud.allowConcurrentDeployments=false centralConfiguration/type-defaults.properties
-  namespaced: true
+- command: kubectl exec -n $NAMESPACE -c deploy -it dai-xld-digitalai-deploy-cc-server-0 -- grep aws.Cloud.allowConcurrentDeployments=false centralConfiguration/type-defaults.properties
   timeout: 30

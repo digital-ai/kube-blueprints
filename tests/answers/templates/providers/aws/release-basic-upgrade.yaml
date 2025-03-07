@@ -1,0 +1,271 @@
+K8sSetup: AWSEKS
+UseCustomNamespace: false
+Namespace: digitalai
+ServerType: dai-release
+ImageRegistryType: default
+IsCustomImageRegistry: false
+CustomImageRegistryName: docker.io
+CustomPrivateImageRegistrySecret: 
+EnableSCC: false
+ImageNameRelease: xl-release
+OperatorImageRelease: release-operator
+XlrReplicaCount: 1
+PreserveCrValuesRelease: |-
+  .metadata.name: .
+  .spec.persistence.storageClass:
+    0.0: .spec.Persistence.StorageClass
+    23.3: .
+  .spec.auth.adminPassword:
+    0.0: .spec.AdminPassword
+    23.3: .
+  .spec.appProtocol:
+    0.0:
+    23.3: .
+  .spec.appHostname:
+    0.0:
+    23.3: .
+  .spec.replicaCount: .
+  .spec.persistence.paths: .
+  .spec.persistence.emptyDirPaths: .
+  .spec.persistence.accessModes.[0]:
+    0.0: .spec.Persistence.AccessMode
+    23.3:
+  .spec.persistence.accessModes:
+    0.0:
+    23.3: .
+  .spec.persistence.size:
+    0.0: .spec.Persistence.Size
+    23.3: .
+  .spec.persistence.existingClaim:
+    0.0:
+      existance: .spec.Persistence.ExistingClaim
+      expression: .spec.Persistence.ExistingClaim
+    23.3: .
+  .spec.oidc: .
+  .spec.external.db:
+    0.0:
+    23.3: .
+  .spec.external.db.enabled:
+    0.0: .spec.UseExistingDB.Enabled
+    23.3:
+  .spec.external.db.main.url:
+    0.0: .spec.UseExistingDB.XLR_DB_URL
+    23.3:
+  .spec.external.db.main.username:
+    0.0: .spec.UseExistingDB.XLR_DB_USER
+    23.3:
+  .spec.external.db.main.password:
+    0.0: .spec.UseExistingDB.XLR_DB_PASS
+    23.3:
+  .spec.external.db.report.url:
+    0.0: .spec.UseExistingDB.XLR_REPORT_DB_URL
+    23.3:
+  .spec.external.db.report.username:
+    0.0: .spec.UseExistingDB.XLR_REPORT_DB_USER
+    23.3:
+  .spec.external.db.report.password:
+    0.0: .spec.UseExistingDB.XLR_REPORT_DB_PASS
+    23.3:
+  .spec.external.mq:
+    0.0:
+    23.3: .
+  .spec.external.mq.enabled:
+    0.0: .spec.UseExistingMQ.Enabled
+    23.3:
+  .spec.external.mq.url:
+    0.0: .spec.UseExistingMQ.XLR_TASK_QUEUE_URL
+    23.3:
+  .spec.external.mq.queueName:
+    0.0: .spec.UseExistingMQ.XLR_TASK_QUEUE_NAME
+    23.3:
+  .spec.external.mq.username:
+    0.0: .spec.UseExistingMQ.XLR_TASK_QUEUE_USERNAME
+    23.3:
+  .spec.external.mq.password:
+    0.0: .spec.UseExistingMQ.XLR_TASK_QUEUE_PASSWORD
+    23.3:
+  .spec.ingress.enabled:
+    0.0: .spec.ingress.Enabled
+    23.3: .
+  .spec.ingress.hostname:
+    0.0: .spec.ingress.hosts.[0]
+    23.3: .
+  .spec.ingress.path: .
+  .spec.ingress.annotations: .
+  .spec.ingress.extraTls:
+    0.0: .spec.ingress.tls
+    23.3: .
+  .spec.keystore.passphrase:
+    0.0: .spec.KeystorePassphrase
+    23.3: .
+  .spec.keystore.keystore:
+    0.0: .spec.RepositoryKeystore
+    23.3: .
+  .spec.truststore: .
+  .spec.postgresql.install: .
+  .spec.postgresql.primary.persistence.size:
+    0.0: .spec.postgresql.persistence.size
+    23.3: .
+  .spec.postgresql.global.storageClass:
+    0.0: .spec.postgresql.persistence.storageClass
+    23.3: .
+  .spec.postgresql.primary.persistence.storageClass:
+    0.0: .spec.postgresql.persistence.storageClass
+    23.3: .
+  .spec.postgresql.primary.extendedConfiguration:
+    0.0:
+      existance: .spec.postgresql.postgresqlMaxConnections
+      expression: .spec.postgresql.postgresqlMaxConnections as $maxConnection | "max_connections = " + $maxConnection
+    23.3: .
+  # preserve current DB version
+  .spec.postgresql.image.tag: .
+  .spec.haproxy-ingress.install: .
+  .spec.nginx-ingress-controller.install: .
+  .spec.rabbitmq.install: .
+  .spec.rabbitmq.persistence.storageClass: .
+  .spec.rabbitmq.persistence.size: .
+  .spec.rabbitmq.replicaCount: .
+  .spec.rabbitmq.persistence.replicaCount: .
+  # upgrade to next supported MQ version (do the manual upgrade later)
+  .spec.rabbitmq.image.tag:
+    0.0:
+      existance: .spec.rabbitmq.image.tag
+      expression: .spec.rabbitmq.image.updateTag // "3.10.25"
+    23.3: .
+  .spec.route.hostname:
+    0.0: .spec.route.hosts.[0]
+    23.3: .
+  .spec.route.path: .
+  .spec.route.annotations: .
+  .spec.route.tls: .
+  .spec.route.enabled:
+    0.0: .spec.route.Enabled
+    23.3: .
+  .spec.license:
+    0.0: .spec.xlrLicense
+    23.3: .
+  .spec.licenseAcceptEula:
+    0.0:
+    23.3: .
+  .spec.http2.enabled: .
+  .spec.ssl: .
+  .spec.hooks: .
+  .spec.configuration: .
+  .spec.extraConfiguration: .
+  .spec.postgresql.primary.configuration: .
+  .spec.postgresql.primary.extraConfiguration: .
+  .spec.rabbitmq.configuration: .
+  .spec.rabbitmq.extraConfiguration: .
+  .spec.resourcesPreset: .
+  .spec.resources: .
+  .spec.defaultInitContainers.resources: .
+  .spec.haproxy-ingress.resources: .
+  .spec.nginx-ingress-controller.defaultBackend.resources: .
+  .spec.nginx-ingress-controller.defaultBackend.resourcesPreset: .
+  .spec.nginx-ingress-controller.resources: .
+  .spec.nginx-ingress-controller.resourcesPreset: .
+  .spec.postgresql.primary.resources: .
+  .spec.postgresql.primary.resourcesPreset: .
+  .spec.rabbitmq.resources: .
+  .spec.rabbitmq.resourcesPreset: .
+  .spec.podSecurityContext: .
+  .spec.containerSecurityContext: .
+  .spec.volumePermissions: .
+  .spec.haproxy-ingress.controller.securityContext: .
+  .spec.postgresql.primary.containerSecurityContext: .
+  .spec.postgresql.primary.podSecurityContext: .
+  .spec.postgresql.volumePermissions: .
+  .spec.rabbitmq.containerSecurityContext: .
+  .spec.rabbitmq.podSecurityContext: .
+  .spec.rabbitmq.volumePermissions: .
+PostgresqlExternalConfigRelease: |-
+  main:
+    url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
+    username: <xlr-username>
+    password: |-
+      <xlr-password>
+    maxPoolSize: 10
+  report:
+    url: jdbc:postgresql://<xlr-report-db-host>:5432/<xlr-report-database-name>
+    username: <xlr-report-username>
+    password: |-
+      <xlr-report-password>
+    maxPoolSize: 10
+RabbitmqExternalConfigRelease: |-
+  url: <queue-url>
+  queueName: <queue-name>
+  username: <username>
+  password: |-
+    <password>
+  queueType: <classic-or-quorum>
+  connector: <rabbitmq-jms-or-activemq-jms>
+OidcConfigTypeInstall: no-oidc
+OidcConfigTypeUpgrade: existing
+ExternalOidcConfGenericDeploy: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaimName: ""
+  userAuthorizationUri: ""
+  userNameClaimName: ""
+  fullNameClaim: ""
+  scopes: '["openid"]'
+ExternalOidcConfGenericRelease: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  fullNameClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaim: ""
+  userAuthorizationUri: ""
+  userNameClaim: ""
+  scopes: '["openid"]'
+IdentityServiceConfDeploy: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaimName: ""
+  userNameClaimName: "preferred_username"
+  scopes: ["openid"]
+IdentityServiceConfRelease: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaim: ""
+  userNameClaim: "preferred_username"
+  scopes: ["openid"]
+UpgradeType: operatorToOperator
+CrdName: digitalaireleases.xlr.digital.ai
+IsCrdReused: false
+CrName: dai-xlr
+PreservePvc: true
+ImageNameRemoteRunner: release-runner
+ImageTagRemoteRunner: 25.1.0-beta.2
+RemoteRunnerInstallType: ''
+RemoteRunnerRepositoryName: xebialabsunsupported
+RemoteRunnerReleaseName: release-runner
+RemoteRunnerUseDefaultLocation: true
+RemoteRunnerHelmChartUrl: ''
+RemoteRunnerReleaseUrl: http://dai-xlr-digitalai-release.digitalai
+RemoteRunnerToken: ''
+RemoteRunnerUserEmail: release-runner@no.reply
+RemoteRunnerUserPassword: 'HQTNYjCjEQklwGng'
+RemoteRunnerTokenExpiration: '0'
+RemoteRunnerCount: 1
+IsRemoteRunnerTruststoreEnabled: false
+RemoteRunnerRestClientCa:
