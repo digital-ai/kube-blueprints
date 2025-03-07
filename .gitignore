@@ -10,3 +10,6 @@ bin/
 
 kubeconfig
 node_modules/
+
+documentation/node_modules
+documentation/scripts/js/node_modules
