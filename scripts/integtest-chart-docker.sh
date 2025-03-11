@@ -11,7 +11,7 @@ if [ -z "$2" ]; then
 fi
 
 if [ -z "$3" ]; then
-    echo "Use third argument to select tests 'plain', or 'openshift'"
+    echo "Use third argument to select provider, for example: 'plain', 'aws', 'gcp' or 'openshift'"
     exit 1
 fi
 
@@ -119,26 +119,22 @@ elif [[ "$APP_TARGET" = "aws" && "$4" == "withLogin" ]]; then
     kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-credentials kuttl-user --token=$TOKEN
     kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-context --current --user=kuttl-user
 
-#elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
-#    echo "Setting up for Azure"
-#
-#    if [[ -z "$AZURE_SUBSCRIPTION_ID" || -z "$AZURE_CLIENT_ID" || -z "$AZURE_CLIENT_SECRET" || -z "$AZURE_TENANT_ID" || -z "$AKS_CLUSTER_NAME" || -z "$AZURE_RESOURCE_GROUP" ]]; then
-#        echo "Azure environment variables are not set. Please set AZURE_SUBSCRIPTION_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID, AKS_CLUSTER_NAME, and AZURE_RESOURCE_GROUP."
-#        exit 1
-#    fi
-#    echo "Auth to $APP_TARGET"
-#
-#    docker run --rm \
-#        -e AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID \
-#        -e AZURE_CLIENT_ID=$AZURE_CLIENT_ID \
-#        -e AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET \
-#        -e AZURE_TENANT_ID=$AZURE_TENANT_ID \
-#        -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-#        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
-#        -u $(id -u):$(id -g) \
-#        mcr.microsoft.com/azure-cli:latest \
-#        \
-#        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID && az aks get-credentials --name $AKS_CLUSTER_NAME --resource-group $AZURE_RESOURCE_GROUP
+elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
+   echo "Setting up for Azure"
+
+   if [[ -z "$AZURE_USER" || -z "$AZURE_PASSWORD" || -z "$AZURE_CLUSTER_NAME" || -z "$AZURE_RESOURCE_GROUP" ]]; then
+       echo "Azure environment variables are not set. Please set AZURE_USER, AZURE_PASSWORD, AZURE_CLUSTER_NAME, and AZURE_RESOURCE_GROUP."
+       exit 1
+   fi
+   echo "Auth to $APP_TARGET"
+
+   docker run --rm \
+       -e AZURE_USER=$AZURE_USER \
+       -e AZURE_PASSWORD=$AZURE_PASSWORD \
+       -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
+       -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+       mcr.microsoft.com/azure-cli:latest \
+       az login -u $AZURE_USER -p $AZURE_PASSWORD && az aks get-credentials --name $AZURE_CLUSTER_NAME --resource-group $AZURE_RESOURCE_GROUP --overwrite-existing
 
 elif [[ "$APP_TARGET" = "gcp" && "$4" == "withLogin" ]]; then
     echo "Setting up for GCP"
