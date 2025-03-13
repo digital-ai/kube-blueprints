@@ -1,0 +1,98 @@
+UseCustomNamespace: false
+Namespace: digitalai
+ServerType: dai-deploy
+ImageRegistryType: default
+IsCustomImageRegistry: false
+CustomImageRegistryName: docker.io
+CustomPrivateImageRegistrySecret:
+RepositoryNameDeploy: xebialabsunsupported
+ImageNameDeploy: xl-deploy
+ImageNameDeployTaskEngine: deploy-task-engine
+ImageNameCc: central-configuration
+OperatorImageDeploy: deploy-operator
+PostgresqlExternalConfigDeploy: |-
+  main:
+    url: jdbc:postgresql://<xld-db-host>:5432/<xld-database-name>
+    username: <xld-username>
+    password: |-
+      <xld-password>
+    maxPoolSize: 10
+  report:
+    url: jdbc:postgresql://<xld-report-db-host>:5432/<xld-report-database-name>
+    username: <xld-report-username>
+    password: |-
+      <xld-report-password>
+    maxPoolSize: 10
+RabbitmqExternalConfigDeploy: |-
+  url: <queue-url>
+  queueName: <queue-name>
+  username: <username>
+  password: |-
+    <password>
+  driverClassName: <driver-class-name>
+OidcConfigTypeInstall: 'no-oidc'
+OidcConfigTypeUpgrade: 'existing'
+ExternalOidcConfGenericDeploy: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaimName: ""
+  userAuthorizationUri: ""
+  userNameClaimName: ""
+  fullNameClaim: ""
+  scopes: '["openid"]'
+ExternalOidcConfGenericRelease: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  fullNameClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaim: ""
+  userAuthorizationUri: ""
+  userNameClaim: ""
+  scopes: '["openid"]'
+IdentityServiceConfDeploy: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaimName: ""
+  userNameClaimName: "preferred_username"
+  scopes: ["openid"]
+IdentityServiceConfRelease: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaim: ""
+  userNameClaim: "preferred_username"
+  scopes: ["openid"]
+IsCrdReused: false
+ImageNameReleaseRunner: 'release-runner'
+RemoteRunnerInstallType: ''
+RepositoryNameReleaseRunner: 'xebialabsunsupported'
+RemoteRunnerReleaseName: 'release-runner'
+RemoteRunnerUseDefaultLocation: true
+RemoteRunnerHelmChartUrl: ''
+RemoteRunnerToken: ''
+RemoteRunnerUserEmail: 'release-runner@no.reply'
+RemoteRunnerUserPassword: 'HQTNYjCjEQklwGng'
+RemoteRunnerTokenExpiration: '0'
+RemoteRunnerCount: 1
+IsRemoteRunnerTruststoreEnabled: false
+RemoteRunnerTruststore: |-
+
+RemoteRunnerTruststorePassword:
