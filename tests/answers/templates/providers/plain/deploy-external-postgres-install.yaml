@@ -1,0 +1,145 @@
+K8sSetup: PlainK8s
+UseCustomNamespace: false
+Namespace: digitalai
+ServerType: dai-deploy
+ImageRegistryType: default
+IsCustomImageRegistry: false
+CustomImageRegistryName: docker.io
+CustomPrivateImageRegistrySecret:
+RepositoryNameDeploy: xebialabsunsupported
+ImageTagDeploy: 25.1.0-beta.2
+OperatorImageTagDeploy: 25.1.0-beta.2
+ImageNameDeploy: xl-deploy
+ImageNameDeployTaskEngine: deploy-task-engine
+ImageNameCc: central-configuration
+OperatorImageDeploy: deploy-operator
+XldMasterCount: 1
+XldWorkerCount: 1
+PostgresqlExternalConfigDeploy: |-
+  main:
+    url: jdbc:postgresql://psql-test-xld-postgresql.${NAMESPACE}.svc.cluster.local:5432/main
+    username: postgres
+    password: |-
+      admin123
+    maxPoolSize: 10
+  report:
+    url: jdbc:postgresql://psql-test-xld-postgresql.${NAMESPACE}.svc.cluster.local:5432/main
+    username: postgres
+    password: |-
+      admin123
+    maxPoolSize: 10
+RabbitmqExternalConfigDeploy: |-
+  url: <queue-url>
+  queueName: <queue-name>
+  username: <username>
+  password: |-
+    <password>
+  driverClassName: <driver-class-name>
+OidcConfigTypeInstall: 'no-oidc'
+OidcConfigTypeUpgrade: 'existing'
+ExternalOidcConfGenericDeploy: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaimName: ""
+  userAuthorizationUri: ""
+  userNameClaimName: ""
+  fullNameClaim: ""
+  scopes: '["openid"]'
+ExternalOidcConfGenericRelease: |-
+  accessTokenUri: ""
+  clientId: ""
+  clientSecret: ""
+  emailClaim: ""
+  fullNameClaim: ""
+  issuer: ""
+  keyRetrievalUri: ""
+  logoutUri: ""
+  postLogoutRedirectUri: ""
+  redirectUri: ""
+  rolesClaim: ""
+  userAuthorizationUri: ""
+  userNameClaim: ""
+  scopes: '["openid"]'
+IdentityServiceConfDeploy: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaimName: ""
+  userNameClaimName: "preferred_username"
+  scopes: ["openid"]
+IdentityServiceConfRelease: |-
+  clientId: ""
+  clientSecret: ""
+  issuer: ""
+  redirectUri: ""
+  postLogoutRedirectUri: ""
+  rolesClaim: ""
+  userNameClaim: "preferred_username"
+  scopes: ["openid"]
+IngressTypeGeneric: 'none'
+IngressTypeOpenshift: 'route'
+ExternalIngressClass: ''
+HttpProtocolIngress: 'http'
+IngressKeystoreSourceGeneric: 'generate'
+IngressKeystoreSourceOpenshift: 'default'
+IngressTlsSecretName: ''
+AdminPassword: 'XB4AFUxAc2i2kds3'
+StorageClass: 'local-path'
+IngressHost: ''
+HttpsProtocol: 'false'
+EnablePostgresql: false
+PostgresqlStorageClass: ''
+EnableRabbitmq: true
+RabbitmqReplicaCount: '1'
+RabbitmqStorageClass: 'local-path'
+LicenseSource: 'generate'
+LicenseEditor:  |-
+
+LicenseFile: ''
+RepositoryKeystoreSource: 'generate'
+RepositoryKeystoreEditor: |-
+
+RepositoryKeystoreFile: ''
+KeystorePassphrase: '4JoGrhbqhhJCCNSf'
+PostgresqlPvcSize: '8'
+RabbitmqPvcSize: '1'
+HttpProtocolRelease: 'http'
+HttpProtocolDeploy: 'http'
+ApplicationKeystoreSource: 'generate'
+ApplicationKeystoreEditor: |-
+
+ApplicationKeystoreFile: ''
+ApplicationKeystoreSecretName: ''
+ApplicationKeystore: ''
+ApplicationKeystoreType: 'pkcs12'
+ApplicationKeystorePassword: 'aVWqYsFbMxh5S8BG'
+PvcSizeDeploy: '1'
+PvcSizeDeployTaskEngine: '1'
+AccessModeDeploy: 'ReadWriteOnce'
+CrdName: ''
+IsCrdReused: false
+CrName: ''
+ImageNameReleaseRunner: 'release-runner'
+ImageTagReleaseRunner: 25.1.0-beta.2
+RemoteRunnerInstallType: ''
+RepositoryNameReleaseRunner: 'xebialabsunsupported'
+RemoteRunnerReleaseName: 'release-runner'
+RemoteRunnerUseDefaultLocation: true
+RemoteRunnerHelmChartUrl: ''
+RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+RemoteRunnerToken: ''
+RemoteRunnerUserEmail: 'release-runner@no.reply'
+RemoteRunnerUserPassword: 'HQTNYjCjEQklwGng'
+RemoteRunnerTokenExpiration: '0'
+RemoteRunnerCount: 1
+IsRemoteRunnerTruststoreEnabled: false
+RemoteRunnerTruststore: |-

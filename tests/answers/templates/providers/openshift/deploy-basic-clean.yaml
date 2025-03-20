@@ -1,0 +1,4 @@
+K8sSetup: Openshift
+CrName: 'dai-ocp-xld'
+RemoteRunnerReleaseUrl: 'http://dai-ocp-xlr-digitalai-release.digitalai'
+EnableSCC: false
