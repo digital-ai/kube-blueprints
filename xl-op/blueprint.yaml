@@ -22,7 +22,9 @@ spec:
       ignoreIfSkipped: true
       saveInXlvals: true
       default: default
-      description: Select the type of the Image Registry to use for pulling all images required for the installation.
+      description: |
+        Select the type of the Image Registry to use for pulling all images required for the installation.
+        When selecting a custom image registry, all prerequisite images need to be available in the image registry. 
     - name: IsCustomImageRegistry
       type: Confirm
       saveInXlvals: true
@@ -73,7 +75,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy server image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: xl-deploy
-      description: Enter the Deploy server image name to use
+      description: Enter the Deploy server image name to use. Choose the default value, unless using a custom image with different name.
     - name: ImageNameRelease
       type: Input
       saveInXlvals: true
@@ -82,7 +84,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Release image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: xl-release
-      description: Enter the Release server image name to use
+      description: Enter the Release server image name to use. Choose the default value, unless using a custom image with different name.
     - name: ImageTagRelease
       type: Input
       saveInXlvals: true
@@ -90,7 +92,10 @@ spec:
       overrideDefault: true
       promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Release application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Release application server image tag to use. The default value is the latest version. The available versions can be seen from docker hub repository tags for the image.
+      description: |
+        Enter the Release application server image tag to use. The default value is the latest version.
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/xl-release/tags      
     - name: ImageTagDeploy
       type: Input
       saveInXlvals: true
@@ -98,7 +103,12 @@ spec:
       overrideDefault: true
       promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Deploy application server image tag to use. The default value is the latest version. The available versions can be seen from docker hub repository tags for the image.
+      description: |
+        Enter the Deploy application server image tag to use. The default value is the latest version. 
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/xl-deploy/tags
+        https://hub.docker.com/r/xebialabs/deploy-task-engine/tags
+        https://hub.docker.com/r/xebialabs/central-configuration/tags
     - name: ImageNameDeployTaskEngine
       type: Input
       saveInXlvals: true
@@ -107,7 +117,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy task engine image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: deploy-task-engine
-      description: Enter the Deploy task engine image name to use
+      description: Enter the Deploy task engine image name to use. Choose the default value, unless using a custom image with different name.
     - name: ImageNameCc
       type: Input
       saveInXlvals: true
@@ -116,7 +126,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Central Configuration image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: central-configuration
-      description: Enter the Central Configuration image name to use
+      description: Enter the Central Configuration image name to use. Choose the default value, unless using a custom image with different name.
     - name: LicenseSource
       type: Select
       options:
@@ -131,7 +141,9 @@ spec:
       overrideDefault: true
       prompt: "Select source of the license:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Provide source of the license file. Using generate option, the license is a temporary evaluation license and should not be used for production. The license file/content can be plain text or base64 encoded."
+      description: |
+        Provide source of the license file. Using generate option, the license is a temporary evaluation license
+        and should not be used for production. The license file/content can be plain text or base64 encoded.
       default: generate
     - name: LicenseEditor
       type: Editor
@@ -179,7 +191,7 @@ spec:
       validate: !expr "regex('^([0-9])+(\\.)?([0-9])*$', PvcSizeDeploy)"
     - name: AccessModeDeploy
       type: Select
-      prompt: "Select between supported Access Modes for the Deploy pods:"
+      prompt: "Select between supported Access Modes for the Deploy application pods:"
       options:
         - label: ReadWriteOnce
           value: ReadWriteOnce
@@ -189,7 +201,11 @@ spec:
       ignoreIfSkipped: true
       saveInXlvals: true
       default: ReadWriteOnce
-      description: Select between supported Access Modes to define if the volume can be mounted as read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany). For all Deploy pods ReadWriteOnce access mode is enough, the pods are not sharing the volumes.
+      description: |
+        Select between supported Access Modes to define if the volume can be mounted as 
+        read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany).
+        For all Deploy pods ReadWriteOnce access mode is enough, the pods are not sharing the volumes.
+        Note, the same access mode will apply to Deploy task engine and Central configuration also.
     - name: EnableSCC
       type: Confirm
       saveInXlvals: true
@@ -198,7 +214,9 @@ spec:
       default: false
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Do you want to enable Security Context Constraints (SCCs)?"
-      description: "Security Context Constraints are disabled by default. If you are upgrading from a setup that had SCCs enabled, select 'yes' or configure them manually to avoid pod failures."
+      description: |
+        Security Context Constraints are disabled by default for openshift. If you are upgrading from a setup that had SCCs enabled,
+        select 'yes' or configure them manually to avoid pod failures.
     - name: XldWorkerCount
       type: Input
       saveInXlvals: true
@@ -251,7 +269,11 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       default: ReadWriteMany
-      description: Select between supported Access Modes to define if the volume can be mounted as read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany). For the Release pods if you plan to use multiple pods on different nodes use ReadWriteMany, the pods are sharing volumes.
+      description: |
+        Select between supported Access Modes to define if the volume can be mounted as
+        read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany).
+        For the Release pods if you plan to use multiple pods on different nodes use ReadWriteMany,
+        since the pods are sharing volumes.
     - name: StorageClass
       type: Select
       options:
@@ -276,7 +298,17 @@ spec:
       overrideDefault: true
       prompt: "Select source of the resource values (CPU and memory):"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Provide source of the resources (CPU and memory) requests and limits values for various containers. This selection will be used for specifying resources for all the installation components. You can choose to enter the resources values either as a preset or define the custom resources values through the editor. If none is selected, resources will not be specified and will need to be done manually. Based on the selection, the resource values are prompted during installation. For example, if you select a preset, the following prompts for resource values will follow the preset configuration. Similarly, if you select custom resource values, the prompts will be based on the custom editor settings."
+      description: |
+        Provide source of the resources (CPU and memory) requests and limits values for various containers.
+        This type will be used for specifying resources for all the installation components.
+        You can choose to enter the resources values either as a preset, where we choose from a
+        predefined set of values or specify in editor the custom resource values for requests and limits.
+        If none is selected, resources will not be specified and will need to be done manually.
+        For example, if you select preset, the following prompts for specifying resource values
+        will use the preset configurations. Similarly, if you select custom resource values, the 
+        following prompts will use editor for specifying the custom resource values. If you choose
+        none, there will no prompts for specifying resources.
+        Note: In production, its recommended to have resource values specified through any of the options. 
       default: none
     - name: ResourcesPresetDeploy
       type: Select
@@ -322,7 +354,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Deploy master:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Deploy master"
+      description: "Provide resource allocation (requests and limits values) for Deploy master"
       default: !expr DefaultResourcesEditor
     - name: ResourcesPresetDeployCc
       type: Select
@@ -347,7 +379,7 @@ spec:
       prompt: "Select one of the predefined resource values for Central Configuration:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "preset"
       description: "Select one of the predefined resource values for Central Configuration"
-      default: nano         
+      default: nano
     - name: ResourcesEditorDeployCc
       type: Editor
       saveInXlvals: true
@@ -355,7 +387,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Central Configuration:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Central Configuration"
+      description: "Provide resource allocation (requests and limits values) for Central Configuration"
       default: !expr DefaultResourcesEditor
     - name: ResourcesPresetDeployTaskEngine
       type: Select
@@ -388,7 +420,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for the Deploy worker:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Deploy worker"
+      description: "Provide resource allocation (requests and limits values) for Deploy worker"
       default: !expr DefaultResourcesEditor
     - name: ResourcesPresetRelease
       type: Select
@@ -421,7 +453,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Release server:"
       promptIf: !expr ServerType == 'dai-release' && ProcessType == "install" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Release server"
+      description: "Provide resource allocation (requests and limits values) for Release server"
       default: !expr DefaultResourcesEditor
     - name: HttpProtocolRelease
       type: Select
@@ -438,7 +470,12 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      description: Select the protocol, for https and https2 you will need to provide the secret with key, or you will use autogenerated self-signed key
+      description: |
+        Select the application backend protocol. Ingress will connect using this backend protocol.
+        When selecting https or http2, ssl is enabled for the application server. 
+        And you will need to provide the ssl keystore with key, either through file, editor,
+        kubernetes secret in the same namespace. Or you will need to use an autogenerated self-signed key.
+        Note: This is only for the application server. The protocol for ingress will be selected later.
     - name: HttpProtocolDeploy
       type: Select
       options:
@@ -452,7 +489,12 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      description: Select the protocol, for https and https2 you will need to provide the secret with key, or you will use autogenerated self-signed key
+      description: |
+        Select the application backend protocol. Ingress will connect using this backend protocol.
+        When selecting https, ssl is enabled for the application server.
+        And you will need to provide the ssl keystore with key, either through file, editor,
+        kubernetes secret in the same namespace. Or you will need to use autogenerated self-signed key.
+        Note: This is only for the application server. The protocol for ingress will be selected later.
     - name: ApplicationKeystoreSource
       type: Select
       options:
@@ -469,7 +511,15 @@ spec:
       overrideDefault: true
       prompt: "Select source of the HTTPS keystore for the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
-      description: "Provide source of the HTTPS keystore in PKCS12 or JKS format"
+      description: |
+        Provide source of the HTTPS keystore in PKCS12 or JKS format. The keystore should contain the server certificate and private key. 
+        When selecting 'generate', a self-signed key will be generated for the server.
+        If you want to use your own keystore, select 'file' or 'editor' or 'secret'. Use openssl or keytool to create the keystore.
+        When selecting 'file', provide the path to the keystore file.
+        When selecting 'editor', provide the keystore content in base64 encoded format. 
+        When selecting 'secret', provide the generic secret name with the HTTPS keystore for the application server.
+        eg. `kubectl create secret generic app-tls-secret --from-file=ssl-keystore.p12=ssl-keystore.p12 -n digitalai`
+        And make sure the secret is already created in the same namespace.
       default: "generate"
       validate: !expr "ApplicationKeystoreSource == 'secret' ? length(k8sResources(Namespace, 'secrets')) > '0' : true"
     - name: ApplicationKeystoreEditor
@@ -479,7 +529,7 @@ spec:
       overrideDefault: true
       prompt: "Provide HTTPS keystore for the server:"
       promptIf: !expr "ServerType != 'dai-release-runner' && ProcessType == 'install' && ApplicationKeystoreSource == 'editor'"
-      description: "Provide HTTPS keystore for the server in pkcs12 format, generated with openssl"
+      description: "Provide HTTPS keystore for the server in jks or pkcs12 format"
       default: ""
     - name: ApplicationKeystoreFile
       type: Input
@@ -513,7 +563,7 @@ spec:
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      description: Provide the HTTPS keystore for the application server
+      description: Provide the application server HTTPS keystore
       value: !expr "ApplicationKeystoreSource == 'editor' ? ifBase64(ApplicationKeystoreEditor) : ifBase64(ifFileReadBytes(ApplicationKeystoreFile))"
       default: ""
     - name: ApplicationKeystoreType
@@ -526,7 +576,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       prompt: "Provide the application server HTTPS keystore format:"
-      description: Provide the HTTPS keystore type for the application server
+      description: Provide the application server HTTPS keystore type
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
       default: "pkcs12"
     - name: ApplicationKeystorePassword
@@ -537,7 +587,7 @@ spec:
       overrideDefault: true
       prompt: "Provide the server HTTPS keystore password:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
-      description: HTTPS keystore passphrase for the server
+      description: Passphrase for the application server HTTPS keystore
       default: !expr "ApplicationKeystoreSource == 'generate' ? randPassword() : ''"
     - name: IngressTypeGeneric
       type: Select
@@ -554,7 +604,9 @@ spec:
       promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
       default: nginx
-      description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
+      description: |
+        Select between supported ingress types. If None is selected, the application will not be exposed
+        and therefore will not be accessible from the browser.
       validate: !expr "regex('.*external.*', IngressTypeGeneric) ? length(k8sResources(Namespace, 'ingressclasses')) > '0' : true"
     - name: IngressTypeOpenshift
       type: Select
@@ -573,14 +625,18 @@ spec:
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
       default: route
-      description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
+      description: |
+        Select between supported ingress types. or just use Openshift Route which is supported by default in openshift.
+        If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
       validate: !expr "regex('.*external.*', IngressTypeOpenshift) ? length(k8sResources(Namespace, 'ingressclasses')) > '0' : true"
     - name: IngressType
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       value: !expr "regex('^Openshift.*', K8sSetup) ? IngressTypeOpenshift : IngressTypeGeneric"
-      description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
+      description: |
+        Select between supported ingress types. If None is selected, the application will not be exposed
+        and therefore will not be accessible from the browser.
     - name: NginxResourcesPreset
       type: Select
       options:
@@ -612,7 +668,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Nginx ingress:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "nginx" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Nginx ingress"
+      description: "Provide resource allocation (requests and limits values) for Nginx ingress"
       default: !expr DefaultResourcesEditor
     - name: HAProxyResourcesEditor
       type: Editor
@@ -621,7 +677,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for HAProxy ingress:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "haproxy" && ResourcesSource != "none"
-      description: "Provide resource allocation for HAProxy ingress"
+      description: "Provide resource allocation (requests and limits values) for HAProxy ingress"
       default: !expr DefaultResourcesEditor
     - name: ExternalIngressClass
       type: Select
@@ -646,7 +702,10 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      description: Select the ingress protocol, for https you will need to provide the secret with key, or you will use autogenerated self-signed key
+      description: |
+        Select the ingress protocol, for https you will need to provide the ssl keystore with key,
+        or you will need to use autogenerated self-signed key. 
+        Refer documentation on 'Configure SSL/TLS in kubernetes environment' for more details.
     - name: IngressKeystoreSourceGeneric
       type: Select
       options:
@@ -661,7 +720,11 @@ spec:
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
       promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != 'http'"
-      description: "Provide source of the ingress keystore"
+      description: |
+        Provide source of the ingress keystore. 
+        If you select secret, provide the tls secret.
+        Like `kubectl create secret tls ingress-tls-secret --key=server.key --cert=server.crt`
+        If you select passthrough, the traffic will be passed onto the backend for ssl decryption.
       default: "generate"
       validate: !expr "IngressKeystoreSourceGeneric == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceGeneric == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
     - name: IngressKeystoreSourceHaproxy
@@ -676,7 +739,10 @@ spec:
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
       promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType == 'haproxy' && HttpProtocolIngress != 'http'"
-      description: "Provide source of the ingress keystore"
+      description: |
+        Provide source of the ingress keystore.
+        If you select secret, provide the tls secret.
+        Like `kubectl create secret tls ingress-tls-secret --key=server.key --cert=server.crt`
       default: "generate"
       validate: !expr "IngressKeystoreSourceHaproxy == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : true"
     - name: IngressKeystoreSourceOpenshiftHttp
@@ -695,7 +761,11 @@ spec:
       overrideDefault: true
       prompt: "Select source of the keystore for the route:"
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease == 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')"
-      description: "Provide source of the ingress keystore"
+      description: |
+        Provide source of the ingress keystore.
+        If you select default, the route will use its default certificate.
+        If you select secret, provide the tls secret.
+        Like `kubectl create secret tls ingress-tls-secret --key=server.key --cert=server.crt`
       default: "default"
       validate: !expr "IngressKeystoreSourceOpenshiftHttp == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttp == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
     - name: IngressKeystoreSourceOpenshiftHttps
@@ -730,7 +800,9 @@ spec:
       overrideDefault: true
       prompt: "Provide DNS name for accessing UI of the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (IngressType != "none" || ServerType == 'dai-release')
-      description: "Provide DNS name for accessing UI of the server. For OpenShift, this is used with Routing, while for other providers this is set up only when Ingress is used."
+      description: |
+        Provide DNS name for accessing UI of the server. For OpenShift, this is used with Routing,
+        while for other providers this is set up only when Ingress is used.
       validate: !expr "regex('^[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}$', IngressHost)"
     - name: HttpsProtocol
       type: Confirm
@@ -739,7 +811,9 @@ spec:
       overrideDefault: true
       prompt: "The access to the Release host will be secured externally with HTTPS protocol:"
       promptIf: !expr ServerType == 'dai-release' && ProcessType == "install" && IngressType == "none" && HttpProtocolRelease == "http"
-      description: "Select true if the HTTPS protocol will be used that is setup somewhere externally, the server URL will start with https"
+      description: |
+        Select true if the HTTPS protocol will be used that is setup somewhere externally,
+        the server URL will start with https.
     - name: IngressTlsSecretName
       type: Select
       options:
@@ -749,7 +823,7 @@ spec:
       overrideDefault: true
       prompt: "Provide the TLS secret name with the key and certificate:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType != "none" && HttpProtocolIngress != "http" && IngressKeystoreSource == "secret"
-      description: Provide the TLS secret name with the key and certificate
+      description: Provide the TLS secret name with the key and certificate which was created earlier.
     - name: AdminPassword
       type: Input
       saveInXlvals: true
@@ -772,7 +846,8 @@ spec:
       overrideDefault: true
       prompt: "Type of the OIDC configuration:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: Provide the type of the OIDC configuration
+      description: |
+        Provide the type of the OIDC configuration. Based on the type, you will be providing the OIDC configuration.
       default: no-oidc
     - name: OidcConfigTypeUpgrade
       type: Select
@@ -790,7 +865,9 @@ spec:
       overrideDefault: true
       prompt: "Type of the OIDC configuration:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "upgrade"
-      description: Provide the type of the OIDC configuration
+      description: |
+        Provide the type of the OIDC configuration. Based on the type, you will be providing the OIDC configuration
+        or using the existing OIDC configuration.
       default: existing
     - name: OidcConfigType
       type: Input
@@ -904,7 +981,7 @@ spec:
       prompt: "Enter the operator image to use (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       default: deploy-operator
-      description: Enter the Deploy operator image to use
+      description: Enter the Deploy operator image to use. Choose the default value, unless using a custom image with different name.
     - name: OperatorImageRelease
       type: Input
       saveInXlvals: true
@@ -913,7 +990,7 @@ spec:
       prompt: "Enter the operator image to use (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       default: release-operator
-      description: Enter the Release operator image to use
+      description: Enter the Release operator image to use. Choose the default value, unless using a custom image with different name.
     - name: OperatorImageTagRelease
       type: Input
       saveInXlvals: true
@@ -921,7 +998,10 @@ spec:
       overrideDefault: true
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Release operator image tag to use. The default is the latest tag. The available versions can be seen from docker hub repository tags for the image.
+      description: | 
+        Enter the Release operator image tag to use. The default is the latest tag.
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/release-operator/tags
     - name: OperatorImageTagDeploy
       type: Input
       saveInXlvals: true
@@ -929,7 +1009,10 @@ spec:
       overrideDefault: true
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Deploy operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Deploy operator image tag to use. The default is the latest tag. The available versions can be seen from docker hub repository tags for the image.
+      description: | 
+        Enter the Deploy operator image tag to use. The default is the latest tag. 
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/deploy-operator/tags
     - name: RepositoryKeystoreSource
       type: Select
       options:
@@ -946,7 +1029,11 @@ spec:
       overrideDefault: true
       prompt: "Select source of the repository keystore:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Provide source of the repository keystore file"
+      description: |
+        Provide source of the repository keystore file.
+        Selecting generate will create a new repository keystore.
+        Selecting file and editor option will require to input the repository keystore.
+        Selecting default option will use the default internal repository keystore.
       default: generate
     - name: RepositoryKeystoreEditor
       type: Editor
@@ -964,7 +1051,9 @@ spec:
       overrideDefault: true
       prompt: "Provide repository keystore for the server:"
       promptIf: !expr "ProcessType == 'install' && RepositoryKeystoreSource == 'file'"
-      description: "Provide repository keystore for the server, generated with: `keytool -genseckey -alias deployit-passsword-key -keyalg aes -keysize 128 -keypass deployit -keystore repository-keystore.jceks -storetype jceks -storepass <KeystorePassphrase>`"
+      description: |
+        Provide repository keystore for the server, generated with:
+        `keytool -genseckey -alias deployit-passsword-key -keyalg aes -keysize 128 -keypass deployit -keystore repository-keystore.jceks -storetype jceks -storepass <KeystorePassphrase>`
       validate: !expr "isFile(RepositoryKeystoreFile)"
       default: ""
     - name: RepositoryKeystore
@@ -980,7 +1069,7 @@ spec:
       overrideDefault: true
       prompt: "Provide repository keystore passphrase:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && RepositoryKeystoreSource != 'default'
-      description: Repository keystore passphrase for the server
+      description: Enter the Repository keystore passphrase
       default: !expr "RepositoryKeystoreSource == 'generate' ? randPassword() : ''"
     - name: EnablePostgresql
       type: Confirm
@@ -990,7 +1079,10 @@ spec:
       overrideDefault: true
       prompt: "Do you want to install a new PostgreSQL on the cluster:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Select 'yes' to install a new PostgreSQL instance using the subchart, or 'no' to configure an existing supported database instance. If you enter No, you will need to provide connection parameters of external database, check #Using an Existing PostgreSQL Database# section in the documentation."
+      description: |
+        Select 'yes' to install a new PostgreSQL instance using the subchart, or 'no' to configure
+        an existing supported database instance. If you enter No, you will need to provide connection
+        parameters of external database, check 'Using an Existing PostgreSQL Database' section in the documentation.
     - name: PostgresqlStorageClass
       type: Select
       options:
@@ -1000,7 +1092,9 @@ spec:
       overrideDefault: true
       prompt: "Provide Storage Class to be defined for PostgreSQL:"
       promptIf: !expr ProcessType == "install" && EnablePostgresql
-      description: Provide Storage Class to be defined for PostgreSQL that should be available in the cluster. The storage class needs to support minimally ReadWriteOnce access mode.
+      description: |
+        Provide Storage Class to be defined for PostgreSQL that should be available in the cluster.
+        The storage class needs to support minimally ReadWriteOnce access mode.
     - name: PostgresqlPvcSize
       type: Input
       saveInXlvals: true
@@ -1042,7 +1136,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Postgresql:"
       promptIf: !expr ProcessType == "install" && EnablePostgresql && ResourcesSource == "editor"
-      description: "Provide resource allocation for Postgresql"
+      description: "Provide resource allocation (requests and limits values) for Postgresql"
       default: !expr DefaultResourcesEditor
     - name: PostgresqlExternalConfigRelease
       type: Editor
@@ -1051,7 +1145,9 @@ spec:
       overrideDefault: true
       prompt: "Edit database external setup:"
       promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && EnablePostgresql == false"
-      description: Setup the PostgreSQL external parameters (JDBC URL, username, password)
+      description: |
+        Setup the external DB parameters (such as JDBC URL, DB username, DB password).
+        Any of the supported external DB can be used. Modify the jdbc url accordingly.
       default: |-
         main:
           url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
@@ -1072,7 +1168,9 @@ spec:
       overrideDefault: true
       prompt: "Edit database external setup:"
       promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && EnablePostgresql == false"
-      description: Setup the PostgreSQL external parameters (JDBC URL, username, password)
+      description: |
+        Setup the external DB parameters (such as JDBC URL, DB username, DB password).
+        Any of the supported external DB can be used. Modify the jdbc url accordingly.
       default: |-
         main:
           url: jdbc:postgresql://<xld-db-host>:5432/<xld-database-name>
@@ -1094,7 +1192,10 @@ spec:
       overrideDefault: true
       prompt: "Do you want to install a new RabbitMQ on the cluster:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Select 'yes' to install a new RabbitMQ instance using the subchart, or 'no' to configure an existing supported MQ instance.If you enter No, you will need to provide connection parameters for the Deploy, check #Using an Existing Message Queue# section in the documentation."
+      description: |
+        Select 'yes' to install a new RabbitMQ instance using the subchart or 'no' to configure an 
+        existing supported MQ instance. If you enter No, you will need to provide connection parameters
+        for the MQ instance. check 'Using an Existing Message Queue' section in the documentation.
     - name: RabbitmqReplicaCount
       type: Input
       saveInXlvals: true
@@ -1115,7 +1216,9 @@ spec:
       prompt: "Storage Class to be defined for RabbitMQ:"
       default: !expr StorageClass
       promptIf: !expr "ProcessType == 'install' && EnableRabbitmq"
-      description: Storage Class to be defined for RabbitMQ. The storage class needs to support minimally ReadWriteOnce access mode.
+      description: |
+        Storage Class to be defined for RabbitMQ.
+        The storage class needs to support minimally ReadWriteOnce access mode.
     - name: RabbitmqPvcSize
       type: Input
       saveInXlvals: true
@@ -1157,7 +1260,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Rabbitmq:"
       promptIf: !expr ProcessType == "install" && EnableRabbitmq && ResourcesSource == "editor"
-      description: "Provide resource allocation for Rabbitmq"
+      description: "Provide resource allocation (requests and limits values) for Rabbitmq"
       default: !expr DefaultResourcesEditor
     - name: RabbitmqExternalConfigRelease
       type: Editor
@@ -1166,7 +1269,9 @@ spec:
       overrideDefault: true
       prompt: "Edit RabbitMQ external setup:"
       promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && EnableRabbitmq == false"
-      description: Setup the RabbitMQ external parameters
+      description: |
+        Setup the external RabbitMQ or ActiveMQ parameters (such as queue url, queue name, credentials).
+        Any of the supported external MQ can be used. Modify the connector accordingly.
       default: |-
         url: <queue-url>
         queueName: <queue-name>
@@ -1182,7 +1287,9 @@ spec:
       overrideDefault: true
       prompt: "Edit RabbitMQ external setup:"
       promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && EnableRabbitmq == false"
-      description: Setup the RabbitMQ external parameters
+      description: |
+        Setup the external RabbitMQ or ActiveMQ parameters (such as queue url, queue name, credentials).
+        Any of the supported external MQ can be used. Modify the driver class accordingly.
       default: |-
         url: <queue-url>
         queueName: <queue-name>
@@ -1228,7 +1335,32 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'upgrade'"
       saveInXlvals: true
       ignoreIfSkipped: true
-      description: "For all matched expressions in the cluster CR, the values will be migrated to the upgraded Deploy CR"
+      description: |
+        For all matched expressions in the cluster CR, the values will be migrated to the upgraded CR.
+        The keys present here are the paths in the new CR, which will be preserved from cluster CR
+        of earlier installed version.
+        These values will be migrated by moving values to new or same CR keys by matching old CR keys
+        in the format given below.
+        
+        In the example snippet:
+        ```
+        .metadata.name: .         # 1 Represents the same path in the upgraded new version CR
+        ```
+        1. The value . for a key represents the same path. This mapping defines that value from old 
+        version CR value under that path will be copied to the new version CR under the same path.
+        
+        In the example snippet:
+        ```
+        .spec.auth.adminPassword:   # Represents the path in the upgraded new version CR
+          0.0: .spec.AdminPassword  # 2 Matching path in the cluster CR (for version earlier than 23.3)
+          23.3: .                   # 3 Matching path in the cluster CR (for version from 23.3 onwards)
+        ```
+        2. The value for 0.0 represents the path in cluster CR before upgrade. This mapping defines that 
+        value from old version CR from cluster will be copied to the new version CR in the parent path of 0.0.
+        3. The value for 23.3 represents the path in cluster CR before upgrade. This mapping defines that
+        value from old version CR from cluster will be copied to the new version CR in the parent path of 23.3.
+        
+        Refer section 'Custom resource keys migration during upgrade' in the documentation for more details.
       default: |-
         .metadata.name: .
         .spec.centralConfiguration.persistence.storageClass:
@@ -1460,7 +1592,32 @@ spec:
       promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'upgrade'"
       saveInXlvals: true
       ignoreIfSkipped: true
-      description: For all matched expressions in the cluster CR, the values will be migrated to the upgraded Release CR
+      description: |
+        For all matched expressions in the cluster CR, the values will be migrated to the upgraded CR.
+        The keys present here are the paths in the new CR, which will be preserved from cluster CR
+        of earlier installed version.
+        These values will be migrated by moving values to new or same CR keys by matching old CR keys
+        in the format given below.
+        
+        In the example snippet:
+        ```
+        .metadata.name: .         # 1 Represents the same path in the upgraded new version CR
+        ```
+        1. The value . for a key represents the same path. This mapping defines that value from old 
+        version CR value under that path will be copied to the new version CR under the same path.
+        
+        In the example snippet:
+        ```
+        .spec.auth.adminPassword:   # Represents the path in the upgraded new version CR
+          0.0: .spec.AdminPassword  # 2 Matching path in the cluster CR (for version earlier than 23.3)
+          23.3: .                   # 3 Matching path in the cluster CR (for version from 23.3 onwards)
+        ```
+        2. The value for 0.0 represents the path in cluster CR before upgrade. This mapping defines that 
+        value from old version CR from cluster will be copied to the new version CR in the parent path of 0.0.
+        3. The value for 23.3 represents the path in cluster CR before upgrade. This mapping defines that
+        value from old version CR from cluster will be copied to the new version CR in the parent path of 23.3.
+        
+        Refer section 'Custom resource keys migration during upgrade' in the documentation for more details.
       default: |-
         .metadata.name: .
         .spec.persistence.storageClass:
@@ -1659,7 +1816,11 @@ spec:
       overrideDefault: true
       promptIf: !expr ServerType == 'dai-release' && ProcessType == 'install'
       prompt: "Install Digital.ai Release Runner:"
-      description: "Type yes to install Digital.ai Release Runner. The installation will start after Release is ready on the cluster."
+      description: |
+        Selecting no-install will skip the Release Runner installation. 
+        Selecting local-install will install Release Runner from the local.
+        Selecting cluster-install will install Release Runner from the cluster.
+        The installation will start after Release is ready on the cluster."
     - name: RemoteRunnerInstall
       type: Confirm
       saveInXlvals: true
@@ -1692,7 +1853,10 @@ spec:
       overrideDefault: true
       promptIf: !expr "RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release Runner image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Release Runner image tag to use
+      description: |
+        Enter the Release Runner image tag to use. The default value is the latest version. 
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/release-runner/tags
     - name: RemoteRunnerReleaseName
       type: Input
       saveInXlvals: true
@@ -1708,7 +1872,7 @@ spec:
       saveInXlvals: true
       promptIf: !expr RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Use default version of the Release Runner helm chart:"
-      description: "Type yes to use default internal version of the Release Runner helm chart, in other way you need to provide path to the helm chart."
+      description: "Type yes to use default internal version of the Release Runner helm chart, else you need to provide path to the helm chart."
     - name: RemoteRunnerHelmChartUrl
       type: Input
       saveInXlvals: true
@@ -1741,7 +1905,9 @@ spec:
       overrideDefault: true
       prompt: "Provide release-runner user email (for the user on the Release to send PAT expiration notifications):"
       promptIf: !expr RemoteRunnerInstall && ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      description: release-runner user is user on the Release, that will be used to generate Personal Access Token. The email will be used to send PAT expiration notifications.
+      description: |
+        release-runner user is user on the Release, that will be used to generate Personal Access Token.
+        The email will be used to send PAT expiration notifications.
       default: "release-runner@no.reply"
     - name: RemoteRunnerUserPassword
       type: Input
@@ -1792,7 +1958,10 @@ spec:
       saveInXlvals: true
       promptIf: !expr RemoteRunnerInstall && ServerType == 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enable truststore for Release Runner:"
-      description: "Type yes to setup truststore for Release Runner"
+      description: |
+        Type yes to setup truststore for Release Runner. Will be required when Release Runner connects 
+        with Release over ssl connection. The certificates will be used to establish a secure connection
+        to the Release.
     - name: RemoteRunnerRestClientCa
       type: Editor
       saveInXlvals: true
@@ -1801,7 +1970,9 @@ spec:
       overrideDefault: true
       prompt: "Provide base64 encoded cert in pem format:"
       promptIf: !expr IsRemoteRunnerTruststoreEnabled && RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')
-      description: The Release Runner trusted certificates in pem format.
+      description: |
+        The Release Runner trusted certificates in pem format. Add the certificate of Release.
+        Use openssl command to convert the certificate to pem format.
       default: ""
     - name: RemoteRunnerClean
       type: Confirm
