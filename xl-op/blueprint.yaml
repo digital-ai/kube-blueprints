@@ -1894,3 +1894,6 @@ spec:
     - path: digitalai/dai-release-runner/create-release-runner-user.yaml.tmpl
       writeIf: !expr RemoteRunnerInstall && ServerType != 'dai-release-runner' || ServerType == 'dai-release-runner' && RemoteRunnerInstallType == 'cluster-install'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/create-release-runner-user.yaml.tmpl'"
+    - path: digitalai/dai-release-runner/openshift-scc-release-runner.yaml.tmpl
+      writeIf: !expr EnableSCC && regex('^Openshift.*', K8sSetup) && ((RemoteRunnerInstall && ServerType != 'dai-release-runner') || (ServerType == 'dai-release-runner' && RemoteRunnerInstallType == 'cluster-install'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-release-runner.yaml.tmpl'"
