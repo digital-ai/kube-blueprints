@@ -25,7 +25,9 @@ spec:
         - label: Google Kubernetes Engine
           value: GoogleGKE
       saveInXlvals: true
-      description: The flavour of Kubernetes to deploy or undeploy the Digital.ai Devops Platform to. Only the listed options are supported.
+      description: |
+        The flavour of Kubernetes to deploy or undeploy the Digital.ai Devops Platform to.
+        Only the listed options are supported. You must have your cluster ready.
     - name: OsType
       type: Input
       prompt: "The type of operating system where the xl command is running:"
@@ -38,13 +40,16 @@ spec:
       overrideDefault: true
       prompt: "The type of process command is running:"
       saveInXlvals: true
+      description: "The type of process command which is running. Such as install, upgrade or clean."
 
     - name: UseCustomNamespace
       type: Confirm
       default: false
       saveInXlvals: true
-      prompt: "Do you want to use an custom Kubernetes namespace (current default is 'digitalai'):"
-      description: "Type yes to use a namespace, not 'digitalai', in your kubernetes cluster for doing an install, update or clean of the Digital.ai Devops Platform."
+      prompt: "Do you want to use a custom Kubernetes namespace (Yes, to use a custom namespace other than the default which is 'digitalai'):"
+      description: |
+        Type yes to use a custom namespace, which is not 'digitalai', in your kubernetes cluster
+        for doing an install, update or clean of the Digital.ai Devops Platform.
 
     - name: Namespace
       type: Input
@@ -62,7 +67,9 @@ spec:
       saveInXlvals: true
       promptIf: !expr "ProcessType != 'clean' && k8sResource(Namespace, 'namespace', Namespace) == ''"
       prompt:  !expr "'Do you want to create custom Kubernetes namespace ' + Namespace + ', it does not exist:'"
-      description: "Type yes to create a namespace in your kubernetes cluster."
+      description: |
+        Always Type yes to create a namespace in your kubernetes cluster. since the namespace does not already exist. 
+        And setup can proceed only if namespace is created. 
 
     - name: ServerType
       type: Select
@@ -94,6 +101,7 @@ spec:
       overrideDefault: true
       prompt: "Should clean occur before the apply files to cluster:"
       saveInXlvals: true
+      description: !expr "'Select yes to clean the existing setup before applying the files to the cluster.'"
 
     - name: UpgradeType
       type: Select
