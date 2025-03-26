@@ -4,5 +4,5 @@ ImageTagDeploy: 25.1.0-beta.5
 RepositoryNameRelease: xebialabsunsupported
 OperatorImageTagRelease: 25.1.0-326.256
 ImageTagRelease: 25.1.0-326.256
-RepositoryNameReleaseRunner: xebialabsearlyaccess
-ImageTagReleaseRunner: 25.1.0-beta.6
+RepositoryNameReleaseRunner: xebialabsunsupported
+ImageTagReleaseRunner: 25.1.0-326.256
