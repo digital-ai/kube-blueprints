@@ -4,7 +4,6 @@ import {
   extractPlatform,
   processExprField,
   processExprFieldWithConcatenation,
-  processFieldPromptIf,
   pascalCaseToWords,
 } from './field-utils.js';
 
@@ -29,12 +28,6 @@ export function generateMarkdown(parameters, outputFile) {
       processExprFieldWithConcatenation(param.prompt) || 'N/A',
     );
     markdownContent += sprintf('**Type of Prompt:** %s\n\n', param.type);
-
-    // let promptIf = param.promptIf || 'N/A';
-    // if (promptIf !== 'N/A') {
-    //   promptIf = processFieldPromptIf(promptIf, parameters);
-    // }
-    // markdownContent += sprintf('**Prompt Condition:** %s\n\n', promptIf);
 
     const platform = extractPlatform(param.promptIf || '');
     markdownContent += sprintf('**Platform:** %s\n\n', platform.join(', '));

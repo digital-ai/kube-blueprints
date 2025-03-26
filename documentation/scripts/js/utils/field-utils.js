@@ -1,5 +1,4 @@
 import nlp from 'compromise';
-import { sprintf } from 'sprintf-js';
 
 /**
  * Removes the period in the end of sentence in description for readability
@@ -101,7 +100,8 @@ export function processExprFieldWithConcatenation(field) {
 
 /**
  * Process the promptIf field to return plain english
- *
+ * Experimental: Not used
+ *  
  * @param {string} field
  * @param {Array<Object>} parameters
  * @returns {string}
