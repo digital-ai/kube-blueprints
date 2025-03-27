@@ -79,6 +79,6 @@ def getCurrentVersion() {
 }
 
 def getBranch() {
-    // on simple Jenkins pipeline job the BRANCH_NAME is not filled in, and we run it only on master
-    return env.BRANCH_NAME ? env.BRANCH_NAME.toLowerCase() : 'master'
+    // on simple Jenkins pipeline job the BRANCH_NAME is not filled in, and we run it only on 25.1.x-maintenance
+    return env.BRANCH_NAME ? env.BRANCH_NAME.toLowerCase() : '25.1.x-maintenance'
 }
