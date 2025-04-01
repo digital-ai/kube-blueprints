@@ -2,6 +2,7 @@
   {{- if eq .EnableSCC true }} 
 ---
   {{- $releaseRunnerFullName := printf "dai-ocp-%s-%s-release-%s-install-runner" .ShortServerName .Namespace .ShortServerName }}
+  {{- $releaseFullName := printf "dai-ocp-%s-%s-release" .ShortServerName .Namespace }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
@@ -32,7 +33,7 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-  - system:serviceaccount:{{ .Namespace }}:default
+  - system:serviceaccount:{{- if eq .Values.k8sSetup.platform "OpenshiftCertified" }}{{ .Namespace }}:{{ $releaseFullName }}{{- else }}{{ .Namespace }}:default{{- end }}
 volumes:
   - configMap
   - downwardAPI
