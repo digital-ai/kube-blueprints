@@ -2,9 +2,8 @@
   {{- if and .EnablePostgresql .EnableSCC }}
 ---
   {{- $postgresqlFullName := printf "dai-ocp-%s-postgresql" .ShortServerName }}
-  {{- $saName := $postgresqlFullName }}
   {{- if ne .Namespace "digitalai" }}
-    {{- $saName = printf "dai-ocp-%s-%s-postgresql" .ShortServerName .Namespace }}
+    {{- $postgresqlFullName = printf "dai-ocp-%s-%s-postgresql" .ShortServerName .Namespace }}
   {{- end }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
@@ -36,7 +35,7 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-  - system:serviceaccount:{{ .Namespace }}:{{ $saName }}
+  - system:serviceaccount:{{ .Namespace }}:{{ $postgresqlFullName }}
 volumes:
   - configMap
   - downwardAPI
