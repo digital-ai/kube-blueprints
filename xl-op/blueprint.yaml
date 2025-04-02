@@ -654,8 +654,6 @@ spec:
           value: generate
         - label: TLS Secret containing tls key and cert
           value: secret
-        - label: SSL passthrough (Cannot be chosen with backend protocol as http. It will pass the traffic to the backend without decryption. Application ssl keystore should be configured)
-          value: passthrough
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -688,8 +686,6 @@ spec:
           value: generate
         - label: TLS Secret containing tls key and cert
           value: secret
-        - label: SSL passthrough (Cannot be choosen with backend protocol as http. It will pass the traffic to the backend without decryption. Application ssl keystore should be configured)
-          value: passthrough
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
