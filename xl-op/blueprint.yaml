@@ -651,11 +651,11 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr K8sSetup != 'Openshift' && ServerType != 'dai-release-runner'&& ProcessType == "install" && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != "http"
+      promptIf: !expr K8sSetup != 'Openshift' && ServerType != 'dai-release-runner'&& ProcessType == "install" && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != "http" && ((ServerType=='dai-release' && HttpProtocolRelease != 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy != 'http'))
       description: "Provide source of the ingress keystore"
       default: "generate"
       validate: !expr "IngressKeystoreSourceGeneric == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceGeneric == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
-    - name: IngressKeystoreSourceHaproxy
+    - name: IngressKeystoreSourceNoPassthrough
       type: Select
       options:
         - label: The ingress keystore will be automatically generated with self-signed key
@@ -666,10 +666,10 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr K8sSetup != 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == 'haproxy' && HttpProtocolIngress != "http"
+      promptIf: !expr K8sSetup != 'Openshift' && ServerType != 'dai-release-runner' && ProcessType == "install" && HttpProtocolIngress != 'http' && ( IngressType == 'haproxy' || ( IngressType != 'none' && IngressType != 'haproxy' && ((ServerType == 'dai-release' && HttpProtocolRelease == 'http') || (ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')) ) )
       description: "Provide source of the ingress keystore"
       default: "generate"
-      validate: !expr "IngressKeystoreSourceHaproxy == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : true"
+      validate: !expr "IngressKeystoreSourceNoPassthrough == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : true"
     - name: IngressKeystoreSourceOpenshiftHttp
       type: Select
       options:
@@ -679,8 +679,6 @@ spec:
           value: generate
         - label: TLS Secret containing tls key and cert
           value: secret
-        - label: SSL passthrough (Cannot be choosen with backend protocol as http. It will pass the traffic to the backend without decryption. Application ssl keystore should be configured)
-          value: passthrough
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -712,7 +710,7 @@ spec:
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      value: !expr "K8sSetup == 'Openshift' ? IngressKeystoreSourceOpenshift : (IngressType == 'haproxy' ? IngressKeystoreSourceHaproxy : IngressKeystoreSourceGeneric)"
+      value: !expr "K8sSetup == 'Openshift' ? IngressKeystoreSourceOpenshift : ((IngressType == 'haproxy' || (IngressType != 'none' && IngressType != 'haproxy' && ((ServerType=='dai-release' && HttpProtocolRelease == 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy == 'http')))) ? IngressKeystoreSourceNoPassthrough : IngressKeystoreSourceGeneric)"
       description: Select between supported ingress keystore sources.
     - name: IngressHost
       type: Input
