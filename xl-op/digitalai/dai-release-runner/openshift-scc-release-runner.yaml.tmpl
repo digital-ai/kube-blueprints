@@ -1,14 +1,12 @@
 {{- if hasPrefix "Openshift" .K8sSetup }}
-  {{- if and .EnableRabbitmq .EnableSCC }}
+  {{- if eq .EnableSCC true }} 
 ---
-  {{- $rabbitmqFullName := printf "dai-ocp-%s-rabbitmq" .ShortServerName }}
-  {{- if ne .Namespace "digitalai" }}
-    {{- $rabbitmqFullName = printf "dai-ocp-%s-%s-rabbitmq" .ShortServerName .Namespace }}
-  {{- end }}
+  {{- $releaseRunnerFullName := printf "dai-ocp-%s-%s-release-%s-install-runner" .ShortServerName .Namespace .ShortServerName }}
+  {{- $releaseFullName := printf "dai-ocp-%s-%s-release" .ShortServerName .Namespace }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
-  name: {{ $rabbitmqFullName }}
+  name: {{ $releaseRunnerFullName }}
   namespace: {{ .Namespace }}
 allowHostDirVolumePlugin: false
 allowHostIPC: false
@@ -35,7 +33,7 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-  - system:serviceaccount:{{ .Namespace }}:{{ $rabbitmqFullName }}
+  - system:serviceaccount:{{- if eq .Values.k8sSetup.platform "OpenshiftCertified" }}{{ .Namespace }}:{{ $releaseFullName }}{{- else }}{{ .Namespace }}:default{{- end }}
 volumes:
   - configMap
   - downwardAPI
