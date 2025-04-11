@@ -61,9 +61,9 @@ chmod -R 777 $OUTPUT_HOST_DIR
 echo "Download latest xl-cli ${XL_CLIENT_VERSION}"
 
 curl -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
-    -o $OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin \
-    https://nexus.xebialabs.com/nexus/content/repositories/releases/com/xebialabs/xlclient/xl-client/${XL_CLIENT_VERSION}/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin
-chmod 755 $OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin
+    -o "$OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin" \
+    "https://nexus.xebialabs.com/nexus/content/repositories/releases/com/xebialabs/xlclient/xl-client/${XL_CLIENT_VERSION}/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin"
+chmod 755 "$OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin"
 
 echo "Setup versions:"
 echo "  XL_CLIENT_VERSION=$XL_CLIENT_VERSION"
