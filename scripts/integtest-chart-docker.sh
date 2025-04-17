@@ -99,25 +99,21 @@ elif [[ "$APP_TARGET" = "aws" && "$4" == "withLogin" ]]; then
 
     if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" || -z "$AWS_REGION" || -z "$AWS_CLUSTER_NAME" || -z "$AWS_SESSION_TOKEN" ]]; then
         echo "AWS environment variables are not set. Please set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION and AWS_CLUSTER_NAME."
-        exit 1
+        # exit 1
     fi
     echo "Auth to $APP_TARGET"
 
     docker run --rm \
-        -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-        -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
         -e AWS_REGION=$AWS_REGION \
         -e AWS_CLUSTER_NAME=$AWS_CLUSTER_NAME \
-        -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
-        -e K8S_AUTH_TOKEN=$TOKEN \
         -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
         -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
         -u $(id -u):$(id -g) \
         amazon/aws-cli:latest \
-        eks --region $AWS_REGION update-kubeconfig --name $AWS_CLUSTER_NAME
-    TOKEN=$(aws eks get-token --region $AWS_REGION --cluster-name $AWS_CLUSTER_NAME --output json | jq -r '.status.token')
-    kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-credentials kuttl-user --token=$TOKEN
-    kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-context --current --user=kuttl-user
+        eks --region $AWS_REGION update-kubeconfig --name $AWS_CLUSTER_NAME --alias kuttl-user
+    # TOKEN=$(aws eks get-token --region $AWS_REGION --cluster-name $AWS_CLUSTER_NAME --query 'status.token' --output text)
+    # kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-credentials kuttl-user --token=$TOKEN
+    # kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-context --current --user=kuttl-user
 
 elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
    echo "Setting up for Azure"
