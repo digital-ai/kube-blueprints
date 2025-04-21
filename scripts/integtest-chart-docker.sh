@@ -89,7 +89,7 @@ if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
     docker login -u="$REDHAT_REGISTRY_SA" -p="$REDHAT_REGISTRY_SA_TOKEN" registry.redhat.io
     docker run --rm \
         -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+        -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
         -u $(id -u):$(id -g) \
         registry.redhat.io/openshift4/ose-cli:latest \
         oc login $REDHAT_OC_URL --username $REDHAT_OC_LOGIN --password $REDHAT_OC_PASSWORD
@@ -107,13 +107,20 @@ elif [[ "$APP_TARGET" = "aws" && "$4" == "withLogin" ]]; then
         -e AWS_REGION=$AWS_REGION \
         -e AWS_CLUSTER_NAME=$AWS_CLUSTER_NAME \
         -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+        -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
         -u $(id -u):$(id -g) \
         amazon/aws-cli:latest \
         eks --region $AWS_REGION update-kubeconfig --name $AWS_CLUSTER_NAME --alias kuttl-user
     # TOKEN=$(aws eks get-token --region $AWS_REGION --cluster-name $AWS_CLUSTER_NAME --query 'status.token' --output text)
     # kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-credentials kuttl-user --token=$TOKEN
     # kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-context --current --user=kuttl-user
+
+    if [[ $? -eq 0 ]]; then
+        echo "AWS EKS login succeeded."
+    else
+        echo "AWS EKS login failed. Please check your configuration and try again."
+        exit 1
+    fi
 
 elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
    echo "Setting up for Azure"
@@ -128,7 +135,7 @@ elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
        -e AZURE_USER=$AZURE_USER \
        -e AZURE_PASSWORD=$AZURE_PASSWORD \
        -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-       -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+       -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
        mcr.microsoft.com/azure-cli:latest \
        az login -u $AZURE_USER -p $AZURE_PASSWORD && az aks get-credentials --name $AZURE_CLUSTER_NAME --resource-group $AZURE_RESOURCE_GROUP --overwrite-existing
 
@@ -145,7 +152,7 @@ elif [[ "$APP_TARGET" = "gcp" && "$4" == "withLogin" ]]; then
         -e HOME=$OUTPUT_CONTAINER_DIR \
         -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
         -e CLOUDSDK_CORE_PROJECT=$GCP_PROJECT \
-        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+        -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
         -u $(id -u):$(id -g) \
         google/cloud-sdk:latest \
         sh -c "gcloud auth activate-service-account --key-file=$GCP_KEYFILE_JSON && \
@@ -187,7 +194,7 @@ docker run --rm $EXTRA_CONTAINER_ARGS \
     -e XL_SKIP_TOOL_CHECK=true \
     -e XL_CLI=$OUTPUT_CONTAINER_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin \
     -e XL_CLI_CLEAN_EXTRA="--clean-force --clean-grace-period 1" \
-    -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+    -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
     -u $(id -u):$(id -g) \
     xldevdocker/kuttl:latest \
     --artifacts-dir $OUTPUT_CONTAINER_DIR/logs --config $TEST_DIR
