@@ -1,3 +1,9 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import com.github.gradle.node.yarn.task.YarnTask
+import org.apache.commons.lang.SystemUtils.*
+import de.undercouch.gradle.tasks.download.Download
+
 buildscript {
     repositories {
         mavenLocal()
@@ -29,12 +35,6 @@ plugins {
     id("de.undercouch.download") version "5.6.0"
 }
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import com.github.gradle.node.yarn.task.YarnTask
-import org.apache.commons.lang.SystemUtils.*
-import de.undercouch.gradle.tasks.download.Download
-
 apply(plugin = "ai.digital.gradle-commit")
 apply(plugin = "com.xebialabs.dependency")
 
@@ -44,7 +44,7 @@ project.defaultTasks = listOf("build")
 val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?: if (project.version.toString().contains("SNAPSHOT")) {
     project.version.toString()
 } else {
-    "25.1.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
+    "${project.version}-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
 }
 project.extra.set("releasedVersion", releasedVersion)
 
@@ -98,9 +98,11 @@ dependencies {
     implementation(gradleKotlinDsl())
 }
 
+val languageLevel = findProperty("languageLevel")?.toString()
+
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.toVersion(languageLevel)
+    targetCompatibility = JavaVersion.toVersion(languageLevel)
 }
 
 subprojects {
@@ -180,7 +182,7 @@ tasks {
             commandLine(commandUnzip.split(" "))
         } else {
             commandLine("echo",
-                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=25.1.0")
+                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=${project.version}")
         }
     }
 
@@ -199,7 +201,7 @@ tasks {
             commandLine(commandRsync.split(" "))
         } else {
             commandLine("echo",
-                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=25.1.0")
+                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=${project.version}")
         }
     }
 
