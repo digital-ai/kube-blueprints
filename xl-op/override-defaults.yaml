@@ -5,4 +5,4 @@ RepositoryNameRelease: xebialabs
 OperatorImageTagRelease: 25.1.0-415.649
 ImageTagRelease: 25.1.0-415.649
 RepositoryNameReleaseRunner: xebialabs
-ImageTagReleaseRunner: 25.1.0-403.915
+ImageTagReleaseRunner: 25.1.0-415.649
