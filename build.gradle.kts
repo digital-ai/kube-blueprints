@@ -41,17 +41,16 @@ apply(plugin = "com.xebialabs.dependency")
 group = "ai.digital.xlclient.blueprints"
 project.defaultTasks = listOf("build")
 
-val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?: if (project.version.toString().contains("SNAPSHOT")) {
-    project.version.toString()
-} else {
+val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?: 
     "${project.version}-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
-}
+
 project.extra.set("releasedVersion", releasedVersion)
+
+val languageLevel = properties["languageLevel"]
+val helmVersion = properties["helmVersion"]
 
 val os = detectOs()
 val arch = detectHostArch()
-val helmVersion = properties["helmVersion"]
-
 enum class Os {
     DARWIN {
         override fun toString(): String = "darwin"
@@ -97,8 +96,6 @@ dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
 }
-
-val languageLevel = findProperty("languageLevel")?.toString()
 
 java {
     sourceCompatibility = JavaVersion.toVersion(languageLevel)
@@ -316,8 +313,8 @@ publishing {
 }
 
 node {
-    version.set("20.14.0")
-    yarnVersion.set("1.22.22")
+    version.set(properties["nodeVersion"] as String)
+    yarnVersion.set(properties["yarnVersion"] as String)
     download.set(true)
 }
 
