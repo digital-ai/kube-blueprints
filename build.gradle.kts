@@ -1,6 +1,9 @@
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.github.gradle.node.yarn.task.YarnTask
+import com.github.gradle.node.task.NodeTask
+import com.github.gradle.node.npm.task.NpmTask
+import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.apache.commons.lang.SystemUtils.*
 import de.undercouch.gradle.tasks.download.Download
 
@@ -41,7 +44,7 @@ apply(plugin = "com.xebialabs.dependency")
 group = "ai.digital.xlclient.blueprints"
 project.defaultTasks = listOf("build")
 
-val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?: 
+val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?:
     "${project.version}-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
 
 project.extra.set("releasedVersion", releasedVersion)
@@ -249,6 +252,19 @@ tasks {
         workingDir.set(file("${rootDir}/documentation"))
     }
 
+    register<YarnTask>("yarnInstallJsScripts") {
+        group = "docusaurus"
+        args.set(listOf("install"))
+        workingDir.set(file("${rootDir}/documentation/scripts/js"))
+    }
+
+    register<YarnTask>("yarnRunBuildBlueprintDocs") {
+        group = "docusaurus"
+        dependsOn(named("yarnInstallJsScripts"))
+        args.set(listOf("run", "generate-blueprint-docs"))
+        workingDir.set(file("${rootDir}/documentation/scripts/js"))
+    }
+
     register<YarnTask>("yarnRunStart") {
         group = "docusaurus"
         dependsOn(named("yarn_install"))
@@ -258,7 +274,7 @@ tasks {
 
     register<YarnTask>("yarnRunBuild") {
         group = "docusaurus"
-        dependsOn(named("yarn_install"))
+        dependsOn(named("yarn_install"), named("yarnRunBuildBlueprintDocs"))
         args.set(listOf("run", "build"))
         workingDir.set(file("${rootDir}/documentation"))
     }
@@ -282,6 +298,7 @@ tasks {
         group = "docusaurus"
         dependsOn(named("docBuild"))
     }
+
 }
 
 tasks.withType<AbstractPublishToMaven> {

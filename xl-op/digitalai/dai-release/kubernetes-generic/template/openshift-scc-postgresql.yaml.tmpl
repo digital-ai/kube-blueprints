@@ -2,6 +2,9 @@
   {{- if and .EnablePostgresql .EnableSCC }}
 ---
   {{- $postgresqlFullName := printf "dai-ocp-%s-postgresql" .ShortServerName }}
+  {{- if ne .Namespace "digitalai" }}
+    {{- $postgresqlFullName = printf "dai-ocp-%s-%s-postgresql" .ShortServerName .Namespace }}
+  {{- end }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
@@ -28,7 +31,7 @@ requiredDropCapabilities:
 runAsUser:
   type: RunAsAny
 seLinuxContext:
-  type: MustRunAs
+  type: RunAsAny
 supplementalGroups:
   type: RunAsAny
 users:
