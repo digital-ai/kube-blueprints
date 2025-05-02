@@ -3,8 +3,8 @@ import java.time.format.DateTimeFormatter
 import com.github.gradle.node.yarn.task.YarnTask
 import com.github.gradle.node.task.NodeTask
 import com.github.gradle.node.npm.task.NpmTask
-import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.apache.commons.lang.SystemUtils.*
+import de.undercouch.gradle.tasks.download.Download
 
 buildscript {
     repositories {
@@ -29,11 +29,12 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "2.1.20"
     id("nebula.release") version (properties["nebulaReleasePluginVersion"] as String)
     id("com.github.node-gradle.node") version "7.0.2"
     id("maven-publish")
     id("idea")
+    id("de.undercouch.download") version "5.6.0"
 }
 
 apply(plugin = "ai.digital.gradle-commit")
@@ -42,17 +43,16 @@ apply(plugin = "com.xebialabs.dependency")
 group = "ai.digital.xlclient.blueprints"
 project.defaultTasks = listOf("build")
 
-val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?: if (project.version.toString().contains("SNAPSHOT")) {
-    project.version.toString()
-} else {
-    "25.3.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
-}
+val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?:
+    "${project.version}-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
+
 project.extra.set("releasedVersion", releasedVersion)
+
+val languageLevel = properties["languageLevel"]
+val helmVersion = properties["helmVersion"]
 
 val os = detectOs()
 val arch = detectHostArch()
-val helmVersion = properties["helmVersion"]
-
 enum class Os {
     DARWIN {
         override fun toString(): String = "darwin"
@@ -100,8 +100,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.toVersion(languageLevel)
+    targetCompatibility = JavaVersion.toVersion(languageLevel)
 }
 
 subprojects {
@@ -181,7 +181,7 @@ tasks {
             commandLine(commandUnzip.split(" "))
         } else {
             commandLine("echo",
-                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=25.3.0")
+                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=${project.version}")
         }
     }
 
@@ -200,7 +200,7 @@ tasks {
             commandLine(commandRsync.split(" "))
         } else {
             commandLine("echo",
-                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=25.3.0")
+                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=${project.version}")
         }
     }
 
@@ -329,8 +329,8 @@ publishing {
 }
 
 node {
-    version.set("20.14.0")
-    yarnVersion.set("1.22.22")
+    version.set(properties["nodeVersion"] as String)
+    yarnVersion.set(properties["yarnVersion"] as String)
     download.set(true)
 }
 
