@@ -60,13 +60,6 @@ spec:
       {{- else }}
       enabled: false
       {{- end }}
-    mq:
-      {{- if eq .EnableRabbitmq false }}
-      enabled: true
-{{ .RabbitmqExternalConfigRelease | indent 6 }}
-      {{- else }}
-      enabled: false
-      {{- end }}
   oidc:
     enabled: {{ not (eq .OidcConfigType "no-oidc") }}
 {{ .ExternalOidcConf | indent 4 }}
@@ -456,55 +449,3 @@ spec:
         {{- /* registry name defined in global section */}}
         repository: {{ .RepositoryNameRelease }}/os-shell
     {{- end }}
-  rabbitmq:
-    {{- if eq .IsCustomImageRegistry true }}
-    global:
-      {{- /* global overrides the other occurences */}}
-      imageRegistry: {{ .CustomImageRegistryName }}
-      {{- if eq .ImageRegistryType "private" }}
-      imagePullSecrets:
-      - {{ .CustomPrivateImageRegistrySecret }}
-      {{- end }}
-    {{- end }}
-    {{- if eq .IsCustomImageRegistry true }}
-    image:
-      {{- /* registry name defined in global section */}}
-      repository: {{ .RepositoryNameRelease }}/rabbitmq
-    {{- end }}
-    install: {{ .EnableRabbitmq }}
-    persistence:
-      size: {{ .RabbitmqPvcSize }}Gi
-      storageClass: "{{ .RabbitmqStorageClass }}"
-    replicaCount: {{ .RabbitmqReplicaCount }}
-    {{- if eq .ResourcesSource "preset" }}
-    resourcesPreset: {{ .RabbitmqResourcesPreset }}
-    resources: {}
-    {{- else if eq .ResourcesSource "editor" }}
-{{ .RabbitmqResourcesEditor | indent 4 }}
-    {{- else if eq .ResourcesSource "none" }}
-    resourcesPreset: "none"
-    resources: {}
-    {{- end }}
-    volumePermissions:
-      {{- if and (hasPrefix "Openshift" .K8sSetup) (eq .EnableSCC false) }}
-      enabled: false
-      {{- else }}
-      enabled: true
-      {{- if eq .IsCustomImageRegistry true }}
-      image:
-        {{- /* registry name defined in global section */}}
-        repository: {{ .RepositoryNameRelease }}/os-shell
-      {{- end }}
-      {{- end }}
-    podSecurityContext:
-      {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
-      enabled: true
-      {{- else }}
-      enabled: false
-      {{- end }}
-    containerSecurityContext:
-      {{- if or (not (hasPrefix "Openshift" .K8sSetup)) .EnableSCC }}
-      enabled: true
-      {{- else }}
-      enabled: false
-      {{- end }}
