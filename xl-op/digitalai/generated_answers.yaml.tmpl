@@ -39,8 +39,6 @@ PreserveCrValuesRelease: |-
   {{- end }}
 PostgresqlExternalConfigRelease: |-
 {{ .PostgresqlExternalConfigRelease | indent 2  }}
-RabbitmqExternalConfigRelease: |-
-{{ .RabbitmqExternalConfigRelease | indent 2 }}
 {{- end }}
 OidcConfigTypeInstall: '{{ .OidcConfigTypeInstall }}'
 OidcConfigTypeUpgrade: '{{ .OidcConfigTypeUpgrade }}'
