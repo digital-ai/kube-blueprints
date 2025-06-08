@@ -5,4 +5,4 @@ RepositoryNameRelease: xebialabsunsupported
 OperatorImageTagRelease: 24.1.19-608.113
 ImageTagRelease: 24.1.19-608.113
 RepositoryNameReleaseRunner: xebialabsunsupported
-ImageTagReleaseRunner: 24.1.19-601.113
+ImageTagReleaseRunner: 24.1.19-608.113
