@@ -1184,12 +1184,12 @@ spec:
           maxPoolSize: 10
     - name: EnableRabbitmq
       type: Confirm
-      default: !expr ServerType != 'dai-release-runner' && "ServerType != 'dai-release'
+      default: !expr "ServerType != 'dai-release-runner' && ServerType != 'dai-release'"
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Do you want to install a new RabbitMQ on the cluster:"
-      promptIf: !expr ServerType != 'dai-release-runner' && "ServerType != 'dai-release' && ProcessType == "install"
+      promptIf: !expr "ServerType != 'dai-release-runner' && ServerType != 'dai-release' && ProcessType == 'install'"
       description: |
         Select 'yes' to install a new RabbitMQ instance using the subchart or 'no' to configure an 
         existing supported MQ instance. If you enter No, you will need to provide connection parameters
