@@ -1,4 +1,4 @@
-RepositoryNameDeploy: xebialabsunsupported
+RepositoryNameDeploy: xebialabs
 OperatorImageTagDeploy: 25.1.2-610.908
 ImageTagDeploy: 25.1.2-610.908
 RepositoryNameRelease: 'xebialabs '
