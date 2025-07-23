@@ -4,5 +4,5 @@ ImageTagDeploy: 25.3.0-beta.711
 RepositoryNameRelease: 'xebialabsearlyaccess'
 OperatorImageTagRelease: 25.3.0-beta.711
 ImageTagRelease: 25.3.0-beta.711
-RepositoryNameReleaseRunner: xebialabs
+RepositoryNameReleaseRunner: xebialabsearlyaccess
 ImageTagReleaseRunner: 25.3.0-beta.711
