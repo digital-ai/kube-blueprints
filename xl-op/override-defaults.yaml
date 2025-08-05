@@ -4,5 +4,5 @@ ImageTagDeploy: 24.1.21-804.1349
 RepositoryNameRelease: xebialabsunsupported
 OperatorImageTagRelease: 24.1.21-804.1349
 ImageTagRelease: 24.1.21-804.1349
-RepositoryNameReleaseRunner: xebialabs
-ImageTagReleaseRunner: 24.1.20-706.113
+RepositoryNameReleaseRunner: xebialabsunsupported
+ImageTagReleaseRunner: 24.1.21-804.1349
