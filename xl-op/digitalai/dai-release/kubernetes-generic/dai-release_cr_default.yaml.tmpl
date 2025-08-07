@@ -15,16 +15,16 @@ metadata:
   {{- end }}
   {{- end }}
 spec:
-  {{- if eq .IsCustomImageRegistry true }}
   global:
     security:
       allowInsecureImages: true
+    {{- if eq .IsCustomImageRegistry true }}
     imageRegistry: {{ .CustomImageRegistryName }}
     {{- if eq .ImageRegistryType "private" }}
     imagePullSecrets:
       - {{ .CustomPrivateImageRegistrySecret }}
     {{- end }}
-  {{- end }}
+    {{- end }}
   k8sSetup:
     platform: {{ .K8sSetup }}
   auth:
