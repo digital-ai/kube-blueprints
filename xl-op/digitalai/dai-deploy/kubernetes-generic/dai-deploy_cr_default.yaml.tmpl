@@ -85,22 +85,24 @@ spec:
       {{- else }}
       enabled: false
       {{- end }}
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        tag: "{{ .ImageTagDeploy }}"
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameDeploy }}/kubectl
-      {{- end }}
+        repository: {{ .RepositoryNameDeploy }}/xl-client
+        {{- end }}
     getLicense:
       {{- if eq .LicenseSource "generate" }}
       enabled: true
       {{- else }}
       enabled: false
       {{- end }}
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        tag: "{{ .ImageTagDeploy }}"
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameDeploy }}/kubectl
-      {{- end }}
+        repository: {{ .RepositoryNameDeploy }}/xl-client
+        {{- end }}
   centralConfiguration:
     replicaCount: 1
     image:
@@ -130,17 +132,15 @@ spec:
         {{- end }}
     volumePermissions:
       enabled: false
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        tag: "{{ .ImageTagDeploy }}"
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
-        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
-        tag: "{{ .ImageTagDeploy }}"
         override: true
-        {{- else }}
-        repository: {{ .RepositoryNameDeploy }}/os-shell
         {{- end }}
-      {{- end }}
+        {{- end }}
     diagnosticMode:
       enabled: false
     {{- if eq .ResourcesSource "preset" }}
@@ -174,17 +174,15 @@ spec:
         {{- end }}
     volumePermissions:
       enabled: false
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        tag: "{{ .ImageTagDeploy }}"
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
-        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
-        tag: "{{ .ImageTagDeploy }}"
         override: true
-        {{- else }}
-        repository: {{ .RepositoryNameDeploy }}/os-shell
         {{- end }}
-      {{- end }}
+        {{- end }}
     image:
       repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
       tag: "{{ .ImageTagDeploy }}"
@@ -225,17 +223,15 @@ spec:
       {{- end }}
     volumePermissions:
       enabled: false
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        tag: "{{ .ImageTagDeploy }}"
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
-        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
-        tag: "{{ .ImageTagDeploy }}"
         override: true
-        {{- else }}
-        repository: {{ .RepositoryNameDeploy }}/os-shell
         {{- end }}
-      {{- end }}
+        {{- end }}
     image:
       repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeployTaskEngine }}
       tag: "{{ .ImageTagDeploy }}"
@@ -255,18 +251,16 @@ spec:
     resources: {}
     {{- end }}
 
-  {{- if eq .IsCustomImageRegistry true }}
   busyBox:
     image:
+      tag: "{{ .ImageTagDeploy }}"
+      repository: {{ .RepositoryNameDeploy }}/xl-client
+      {{- if eq .IsCustomImageRegistry true }}
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified" }}
-      repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
-      tag: "{{ .ImageTagDeploy }}"
       override: true
-      {{- else }}
-      repository: {{ .RepositoryNameDeploy }}/busybox
       {{- end }}
-  {{- end }}
+      {{- end }}
 
   ingress:
     {{- if eq .IngressType "nginx" }}
