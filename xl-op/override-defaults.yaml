@@ -1,4 +1,4 @@
-RepositoryNameDeploy: xebialabsunsupported
+RepositoryNameDeploy: xebialabsearlyaccess
 OperatorImageTagDeploy: 25.3.0-beta.813
 ImageTagDeploy: 25.3.0-beta.813
 RepositoryNameRelease: 'xebialabsearlyaccess'
