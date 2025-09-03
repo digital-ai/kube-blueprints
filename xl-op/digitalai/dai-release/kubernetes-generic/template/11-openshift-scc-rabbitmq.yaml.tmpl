@@ -1,0 +1,47 @@
+{{- if hasPrefix "Openshift" .K8sSetup }}
+  {{- if and .EnableRabbitmq .EnableSCC }}
+---
+  {{- $rabbitmqFullName := printf "dai-ocp-%s-rabbitmq" .ShortServerName }}
+  {{- if ne .Namespace "digitalai" }}
+    {{- $rabbitmqFullName = printf "dai-ocp-%s-%s-rabbitmq" .ShortServerName .Namespace }}
+  {{- end }}
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: {{ $rabbitmqFullName }}
+  namespace: {{ .Namespace }}
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegeEscalation: false
+allowPrivilegedContainer: false
+allowedCapabilities: null
+seccompProfiles:
+  - runtime/default
+defaultAddCapabilities: null
+fsGroup:
+  type: RunAsAny
+groups: []
+priority: 100
+readOnlyRootFilesystem: false
+requiredDropCapabilities:
+  - MKNOD
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+users:
+  - system:serviceaccount:{{ .Namespace }}:{{ $rabbitmqFullName }}
+volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - persistentVolumeClaim
+  - projected
+  - secret
+  {{- end }}
+{{- end }}
