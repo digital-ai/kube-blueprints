@@ -90,10 +90,13 @@ spec:
       enabled: false
       {{- end }}
       image:
+        repository: {{ .RepositoryNameRelease }}/xl-client
         tag: "{{ .ImageTagRelease }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameRelease }}/xl-client
+        {{- if eq .K8sSetup "OpenshiftCertified"}}
+        override: true
+        {{- end }}
         {{- end }}
     getLicense:
       {{- if eq .LicenseSource "generate" }}
@@ -102,10 +105,13 @@ spec:
       enabled: false
       {{- end }}
       image:
+        repository: {{ .RepositoryNameRelease }}/xl-client
         tag: "{{ .ImageTagRelease }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameRelease }}/xl-client
+        {{- if eq .K8sSetup "OpenshiftCertified"}}
+        override: true
+        {{- end }}
         {{- end }}
     installReleaseRunner:
       {{- if eq .RemoteRunnerInstallType "cluster-install" }}
@@ -116,10 +122,13 @@ spec:
       enabled: false
       {{- end }}
       image:
+        repository: {{ .RepositoryNameRelease }}/xl-client
         tag: "{{ .ImageTagRelease }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameRelease }}/xl-client
+        {{- if eq .K8sSetup "OpenshiftCertified"}}
+        override: true
+        {{- end }}
         {{- end }}
   persistence:
     storageClass: "{{ .StorageClass }}"
@@ -150,8 +159,8 @@ spec:
   volumePermissions:
     enabled: false
     image:
-      tag: "{{ .ImageTagRelease }}"
       repository: {{ .RepositoryNameRelease }}/{{ .ImageNameRelease }}
+      tag: "{{ .ImageTagRelease }}"
       {{- if eq .IsCustomImageRegistry true }}
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified" }}
@@ -162,13 +171,15 @@ spec:
     repository: {{ .RepositoryNameRelease }}/{{ .ImageNameRelease }}
     tag: "{{ .ImageTagRelease }}"
     pullPolicy: IfNotPresent
-    {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
+    {{- if eq .IsCustomImageRegistry true }}
+    registry: {{ .CustomImageRegistryName }}
+    {{- if eq .K8sSetup "OpenshiftCertified" }}
     override: true
     {{- end }}
   busyBox:
     image:
-      tag: "{{ .ImageTagRelease }}"
       repository: {{ .RepositoryNameRelease }}/xl-client
+      tag: "{{ .ImageTagRelease }}"
       {{- if eq .IsCustomImageRegistry true }}
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified"}}

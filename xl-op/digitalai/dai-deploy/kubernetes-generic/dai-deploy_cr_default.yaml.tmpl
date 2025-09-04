@@ -86,10 +86,13 @@ spec:
       enabled: false
       {{- end }}
       image:
+        repository: {{ .RepositoryNameDeploy }}/xl-client
         tag: "{{ .ImageTagDeploy }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameDeploy }}/xl-client
+        {{- if eq .K8sSetup "OpenshiftCertified"}}
+        override: true
+        {{- end }}
         {{- end }}
     getLicense:
       {{- if eq .LicenseSource "generate" }}
@@ -98,10 +101,12 @@ spec:
       enabled: false
       {{- end }}
       image:
+        repository: {{ .RepositoryNameDeploy }}/xl-client
         tag: "{{ .ImageTagDeploy }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameDeploy }}/xl-client
+        {{- if eq .K8sSetup "OpenshiftCertified" }}
+        override: true
         {{- end }}
   centralConfiguration:
     replicaCount: 1
@@ -109,7 +114,9 @@ spec:
       repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameCc }}
       tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
-      {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
+      {{- if eq .IsCustomImageRegistry true }}
+      registry: {{ .CustomImageRegistryName }}
+      {{- if eq .K8sSetup "OpenshiftCertified" }}
       override: true
       {{- end }}
     persistence:
@@ -133,8 +140,8 @@ spec:
     volumePermissions:
       enabled: false
       image:
-        tag: "{{ .ImageTagDeploy }}"
         repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
@@ -175,8 +182,8 @@ spec:
     volumePermissions:
       enabled: false
       image:
-        tag: "{{ .ImageTagDeploy }}"
         repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
@@ -187,7 +194,9 @@ spec:
       repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
       tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
-      {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
+      {{- if eq .IsCustomImageRegistry true }}
+      registry: {{ .CustomImageRegistryName }}
+      {{- if eq .K8sSetup "OpenshiftCertified" }}
       override: true
       {{- end }}
     diagnosticMode:
@@ -224,8 +233,8 @@ spec:
     volumePermissions:
       enabled: false
       image:
-        tag: "{{ .ImageTagDeploy }}"
         repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified" }}
@@ -236,7 +245,9 @@ spec:
       repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeployTaskEngine }}
       tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
-      {{- if and (eq .K8sSetup "OpenshiftCertified") (eq .IsCustomImageRegistry true) }}
+      {{- if eq .IsCustomImageRegistry true }}
+      registry: {{ .CustomImageRegistryName }}
+      {{- if eq .K8sSetup "OpenshiftCertified" }}
       override: true
       {{- end }}
     diagnosticMode:
@@ -253,8 +264,8 @@ spec:
 
   busyBox:
     image:
-      tag: "{{ .ImageTagDeploy }}"
       repository: {{ .RepositoryNameDeploy }}/xl-client
+      tag: "{{ .ImageTagDeploy }}"
       {{- if eq .IsCustomImageRegistry true }}
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified" }}
