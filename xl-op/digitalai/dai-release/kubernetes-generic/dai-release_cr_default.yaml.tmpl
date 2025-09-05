@@ -176,6 +176,7 @@ spec:
     {{- if eq .K8sSetup "OpenshiftCertified" }}
     override: true
     {{- end }}
+    {{- end }}
   busyBox:
     image:
       repository: {{ .RepositoryNameRelease }}/xl-client

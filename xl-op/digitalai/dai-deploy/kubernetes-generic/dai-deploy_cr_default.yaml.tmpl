@@ -108,6 +108,7 @@ spec:
         {{- if eq .K8sSetup "OpenshiftCertified" }}
         override: true
         {{- end }}
+        {{- end }}
   centralConfiguration:
     replicaCount: 1
     image:
@@ -118,6 +119,7 @@ spec:
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified" }}
       override: true
+      {{- end }}
       {{- end }}
     persistence:
       enabled: false
@@ -199,6 +201,7 @@ spec:
       {{- if eq .K8sSetup "OpenshiftCertified" }}
       override: true
       {{- end }}
+      {{- end }}
     diagnosticMode:
       enabled: false
     {{- if eq .ResourcesSource "preset" }}
@@ -249,6 +252,7 @@ spec:
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified" }}
       override: true
+      {{- end }}
       {{- end }}
     diagnosticMode:
       enabled: false
