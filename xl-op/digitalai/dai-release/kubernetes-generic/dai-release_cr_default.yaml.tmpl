@@ -89,29 +89,31 @@ spec:
     {{- end }}
     {{- end }}
   {{- end }}
-  hooks:  
+  hooks:
     genSelfSigned:
       {{- if and (eq .ApplicationKeystoreSource "generate") (or (eq .HttpProtocolRelease "https") (eq .HttpProtocolRelease "http2")) }}  
       enabled: true
       {{- else }}
       enabled: false
       {{- end }}
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        repository: {{ .RepositoryNameRelease }}/xl-client
+        tag: "{{ .ImageTagRelease }}"
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameRelease }}/kubectl
-      {{- end }}
+        {{- end }}
     getLicense:
       {{- if eq .LicenseSource "generate" }}
       enabled: true
       {{- else }}
       enabled: false
       {{- end }}
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        repository: {{ .RepositoryNameRelease }}/xl-client
+        tag: "{{ .ImageTagRelease }}"
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameRelease }}/kubectl
-      {{- end }}
+        {{- end }}
     installReleaseRunner:
       {{- if eq .RemoteRunnerInstallType "cluster-install" }}
       enabled: true
@@ -121,10 +123,10 @@ spec:
       enabled: false
       {{- end }}
       image:
+        repository: {{ .RepositoryNameRelease }}/xl-client
         tag: "{{ .ImageTagRelease }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameRelease }}/xl-client
         {{- end }}
   persistence:
     storageClass: "{{ .StorageClass }}"
@@ -154,16 +156,26 @@ spec:
   {{- end }}
   volumePermissions:
     enabled: false
+    image:
+      repository: {{ .RepositoryNameRelease }}/{{ .ImageNameRelease }}
+      tag: "{{ .ImageTagRelease }}"
+      {{- if eq .IsCustomImageRegistry true }}
+      registry: {{ .CustomImageRegistryName }}
+      {{- end }}
   image:
     repository: {{ .RepositoryNameRelease }}/{{ .ImageNameRelease }}
     tag: "{{ .ImageTagRelease }}"
     pullPolicy: IfNotPresent
-  {{- if eq .IsCustomImageRegistry true }}
+    {{- if eq .IsCustomImageRegistry true }}
+    registry: {{ .CustomImageRegistryName }}
+    {{- end }}
   busyBox:
     image:
+      repository: {{ .RepositoryNameRelease }}/xl-client
+      tag: "{{ .ImageTagRelease }}"
+      {{- if eq .IsCustomImageRegistry true }}
       registry: {{ .CustomImageRegistryName }}
-      repository: {{ .RepositoryNameRelease }}/busybox
-  {{- end }}
+      {{- end }}
   diagnosticMode:
     enabled: false
   ingress:

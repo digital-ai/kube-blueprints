@@ -85,28 +85,33 @@ spec:
       {{- else }}
       enabled: false
       {{- end }}
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        repository: {{ .RepositoryNameDeploy }}/xl-client
+        tag: "{{ .ImageTagDeploy }}"
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameDeploy }}/kubectl
-      {{- end }}
+        {{- end }}
     getLicense:
       {{- if eq .LicenseSource "generate" }}
       enabled: true
       {{- else }}
       enabled: false
       {{- end }}
-      {{- if eq .IsCustomImageRegistry true }}
       image:
+        repository: {{ .RepositoryNameDeploy }}/xl-client
+        tag: "{{ .ImageTagDeploy }}"
+        {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
-        repository: {{ .RepositoryNameDeploy }}/kubectl
-      {{- end }}
+        {{- end }}
   centralConfiguration:
     replicaCount: 1
     image:
       repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameCc }}
       tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
+      {{- if eq .IsCustomImageRegistry true }}
+      registry: {{ .CustomImageRegistryName }}
+      {{- end }}
     persistence:
       enabled: false
       storageClass: "{{ .StorageClass }}"
@@ -127,6 +132,12 @@ spec:
         {{- end }}
     volumePermissions:
       enabled: false
+      image:
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
+        {{- if eq .IsCustomImageRegistry true }}
+        registry: {{ .CustomImageRegistryName }}
+        {{- end }}
     diagnosticMode:
       enabled: false
     {{- if eq .ResourcesSource "preset" }}
@@ -160,10 +171,19 @@ spec:
         {{- end }}
     volumePermissions:
       enabled: false
+      image:
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
+        {{- if eq .IsCustomImageRegistry true }}
+        registry: {{ .CustomImageRegistryName }}
+        {{- end }}
     image:
       repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
       tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
+      {{- if eq .IsCustomImageRegistry true }}
+      registry: {{ .CustomImageRegistryName }}
+      {{- end }}
     diagnosticMode:
       enabled: false
     {{- if eq .ResourcesSource "preset" }}
@@ -197,10 +217,19 @@ spec:
       {{- end }}
     volumePermissions:
       enabled: false
+      image:
+        repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
+        tag: "{{ .ImageTagDeploy }}"
+        {{- if eq .IsCustomImageRegistry true }}
+        registry: {{ .CustomImageRegistryName }}
+        {{- end }}
     image:
       repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeployTaskEngine }}
       tag: "{{ .ImageTagDeploy }}"
       pullPolicy: IfNotPresent
+      {{- if eq .IsCustomImageRegistry true }}
+      registry: {{ .CustomImageRegistryName }}
+      {{- end }}
     diagnosticMode:
       enabled: false
     {{- if eq .ResourcesSource "preset" }}
@@ -213,12 +242,13 @@ spec:
     resources: {}
     {{- end }}
 
-  {{- if eq .IsCustomImageRegistry true }}
   busyBox:
     image:
+      repository: {{ .RepositoryNameDeploy }}/xl-client
+      tag: "{{ .ImageTagDeploy }}"
+      {{- if eq .IsCustomImageRegistry true }}
       registry: {{ .CustomImageRegistryName }}
-      repository: {{ .RepositoryNameDeploy }}/busybox
-  {{- end }}
+      {{- end }}
 
   ingress:
     {{- if eq .IngressType "nginx" }}
