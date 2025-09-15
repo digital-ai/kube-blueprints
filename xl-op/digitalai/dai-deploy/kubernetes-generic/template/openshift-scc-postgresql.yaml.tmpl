@@ -1,5 +1,5 @@
 {{- if hasPrefix "Openshift" .K8sSetup }}
-  {{- if and .EnablePostgresql .EnableSCC }}
+  {{- if and .EnableSCC eq .PostgresqlInstall "chart" }}
 ---
   {{- $postgresqlFullName := printf "dai-ocp-%s-postgresql" .ShortServerName }}
 apiVersion: security.openshift.io/v1
