@@ -1,0 +1,174 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-self-signed
+data:
+  "openssl-san.cnf": |
+    [req]
+    distinguished_name = dn
+    req_extensions = v3_req
+    prompt = no
+
+    [dn]
+    CN = webhook-service.{{ .Namespace }}.svc
+    O = {{ .Namespace }}
+
+    [v3_req]
+    keyUsage = critical, digitalSignature, keyEncipherment
+    extendedKeyUsage = serverAuth
+    subjectAltName = @alt_names
+
+    [alt_names]
+    DNS.1 = webhook-service.{{ .Namespace }}.svc
+    DNS.2 = webhook-service.{{ .Namespace }}.svc.cluster.local
+  "gen-self-signed.sh": |
+    #!/bin/sh
+
+    echo "Generating rabbitmq self-signed cert"
+
+    cd /opt/xebialabs/ssl
+
+    # CA key
+    openssl genrsa -out ca.key 4096
+
+    # CA cert
+    openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 \
+      -subj "/CN=webhook-ca/O={{ .Namespace }}" \
+      -out ca.crt
+
+    openssl genrsa -out server.key 2048
+    openssl req -new -key server.key -out server.csr -config openssl-san.cnf
+
+    openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key \
+      -CAcreateserial -out server.crt -days 365 -sha256 \
+      -extensions v3_req -extfile openssl-san.cnf
+
+  "install-self-signed.sh": |
+    #!/bin/sh
+
+    SECRET_NAME="rabbitmq-webhook-server-cert"
+    CA_BUNDLE=""
+
+    cd /opt/xebialabs/ssl
+
+    if kubectl get secret "${SECRET_NAME}-ca" > /dev/null 2>&1; then
+      echo "Secret '${SECRET_NAME}-ca' exists skipping creation."
+      CA_BUNDLE=$(kubectl get secret "${SECRET_NAME}-ca" -o jsonpath='{.data.ca}' | base64 -d)
+    else
+
+      cat ca.crt | base64 | tr -d '\n' > ca-b64.txt
+      CA_BUNDLE=$(cat ca-b64.txt)
+
+      kubectl create secret generic ${SECRET_NAME}-ca \
+        --from-file="ca=ca-b64.txt" \
+        --dry-run=client \
+        -o yaml | kubectl apply -f -
+
+      kubectl create secret tls ${SECRET_NAME} \
+        --cert=server.crt \
+        --key=server.key \
+        --dry-run=client \
+        -o yaml | kubectl apply -f -
+    fi
+
+    kubectl get validatingwebhookconfiguration topology.rabbitmq.com -o json | \
+      yq eval ".webhooks[].clientConfig.caBundle = \"$CA_BUNDLE\"" - | \
+      kubectl apply -f -
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rabbitmq-self-signed-role
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "get", "list", "patch", "update"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rabbitmq-self-signed-rolebinding
+subjects:
+  - kind: ServiceAccount
+    name: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rabbitmq-self-signed-role
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rabbitmq-self-signed-clusterrole
+rules:
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations"]
+    verbs: ["get", "patch", "update"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rabbitmq-self-signed-clusterrolebinding
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: {{ .Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: rabbitmq-self-signed-clusterrole
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rabbitmq-self-signed
+spec:
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      name: rabbitmq-self-signed
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: gen-self-signed-job
+          image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}:{{ .ImageTagDeploy }}
+          imagePullPolicy: Always
+          command:
+            - "/opt/xebialabs/ssl/gen-self-signed.sh"
+          volumeMounts:
+              - name: shared-data
+                mountPath: /opt/xebialabs/ssl
+              - name: configuration
+                mountPath: /opt/xebialabs/ssl/openssl-san.cnf
+                subPath: openssl-san.cnf
+              - name: configuration
+                mountPath: /opt/xebialabs/ssl/gen-self-signed.sh
+                subPath: gen-self-signed.sh
+      containers:
+        - name: install-self-signed-job
+          image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/xl-client:{{ .ImageTagDeploy }}
+          imagePullPolicy: Always
+          command:
+            - "/opt/xebialabs/ssl/install-self-signed.sh"
+          volumeMounts:
+              - name: shared-data
+                mountPath: /opt/xebialabs/ssl
+              - name: configuration
+                mountPath: /opt/xebialabs/ssl/install-self-signed.sh
+                subPath: install-self-signed.sh
+      volumes:
+        - name: shared-data
+          emptyDir: {}
+        - name: configuration
+          configMap:
+            name: rabbitmq-self-signed
+            items:
+              - key: "gen-self-signed.sh"
+                path: "gen-self-signed.sh"
+                mode: 0755
+              - key: "openssl-san.cnf"
+                path: "openssl-san.cnf"
+              - key: "install-self-signed.sh"
+                path: "install-self-signed.sh"
+                mode: 0755
