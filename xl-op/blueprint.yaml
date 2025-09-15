@@ -597,7 +597,7 @@ spec:
           value: ingress-nginx-controller
         - label: NGINX Ingress Bitnami Helm Chart (deprecated)
           value: nginx
-        - label: HAProxy
+        - label: HAProxy Helm Chart (deprecated)
           value: haproxy
         - label: External - IngressClass resource should already exist
           value: external
@@ -620,7 +620,7 @@ spec:
           value: ingress-nginx-controller
         - label: NGINX Bitnami Helm Chart (deprecated)
           value: nginx
-        - label: HAProxy
+        - label: HAProxy Helm Chart (deprecated)
           value: haproxy
         - label: External - IngressClass resource should already exist
           value: external
