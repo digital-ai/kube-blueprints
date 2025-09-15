@@ -54,11 +54,23 @@ spec:
   replicaCount: {{ .XlrReplicaCount }}
   external:
     db:
-      {{- if eq .EnablePostgresql false }}
+      {{- if eq .PostgresqlInstall "external"  }}
       enabled: true
 {{ .PostgresqlExternalConfigRelease | indent 6 }}
       {{- else }}
+      {{- if eq .PostgresqlInstall "operator" }}
+      enabled: true
+      main:
+        url: jdbc:postgresql://dai-xlr-postgres-rw:5432/xlr-db
+        username: xlr
+        password: xlr
+      report:
+        url: jdbc:postgresql://dai-xlr-postgres-rw:5432/xlr-report-db
+        username: xlr-report
+        password: xlr-report
+      {{- else }}
       enabled: false
+      {{- end }}
       {{- end }}
   oidc:
     enabled: {{ not (eq .OidcConfigType "no-oidc") }}
@@ -190,7 +202,7 @@ spec:
   diagnosticMode:
     enabled: false
   ingress:
-    {{- if eq .IngressType "nginx" }}
+    {{- if or (eq .IngressType "nginx") (eq .IngressType "nginx-operator") }}
     enabled: true
     annotations:
       {{- if eq .UseCustomNamespace true }}
@@ -424,7 +436,11 @@ spec:
       {{- /* registry name defined in global section */}}
       repository: {{ .RepositoryNameRelease }}/postgresql
     {{- end }}
-    install: {{ .EnablePostgresql }}
+    {{- if eq .PostgresqlInstall "chart"  }}
+    install: true
+    {{- else }}
+    install: false
+    {{- end }}
     primary:
       {{- if eq .ResourcesSource "preset" }}
       resourcesPreset: {{ .PostgresqlResourcesPreset }}
