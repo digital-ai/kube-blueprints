@@ -1956,131 +1956,131 @@ spec:
     - path: digitalai/generated_answers.yaml.tmpl
       renameTo: !expr "'digitalai/generated_answers_' + ServerType + '_' +  Namespace + '_' + ProcessType + '-' + GenerationDateTime + '.yaml.tmpl'"
     # Postgresql
-    - path: digitalai/postgresql-operator/postgresql-cluster-operator.yaml.tmpl
+    - path: digitalai/postgresql-operator/101-postgresql-cluster-operator.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/postgresql-operator/postgresql-cluster-operator.yaml'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/postgresql-operator/101-postgresql-cluster-operator.yaml'"
     # RabbitMQ
-    - path: digitalai/rabbitmq-operator/rabbitmq-cluster-operator.yaml.tmpl
+    - path: digitalai/rabbitmq-operator/102-rabbitmq-cluster-operator.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/rabbitmq-cluster-operator.yaml'"
-    - path: digitalai/rabbitmq-operator/rabbitmq-self-signed-job.yaml.tmpl
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/102-rabbitmq-cluster-operator.yaml'"
+    - path: digitalai/rabbitmq-operator/101-rabbitmq-self-signed-job.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/rabbitmq-self-signed-job.yaml'"
-    - path: digitalai/rabbitmq-operator/rabbitmq-topology-operator.yaml.tmpl
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/101-rabbitmq-self-signed-job.yaml'"
+    - path: digitalai/rabbitmq-operator/103-rabbitmq-topology-operator.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/rabbitmq-topology-operator.yaml'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/103-rabbitmq-topology-operator.yaml'"
     # Ingress Nginx
-    - path: digitalai/ingress-nginx-controller/ingress-nginx-controller.yaml.tmpl
+    - path: digitalai/ingress-nginx-controller/101-ingress-nginx-controller.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && IngressType == 'ingress-nginx-controller'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/ingress-nginx-controller/ingress-nginx-controller.yaml'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/ingress-nginx-controller/101-ingress-nginx-controller.yaml'"
     # Deploy
-    - path: digitalai/dai-deploy/kubernetes-generic/template/leader-election-role.yaml
+    - path: digitalai/dai-deploy/kubernetes-generic/template/802-leader-election-role.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-role.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/leader-election-rolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/802-leader-election-role.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/803-leader-election-rolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-rolebinding.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/manager-clusterrole.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/803-leader-election-rolebinding.yaml.tmpl'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/804-manager-clusterrole.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrole.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/manager-clusterrolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/804-manager-clusterrole.yaml.tmpl'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/805-manager-clusterrolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrolebinding.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/805-manager-clusterrolebinding.yaml.tmpl'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/808-openshift-scc.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc-postgresql.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/808-openshift-scc.yaml.tmpl'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/809-openshift-scc-postgresql.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-postgresql.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc-rabbitmq.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/809-openshift-scc-postgresql.yaml.tmpl'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/810-openshift-scc-rabbitmq.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-rabbitmq.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/manager-role.yaml
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/810-openshift-scc-rabbitmq.yaml.tmpl'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/806-manager-role.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-role.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/manager-rolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/806-manager-role.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/807-manager-rolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-rolebinding.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/custom-resource-definition.yaml
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/807-manager-rolebinding.yaml.tmpl'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/801-custom-resource-definition.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/custom-resource-definition.yaml'"
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/801-custom-resource-definition.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/dai-deploy_cr_default.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/dai-deploy_cr_default.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/deployment.yaml.tmpl
+    - path: digitalai/dai-deploy/kubernetes-generic/template/811-deployment.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/deployment.yaml.tmpl'"
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/811-deployment.yaml.tmpl'"
 
-    - path: digitalai/dai-deploy/kubernetes-generic/template/postgresql-admin-secret.yaml
+    - path: digitalai/dai-deploy/kubernetes-generic/template/501-postgresql-admin-secret.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/postgresql-admin-secret.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/postgresql-cluster.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/501-postgresql-admin-secret.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/503-postgresql-cluster.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/postgresql-cluster.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/postgresql-init-secret.yaml
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/503-postgresql-cluster.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/502-postgresql-init-secret.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/postgresql-init-secret.yaml'"
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/502-postgresql-init-secret.yaml'"
 
-    - path: digitalai/dai-deploy/kubernetes-generic/template/rabbitmq-admin-secret.yaml
+    - path: digitalai/dai-deploy/kubernetes-generic/template/301-rabbitmq-admin-secret.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/rabbitmq-admin-secret.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/rabbitmq-cluster.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/301-rabbitmq-admin-secret.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/302-rabbitmq-cluster.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/rabbitmq-cluster.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/rabbitmq-cluster-admin.yaml
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/302-rabbitmq-cluster.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/304-rabbitmq-cluster-admin.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/rabbitmq-cluster-admin.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/rabbitmq-cluster-admin-permissions.yaml
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/304-rabbitmq-cluster-admin.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/305-rabbitmq-cluster-admin-permissions.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/rabbitmq-cluster-admin-permissions.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/rabbitmq-cluster-vhost.yaml
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/305-rabbitmq-cluster-admin-permissions.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/303-rabbitmq-cluster-vhost.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/rabbitmq-cluster-vhost.yaml'"
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/303-rabbitmq-cluster-vhost.yaml'"
 
     # Release
-    - path: digitalai/dai-release/kubernetes-generic/template/leader-election-role.yaml
+    - path: digitalai/dai-release/kubernetes-generic/template/802-leader-election-role.yaml
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-role.yaml'"
-    - path: digitalai/dai-release/kubernetes-generic/template/leader-election-rolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/802-leader-election-role.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/803-leader-election-rolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-rolebinding.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/manager-clusterrole.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/803-leader-election-rolebinding.yaml.tmpl'"
+    - path: digitalai/dai-release/kubernetes-generic/template/804-manager-clusterrole.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrole.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/manager-clusterrolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/804-manager-clusterrole.yaml.tmpl'"
+    - path: digitalai/dai-release/kubernetes-generic/template/805-manager-clusterrolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrolebinding.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/openshift-scc.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/805-manager-clusterrolebinding.yaml.tmpl'"
+    - path: digitalai/dai-release/kubernetes-generic/template/808-openshift-scc.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/openshift-scc-postgresql.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/808-openshift-scc.yaml.tmpl'"
+    - path: digitalai/dai-release/kubernetes-generic/template/809-openshift-scc-postgresql.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-postgresql.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/manager-role.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/809-openshift-scc-postgresql.yaml.tmpl'"
+    - path: digitalai/dai-release/kubernetes-generic/template/806-manager-role.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-role.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/manager-rolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/806-manager-role.yaml.tmpl'"
+    - path: digitalai/dai-release/kubernetes-generic/template/807-manager-rolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-rolebinding.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/custom-resource-definition.yaml
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/807-manager-rolebinding.yaml.tmpl'"
+    - path: digitalai/dai-release/kubernetes-generic/template/801-custom-resource-definition.yaml
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/custom-resource-definition.yaml'"
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/801-custom-resource-definition.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/dai-release_cr_default.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/dai-release_cr_default.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/deployment.yaml.tmpl
+    - path: digitalai/dai-release/kubernetes-generic/template/810-deployment.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/deployment.yaml.tmpl'"
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/810-deployment.yaml.tmpl'"
 
-    - path: digitalai/dai-release/kubernetes-generic/template/postgresql-admin-secret.yaml
+    - path: digitalai/dai-release/kubernetes-generic/template/501-postgresql-admin-secret.yaml
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/postgresql-admin-secret.yaml'"
-    - path: digitalai/dai-release/kubernetes-generic/template/postgresql-cluster.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/501-postgresql-admin-secret.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/503-postgresql-cluster.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/postgresql-cluster.yaml'"
-    - path: digitalai/dai-release/kubernetes-generic/template/postgresql-init-secret.yaml
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/503-postgresql-cluster.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/502-postgresql-init-secret.yaml
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/postgresql-init-secret.yaml'"
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/502-postgresql-init-secret.yaml'"
 
     # Runner
     - path: digitalai/dai-release-runner/values-cli.yaml.tmpl
