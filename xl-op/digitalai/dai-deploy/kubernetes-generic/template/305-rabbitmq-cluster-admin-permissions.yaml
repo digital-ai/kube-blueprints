@@ -1,0 +1,13 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: Permission
+metadata:
+  name: dai-xld-admin-permissions
+spec:
+  vhost: "/"
+  user: guest
+  permissions:
+    read: ".*"
+    configure: ".*"
+    write: ".*"
+  rabbitmqClusterReference:
+    name: dai-xld-rabbitmq

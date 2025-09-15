@@ -1,0 +1,69 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: dai-xld-postgres
+spec:
+  # Number of PostgreSQL instances (1 primary). Add replicas by increasing this.
+  instances: 1
+
+  # PostgreSQL major version to use
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.5-minimal-bookworm
+
+  # Storage (maps from primary.persistence.*)
+  storage:
+    size: {{ .PostgresqlPvcSize }}Gi
+    storageClass: {{ .PostgresqlStorageClass }} # empty means use cluster default; set to "-" to disable dynamic provisioning is not supported; omit or set a class name
+    # CNPG uses ReadWriteOnce PVCs; accessModes are not set here
+
+  # Resources (no direct resourcesPreset; set explicitly)
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
+  # Service configuration (maps from primary.service.*)
+  managed:
+    services:
+      disabledDefaultServices: [ "ro", "r" ]
+
+  # Authentication (maps from auth.*)
+  # Create a Secret with the superuser password and reference it here
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: dai-xld-postgres-superuser
+
+  # Bootstrap/initdb and post-init scripts
+  bootstrap:
+    initdb:
+      postInitSQL:
+        - CREATE DATABASE "xld-db";
+        - CREATE DATABASE "xld-report-db";
+      # Optional: create an application DB/owner here if you need one
+      # database: <app_db_name>
+      # owner: <app_owner>
+      # secret:
+      #   name: <app-owner-secret>  # contains user/password for owner
+      # Run your initial scripts from a Secret (maps from primary.initdb.scriptsSecret)
+      # For each script file in the Secret, add an entry below referencing its key
+      postInitApplicationSQLRefs:
+        secretRefs:
+          - name: dai-xld-postgres-init
+            key: init.sql
+
+  # PostgreSQL configuration (maps from primary.configuration)
+  postgresql:
+    parameters:
+      wal_level: "replica"
+      max_wal_size: "400MB"
+      max_wal_senders: "16"
+      wal_keep_size: "128MB"
+      fsync: "on"
+      log_connections: "false"
+      log_disconnections: "false"
+      log_hostname: "false"
+      client_min_messages: "error"
+      max_connections: "300"
+      shared_buffers: "80MB"

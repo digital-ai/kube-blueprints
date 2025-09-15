@@ -1,0 +1,12 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: User
+metadata:
+  name: dai-xld-admin
+spec:
+  rabbitmqClusterReference:
+    name: dai-xld-rabbitmq
+  tags:
+    - administrator
+  # Store password in a Secret; reference it here
+  importCredentialsSecret:
+    name: dai-xld-rabbitmq-secret   # must contain keys: username, password (or just password if username provided above)

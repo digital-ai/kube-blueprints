@@ -1,11 +1,11 @@
 {{- if hasPrefix "Openshift" .K8sSetup }}
-  {{- if and .EnablePostgresql .EnableSCC }}
+  {{- if and .EnableSCC eq .RabbitmqInstall "chart" }}
 ---
-  {{- $postgresqlFullName := printf "dai-ocp-%s-postgresql" .ShortServerName }}
+  {{- $rabbitmqFullName := printf "dai-ocp-%s-rabbitmq" .ShortServerName }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
-  name: {{ $postgresqlFullName }}
+  name: {{ $rabbitmqFullName }}
   namespace: {{ .Namespace }}
 allowHostDirVolumePlugin: false
 allowHostIPC: false
@@ -32,7 +32,7 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-  - system:serviceaccount:{{ .Namespace }}:{{ $postgresqlFullName }}
+  - system:serviceaccount:{{ .Namespace }}:{{ $rabbitmqFullName }}
 volumes:
   - configMap
   - downwardAPI

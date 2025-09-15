@@ -43,18 +43,39 @@ spec:
 {{- end }}
   external:
     db:
-      {{- if eq .EnablePostgresql false }}
+      {{- if eq .PostgresqlInstall "external" }}
       enabled: true
 {{ .PostgresqlExternalConfigDeploy | indent 6 }}
       {{- else }}
+      {{- if eq .PostgresqlInstall "operator" }}
+      enabled: true
+      main:
+        url: jdbc:postgresql://dai-xld-postgres-rw:5432/xld-db
+        username: xld
+        password: xld
+      report:
+        url: jdbc:postgresql://dai-xld-postgres-rw:5432/xld-report-db
+        username: xld-report
+        password: xld-report
+      {{- else }}
       enabled: false
       {{- end }}
+      {{- end }}
     mq:
-      {{- if eq .EnableRabbitmq false }}
+      {{- if eq .RabbitmqInstall "external" }}
       enabled: true
 {{ .RabbitmqExternalConfigDeploy | indent 6 }}
       {{- else }}
+      {{- if eq .PostgresqlInstall "operator" }}
+      enabled: true
+      url: "amqp://dai-xld-rabbitmq:5672"
+      queueName: "xld"
+      username: "guest"
+      password: "guest"
+      driverClassName: "com.rabbitmq.jms.admin.RMQConnectionFactory"
+      {{- else }}
       enabled: false
+      {{- end }}
       {{- end }}
   oidc:
     enabled: {{ not (eq .OidcConfigType "no-oidc") }}
@@ -278,13 +299,17 @@ spec:
       {{- end }}
 
   ingress:
-    {{- if eq .IngressType "nginx" }}
+    {{- if or (eq .IngressType "nginx") (eq .IngressType "nginx-operator") }}
     enabled: true
     annotations:
+      {{- if eq .UseCustomNamespace true }}
+      kubernetes.io/ingress.class: nginx-dai
+      {{- else }}
       {{- if eq .UseCustomNamespace true }}
       kubernetes.io/ingress.class: nginx-dai-xld-{{ .Namespace }}
       {{- else }}
       kubernetes.io/ingress.class: nginx-dai-xld
+      {{- end }}
       {{- end }}
       nginx.ingress.kubernetes.io/affinity: cookie
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
@@ -511,7 +536,11 @@ spec:
       {{- /* registry name defined in global section */}}
       repository: {{ .RepositoryNameDeploy }}/postgresql
     {{- end }}
-    install: {{ .EnablePostgresql }}
+    {{- if eq .PostgresqlInstall "chart" }}
+    install: true
+    {{- else }}
+    install: false
+    {{- end }}
     primary:
       {{- if eq .ResourcesSource "preset" }}
       resourcesPreset: {{ .PostgresqlResourcesPreset }}
@@ -561,7 +590,11 @@ spec:
       {{- /* registry name defined in global section */}}
       repository: {{ .RepositoryNameDeploy }}/rabbitmq
     {{- end }}
-    install: {{ .EnableRabbitmq }}
+    {{- if eq .RabbitmqInstall "chart" }}
+    install: true
+    {{- else }}
+    install: false
+    {{- end }}
     persistence:
       size: {{ .RabbitmqPvcSize }}Gi
       storageClass: {{ .RabbitmqStorageClass }}
