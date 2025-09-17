@@ -1550,7 +1550,8 @@ spec:
           0.0:
           23.3: .
         .spec.ssl: .
-        .spec.hooks: .
+        .spec.hooks.genSelfSigned: .
+        .spec.hooks.getLicense: .
         .spec.centralConfiguration.configuration: .
         .spec.centralConfiguration.extraConfiguration: .
         .spec.centralConfiguration.diagnosticMode: .
@@ -1761,7 +1762,8 @@ spec:
           23.3: .
         .spec.http2.enabled: .
         .spec.ssl: .
-        .spec.hooks: .
+        .spec.hooks.genSelfSigned: .
+        .spec.hooks.getLicense: .
         .spec.configuration: .
         .spec.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
