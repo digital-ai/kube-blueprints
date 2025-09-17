@@ -67,7 +67,7 @@ spec:
       type: Select
       prompt: !expr "'Product server you want to perform ' + ProcessType + ' for:'"
       options:
-        - label: Digital.ai Release with optional Digital.ai Release Runner
+        - label: Digital.ai Release
           value: dai-release
         - label: Digital.ai Deploy
           value: dai-deploy
