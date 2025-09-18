@@ -103,7 +103,7 @@ spec:
       {{- end }}
       image:
         repository: {{ .RepositoryNameRelease }}/xl-client
-        tag: "{{ .ImageTagRelease }}"
+        tag: "{{ .OperatorImageTagRelease }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified"}}
@@ -118,7 +118,7 @@ spec:
       {{- end }}
       image:
         repository: {{ .RepositoryNameRelease }}/xl-client
-        tag: "{{ .ImageTagRelease }}"
+        tag: "{{ .OperatorImageTagRelease }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified"}}
@@ -135,7 +135,7 @@ spec:
       {{- end }}
       image:
         repository: {{ .RepositoryNameRelease }}/xl-client
-        tag: "{{ .ImageTagRelease }}"
+        tag: "{{ .OperatorImageTagRelease }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- if eq .K8sSetup "OpenshiftCertified"}}
@@ -192,7 +192,7 @@ spec:
   busyBox:
     image:
       repository: {{ .RepositoryNameRelease }}/xl-client
-      tag: "{{ .ImageTagRelease }}"
+      tag: "{{ .OperatorImageTagRelease }}"
       {{- if eq .IsCustomImageRegistry true }}
       registry: {{ .CustomImageRegistryName }}
       {{- if eq .K8sSetup "OpenshiftCertified"}}
