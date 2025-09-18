@@ -87,7 +87,7 @@ spec:
       {{- end }}
       image:
         repository: {{ .RepositoryNameDeploy }}/xl-client
-        tag: "{{ .ImageTagDeploy }}"
+        tag: "{{ .OperatorImageTagDeploy }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- end }}
@@ -99,7 +99,7 @@ spec:
       {{- end }}
       image:
         repository: {{ .RepositoryNameDeploy }}/xl-client
-        tag: "{{ .ImageTagDeploy }}"
+        tag: "{{ .OperatorImageTagDeploy }}"
         {{- if eq .IsCustomImageRegistry true }}
         registry: {{ .CustomImageRegistryName }}
         {{- end }}
@@ -245,7 +245,7 @@ spec:
   busyBox:
     image:
       repository: {{ .RepositoryNameDeploy }}/xl-client
-      tag: "{{ .ImageTagDeploy }}"
+      tag: "{{ .OperatorImageTagDeploy }}"
       {{- if eq .IsCustomImageRegistry true }}
       registry: {{ .CustomImageRegistryName }}
       {{- end }}
