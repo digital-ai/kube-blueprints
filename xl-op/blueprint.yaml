@@ -593,7 +593,7 @@ spec:
       type: Select
       prompt: "Select between supported ingress types:"
       options:
-        - label: Ingress NGINX controller (non-production)
+        - label: Ingress NGINX controller (experimental/non-production)
           value: ingress-nginx-controller
         - label: NGINX Ingress Bitnami Helm Chart (deprecated)
           value: nginx
@@ -616,7 +616,7 @@ spec:
       options:
         - label: Openshift Route
           value: route
-        - label: Ingress NGINX controller (non-production)
+        - label: Ingress NGINX controller (experimental/non-production)
           value: ingress-nginx-controller
         - label: NGINX Bitnami Helm Chart (deprecated)
           value: nginx
@@ -1076,7 +1076,7 @@ spec:
     - name: PostgresqlInstall
       type: Select
       options:
-        - label: CloudNativePG Operator (non-production)
+        - label: CloudNativePG Operator (experimental/non-production)
           value: operator
         - label: Bitnami Helm Chart (deprecated)
           value: chart
@@ -1191,7 +1191,7 @@ spec:
     - name: RabbitmqInstall
       type: Select
       options:
-        - label: RabbitMQ Cluster Operator (non-production)
+        - label: RabbitMQ Cluster Operator (experimental/non-production)
           value: operator
         - label: Bitnami Helm Chart (deprecated)
           value: chart
@@ -1532,10 +1532,13 @@ spec:
         .spec.hooks: .
         .spec.centralConfiguration.configuration: .
         .spec.centralConfiguration.extraConfiguration: .
+        .spec.centralConfiguration.diagnosticMode: .
         .spec.master.configuration: .
         .spec.master.extraConfiguration: .
+        .spec.master.diagnosticMode: .
         .spec.worker.configuration: .
         .spec.worker.extraConfiguration: .
+        .spec.worker.diagnosticMode: .
         .spec.postgresql.primary.configuration: .
         .spec.postgresql.primary.extraConfiguration: .
         .spec.rabbitmq.configuration: .
@@ -1556,8 +1559,10 @@ spec:
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
         .spec.rabbitmq.resources: .
         .spec.rabbitmq.resourcesPreset: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.centralConfiguration.podSecurityContext: .
         .spec.centralConfiguration.containerSecurityContext: .
         .spec.centralConfiguration.volumePermissions: .
@@ -1620,6 +1625,7 @@ spec:
         .spec.appHostname:
           0.0:
           23.3: .
+        .spec.diagnosticMode: .
         .spec.replicaCount: .
         .spec.persistence.paths: .
         .spec.persistence.emptyDirPaths: .
@@ -1749,6 +1755,8 @@ spec:
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
         .spec.volumePermissions: .
@@ -1955,24 +1963,27 @@ spec:
     # Generic
     - path: digitalai/generated_answers.yaml.tmpl
       renameTo: !expr "'digitalai/generated_answers_' + ServerType + '_' +  Namespace + '_' + ProcessType + '-' + GenerationDateTime + '.yaml.tmpl'"
-    # Postgresql
-    - path: digitalai/postgresql-operator/101-postgresql-cluster-operator.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/postgresql-operator/101-postgresql-cluster-operator.yaml'"
     # RabbitMQ
-    - path: digitalai/rabbitmq-operator/102-rabbitmq-cluster-operator.yaml.tmpl
+    - path: digitalai/rabbitmq-operator/111-rabbitmq-cluster-operator.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/102-rabbitmq-cluster-operator.yaml'"
-    - path: digitalai/rabbitmq-operator/101-rabbitmq-self-signed-job.yaml.tmpl
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/111-rabbitmq-cluster-operator.yaml'"
+    - path: digitalai/rabbitmq-operator/112-rabbitmq-validating-webhook.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/101-rabbitmq-self-signed-job.yaml'"
-    - path: digitalai/rabbitmq-operator/103-rabbitmq-topology-operator.yaml.tmpl
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/112-rabbitmq-validating-webhook.yaml'"
+    - path: digitalai/rabbitmq-operator/113-rabbitmq-self-signed-job.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/rabbitmq-operator/103-rabbitmq-topology-operator.yaml'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/113-rabbitmq-self-signed-job.yaml'"
+    - path: digitalai/rabbitmq-operator/114-rabbitmq-topology-operator.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/114-rabbitmq-topology-operator.yaml'"
+    # Postgresql
+    - path: digitalai/postgresql-operator/131-postgresql-cluster-operator.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/131-postgresql-cluster-operator.yaml'"
     # Ingress Nginx
-    - path: digitalai/ingress-nginx-controller/101-ingress-nginx-controller.yaml.tmpl
+    - path: digitalai/ingress-nginx-controller/151-ingress-nginx-controller.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && IngressType == 'ingress-nginx-controller'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/ingress-nginx-controller/101-ingress-nginx-controller.yaml'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/151-ingress-nginx-controller.yaml'"
     # Deploy
     - path: digitalai/dai-deploy/kubernetes-generic/template/802-leader-election-role.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'

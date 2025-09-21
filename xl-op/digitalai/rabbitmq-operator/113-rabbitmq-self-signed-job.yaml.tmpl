@@ -72,7 +72,8 @@ data:
         -o yaml | kubectl apply -f -
     fi
 
-    kubectl get validatingwebhookconfiguration topology.rabbitmq.com -o json | \
+    until kubectl get validatingwebhookconfiguration topology.rabbitmq.com; do sleep 2; done
+    kubectl get validatingwebhookconfiguration topology.rabbitmq.com -o yaml | \
       yq eval ".webhooks[].clientConfig.caBundle = \"$CA_BUNDLE\"" - | \
       kubectl apply -f -
 ---
