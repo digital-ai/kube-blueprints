@@ -1406,10 +1406,13 @@ spec:
         .spec.hooks: .
         .spec.centralConfiguration.configuration: .
         .spec.centralConfiguration.extraConfiguration: .
+        .spec.centralConfiguration.diagnosticMode: .
         .spec.master.configuration: .
         .spec.master.extraConfiguration: .
+        .spec.master.diagnosticMode: .
         .spec.worker.configuration: .
         .spec.worker.extraConfiguration: .
+        .spec.worker.diagnosticMode: .
         .spec.postgresql.primary.configuration: .
         .spec.postgresql.primary.extraConfiguration: .
         .spec.rabbitmq.configuration: .
@@ -1430,8 +1433,10 @@ spec:
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
         .spec.rabbitmq.resources: .
         .spec.rabbitmq.resourcesPreset: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.centralConfiguration.podSecurityContext: .
         .spec.centralConfiguration.containerSecurityContext: .
         .spec.centralConfiguration.volumePermissions: .
@@ -1469,6 +1474,7 @@ spec:
         .spec.appHostname:
           0.0:
           23.3: .
+        .spec.diagnosticMode: .
         .spec.replicaCount: .
         .spec.persistence.paths: .
         .spec.persistence.emptyDirPaths: .
@@ -1611,8 +1617,10 @@ spec:
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
         .spec.rabbitmq.resources: .
         .spec.rabbitmq.resourcesPreset: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
         .spec.volumePermissions: .
