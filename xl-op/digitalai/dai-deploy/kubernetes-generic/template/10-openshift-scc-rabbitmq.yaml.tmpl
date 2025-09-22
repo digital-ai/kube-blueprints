@@ -1,7 +1,10 @@
 {{- if eq .K8sSetup "Openshift" }}
   {{- if and .EnableRabbitmq .EnableSCC }}
 ---
-  {{- $rabbitmqFullName := printf "dai-ocp-%s-rabbitmq" .ShortServerName }}
+    {{- $rabbitmqFullName := printf "dai-ocp-%s-rabbitmq" .ShortServerName }}
+    {{- if ne .Namespace "digitalai" }}
+      {{- $rabbitmqFullName = printf "dai-ocp-%s-%s-rabbitmq" .ShortServerName .Namespace }}
+    {{- end }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
