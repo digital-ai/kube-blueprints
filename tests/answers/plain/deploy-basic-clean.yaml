@@ -28,6 +28,7 @@ PostgresqlExternalConfigDeploy: |-
     password: |-
       <xld-report-password>
     maxPoolSize: 10
+PostgresqlOperatorClean: true
 RabbitmqExternalConfigDeploy: |-
   url: <queue-url>
   queueName: <queue-name>
@@ -35,6 +36,8 @@ RabbitmqExternalConfigDeploy: |-
   password: |-
     <password>
   driverClassName: <driver-class-name>
+RabbitmqOperatorClean: true
+IngressNginxControllerClean: true
 OidcConfigTypeInstall: 'no-oidc'
 OidcConfigTypeUpgrade: 'existing'
 ExternalOidcConfGenericDeploy: |-

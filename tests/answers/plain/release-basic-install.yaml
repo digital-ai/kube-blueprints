@@ -92,7 +92,9 @@ AdminPassword: '8wFjGpTzPr1giFnI'
 StorageClass: 'local-path'
 IngressHost: 'digitalai.release.local'
 HttpsProtocol: 'false'
-EnablePostgresql: true
+#EnablePostgresql: true
+#PostgresqlInstall: chart
+PostgresqlInstall: operator
 PostgresqlStorageClass: 'local-path'
 EnableRabbitmq: true
 RabbitmqReplicaCount: '1'
