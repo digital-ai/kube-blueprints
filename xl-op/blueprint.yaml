@@ -826,6 +826,13 @@ spec:
       prompt: "Provide the TLS secret name with the key and certificate:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType != "none" && HttpProtocolIngress != "http" && IngressKeystoreSource == "secret"
       description: Provide the TLS secret name with the key and certificate which was created earlier.
+    - name: IngressNginxControllerClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'ingress-nginx-controller')) > '0'
+      prompt: "Clean IngressNginx Controller?:"
+      description: "Type yes to delete IngressNginx Controller installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the controller is shared between applications"
+      default: false
     - name: AdminPassword
       type: Input
       saveInXlvals: true
@@ -1188,6 +1195,13 @@ spec:
           password: |-
             <xld-report-password>
           maxPoolSize: 10
+    - name: PostgresqlOperatorClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr (ServerType == 'dai-release' || ServerType == 'dai-deploy') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'cnpg-controller-manager')) > '0'
+      prompt: "Clean Postgresql Operator?:"
+      description: "Type yes to delete Postgresql Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
+      default: false
     - name: RabbitmqInstall
       type: Select
       options:
@@ -1286,6 +1300,13 @@ spec:
           <password>
         driverClassName: <driver-class-name>
         queueType: <classic-or-quorum>
+    - name: RabbitmqOperatorClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr ServerType == 'dai-deploy' && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'rabbitmq-cluster-operator')) > '0'
+      prompt: "Clean Rabbitmq Operator?:"
+      description: "Type yes to delete Rabbitmq Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
+      default: false
     - name: CrdName
       type: Select
       options:
@@ -1965,24 +1986,24 @@ spec:
       renameTo: !expr "'digitalai/generated_answers_' + ServerType + '_' +  Namespace + '_' + ProcessType + '-' + GenerationDateTime + '.yaml.tmpl'"
     # RabbitMQ
     - path: digitalai/rabbitmq-operator/111-rabbitmq-cluster-operator.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/111-rabbitmq-cluster-operator.yaml'"
     - path: digitalai/rabbitmq-operator/112-rabbitmq-validating-webhook.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/112-rabbitmq-validating-webhook.yaml'"
     - path: digitalai/rabbitmq-operator/113-rabbitmq-self-signed-job.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/113-rabbitmq-self-signed-job.yaml'"
     - path: digitalai/rabbitmq-operator/114-rabbitmq-topology-operator.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/114-rabbitmq-topology-operator.yaml'"
     # Postgresql
     - path: digitalai/postgresql-operator/131-postgresql-cluster-operator.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator') || (ProcessType == 'clean' && PostgresqlOperatorClean && K8sSetup != 'OpenshiftCertified'))
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/131-postgresql-cluster-operator.yaml'"
     # Ingress Nginx
     - path: digitalai/ingress-nginx-controller/151-ingress-nginx-controller.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && IngressType == 'ingress-nginx-controller'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && IngressType == 'ingress-nginx-controller') || (ProcessType == 'clean' && IngressNginxControllerClean && K8sSetup != 'OpenshiftCertified'))
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/151-ingress-nginx-controller.yaml'"
     # Deploy
     - path: digitalai/dai-deploy/kubernetes-generic/template/802-leader-election-role.yaml

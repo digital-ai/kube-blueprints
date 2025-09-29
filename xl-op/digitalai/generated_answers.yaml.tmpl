@@ -64,6 +64,7 @@ IngressKeystoreSourceGeneric: '{{ .IngressKeystoreSourceGeneric }}'
 IngressKeystoreSourceHaproxy: '{{ .IngressKeystoreSourceHaproxy }}'
 IngressKeystoreSourceOpenshift: '{{ .IngressKeystoreSourceOpenshift }}'
 IngressTlsSecretName: '{{ .IngressTlsSecretName }}'
+IngressNginxControllerClean: '{{ .IngressNginxControllerClean }}'
 AdminPassword: '{{ .AdminPassword }}'
 StorageClass: '{{ .StorageClass }}'
 IngressHost: '{{ .IngressHost }}'
@@ -73,12 +74,14 @@ PostgresqlStorageClass: '{{ .PostgresqlStorageClass }}'
 PostgresqlResourcesPreset: '{{ .PostgresqlResourcesPreset }}'
 PostgresqlResourcesEditor: |-
 {{ .PostgresqlResourcesEditor | trim | indent 2 }}
+PostgresqlOperatorClean: '{{ .PostgresqlOperatorClean }}'
 RabbitmqInstall: {{ .RabbitmqInstall }}
 RabbitmqReplicaCount: '{{ .RabbitmqReplicaCount }}'
 RabbitmqStorageClass: '{{ .RabbitmqStorageClass }}'
 RabbitmqResourcesPreset: '{{ .RabbitmqResourcesPreset }}'
 RabbitmqResourcesEditor: |-
 {{ .RabbitmqResourcesEditor | trim | indent 2 }}
+RabbitmqOperatorClean: '{{ .RabbitmqOperatorClean }}'
 LicenseSource: '{{ .LicenseSource }}'
 LicenseEditor:  |-
 {{ .LicenseEditor | trim | indent 2 }}

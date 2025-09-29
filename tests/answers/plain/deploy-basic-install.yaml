@@ -96,9 +96,13 @@ AdminPassword: 'OEi9o1PHyQ89mwxm'
 StorageClass: 'local-path'
 IngressHost: ''
 HttpsProtocol: 'false'
-EnablePostgresql: true
+#EnablePostgresql: true
+#PostgresqlInstall: chart
+PostgresqlInstall: operator
 PostgresqlStorageClass: 'local-path'
-EnableRabbitmq: true
+#EnableRabbitmq: true
+#RabbitmqInstall: chart
+RabbitmqInstall: operator
 RabbitmqReplicaCount: '1'
 RabbitmqStorageClass: 'local-path'
 LicenseSource: 'generate'
