@@ -75,7 +75,7 @@ pipeline {
 }
 
 def getCurrentVersion() {
-    return '25.3.0'
+    return '26.1.0'
 }
 
 def getBranch() {
