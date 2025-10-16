@@ -2422,6 +2422,15 @@ spec:
             requests:
               cpu: 100m
               memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - mountPath: /tmp/k8s-webhook-server/serving-certs
               name: cert
