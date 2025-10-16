@@ -7,8 +7,8 @@ IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
 RepositoryNameDeploy: xebialabsunsupported
-ImageTagDeploy: 25.1.0-1024.113
-OperatorImageTagDeploy: 25.1.0-master
+ImageTagDeploy: 26.1.0
+OperatorImageTagDeploy: 26.1.0-master
 ImageNameDeploy: xl-deploy
 ImageNameDeployTaskEngine: deploy-task-engine
 ImageNameCc: central-configuration
@@ -85,7 +85,7 @@ IdentityServiceConfRelease: |-
   rolesClaim: ""
   userNameClaim: "preferred_username"
   scopes: ["openid"]
-IngressTypeGeneric: 'none'
+IngressTypeGeneric: 'ingress-nginx-controller'
 IngressTypeOpenshift: 'route'
 ExternalIngressClass: ''
 HttpProtocolIngress: 'http'
@@ -94,7 +94,7 @@ IngressKeystoreSourceOpenshift: 'default'
 IngressTlsSecretName: ''
 AdminPassword: 'OEi9o1PHyQ89mwxm'
 StorageClass: 'local-path'
-IngressHost: ''
+IngressHost: 'digitalai.deploy.local'
 HttpsProtocol: 'false'
 #EnablePostgresql: true
 #PostgresqlInstall: chart
@@ -134,7 +134,7 @@ CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameReleaseRunner: 'release-runner'
-ImageTagReleaseRunner: 25.1.0-1024.113
+ImageTagReleaseRunner: 26.1.0
 RemoteRunnerInstallType: ''
 RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'

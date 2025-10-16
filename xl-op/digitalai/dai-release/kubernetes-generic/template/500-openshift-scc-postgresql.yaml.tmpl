@@ -1,9 +1,15 @@
+{{- if hasPrefix "Openshift" .K8sSetup }}
+  {{- if and .EnableSCC (eq .PostgresqlInstall "operator") }}
 ---
+  {{- $postgresqlFullName := printf "dai-ocp-%s-postgresql" .ShortServerName }}
+  {{- if ne .Namespace "digitalai" }}
+    {{- $postgresqlFullName = printf "dai-ocp-%s-%s-postgresql" .ShortServerName .Namespace }}
+  {{- end }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
-  name: dai-ocp-xlr-postgresql
-  namespace: digitalai
+  name: {{ $postgresqlFullName }}
+  namespace: {{ .Namespace }}
 allowHostDirVolumePlugin: false
 allowHostIPC: false
 allowHostNetwork: false
@@ -30,7 +36,7 @@ seccompProfiles:
 supplementalGroups:
   type: RunAsAny
 users:
-  - system:serviceaccount:digitalai:cnpg-manager
+- system:serviceaccount:{{ .Namespace }}:dai-xlr-postgres
 volumes:
   - configMap
   - csi
@@ -40,3 +46,5 @@ volumes:
   - persistentVolumeClaim
   - projected
   - secret
+  {{- end }}
+{{- end }}

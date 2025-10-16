@@ -45,6 +45,16 @@ spec:
                 securityContext:
                   allowPrivilegeEscalation: false
                   readOnlyRootFilesystem: true
+                  runAsNonRoot: true
+                  capabilities:
+                    drop:
+                      - ALL
+            initContainers:
+              - name: setup-container
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  readOnlyRootFilesystem: true
+                  runAsNonRoot: true
                   capabilities:
                     drop:
                       - ALL

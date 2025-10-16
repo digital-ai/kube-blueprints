@@ -5639,5 +5639,14 @@ spec:
             requests:
               cpu: 200m
               memory: 500Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
       serviceAccountName: rabbitmq-cluster-operator
       terminationGracePeriodSeconds: 10

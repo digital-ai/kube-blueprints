@@ -2,7 +2,10 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: dai-xlr-postgres
+  annotations:
+    "cnpg.io/hibernation": "off"
 spec:
+
   # Number of PostgreSQL instances (1 primary). Add replicas by increasing this.
   instances: 1
 
@@ -38,6 +41,10 @@ spec:
     services:
       disabledDefaultServices: [ "ro", "r" ]
 
+  nodeMaintenanceWindow:
+    inProgress: false
+    reusePVC: true
+
   # Authentication (maps from auth.*)
   # Create a Secret with the superuser password and reference it here
   enableSuperuserAccess: true
@@ -50,7 +57,7 @@ spec:
       postInitSQL:
         - CREATE DATABASE "xlr-db";
         - CREATE DATABASE "xlr-report-db";
-      # Optional: create an application DB/owner here if you need one
+      # Ccreate an application DB/owner here if you need one
       # database: <app_db_name>
       # owner: <app_owner>
       # secret:
