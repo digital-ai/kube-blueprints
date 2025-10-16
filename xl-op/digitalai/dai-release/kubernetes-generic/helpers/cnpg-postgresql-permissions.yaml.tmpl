@@ -1,0 +1,46 @@
+#
+# kubectl patch --namespace {{ .Namespace }} -f digitalai/dai-release/kubernetes-generic/helpers/cnpg-postgresql-permissions.yaml
+#
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgresql-volume-permission
+spec:
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      name: postgresql-volume-permission
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: postgresql-volume-permission-job
+          image: ghcr.io/cloudnative-pg/postgresql:17.5-minimal-bookworm
+          imagePullPolicy: Always
+          command:
+            - /bin/sh
+            - -ec
+            - |
+                PGDATA=/var/lib/postgresql/data
+                echo "Fixing permissions on $PGDATA"
+                mkdir -p $PGDATA
+                stat $PGDATA
+                chown -R 26:26 $PGDATA
+                echo "Done"
+          securityContext:
+            allowPrivilegeEscalation: true
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: pgdata
+      volumes:
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: dai-xlr-postgres-1
