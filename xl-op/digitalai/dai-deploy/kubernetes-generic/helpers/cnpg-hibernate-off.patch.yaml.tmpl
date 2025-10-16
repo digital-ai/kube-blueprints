@@ -1,0 +1,6 @@
+#
+# kubectl patch --namespace {{ .Namespace }} cluster dai-xlr-postgres --type=merge --patch-file digitalai/dai-release/kubernetes-generic/helpers/cnpg-hibernate-on.patch.yaml
+#
+metadata:
+  annotations:
+    cnpg.io/hibernation: "off"

@@ -479,7 +479,7 @@ spec:
                 - NET_BIND_SERVICE
               drop:
                 - ALL
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             runAsGroup: 82
             runAsNonRoot: true
             runAsUser: 101
@@ -489,6 +489,38 @@ spec:
             - mountPath: /usr/local/certificates/
               name: webhook-cert
               readOnly: true
+            - mountPath: /tmp
+              name: empty-dir
+              subPath: tmp
+            - mountPath: /tmp/nginx
+              name: empty-dir
+              subPath: nginx
+            - mountPath: /etc/ingress-controller/ssl
+              name: empty-dir
+              subPath: ssl
+            - mountPath: /etc/ingress-controller/telemetry
+              name: empty-dir
+              subPath: telemetry
+            - mountPath: /etc/nginx
+              name: nginx-conf
+      initContainers:
+        - name: copy-image-content
+          image: registry.k8s.io/ingress-nginx/controller:v1.13.2@sha256:1f7eaeb01933e719c8a9f4acd8181e555e582330c7d50f24484fb64d2ba9b2ef
+          command: ["/bin/sh", "-c", "cp -r /etc/nginx/* /mnt/data/"]
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /mnt/data
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 82
+            runAsNonRoot: true
+            runAsUser: 101
+            seccompProfile:
+              type: RuntimeDefault
       dnsPolicy: ClusterFirst
       nodeSelector:
         kubernetes.io/os: linux
@@ -498,6 +530,11 @@ spec:
         - name: webhook-cert
           secret:
             secretName: ingress-nginx-admission
+        - emptyDir: {}
+          name: empty-dir
+        - emptyDir: {}
+          name: nginx-conf
+
 ---
 apiVersion: batch/v1
 kind: Job

@@ -137,6 +137,15 @@ spec:
           imagePullPolicy: Always
           command:
             - "/opt/xebialabs/ssl/gen-self-signed.sh"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
               - name: shared-data
                 mountPath: /opt/xebialabs/ssl
@@ -152,6 +161,15 @@ spec:
           imagePullPolicy: Always
           command:
             - "/opt/xebialabs/ssl/install-self-signed.sh"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
               - name: shared-data
                 mountPath: /opt/xebialabs/ssl
