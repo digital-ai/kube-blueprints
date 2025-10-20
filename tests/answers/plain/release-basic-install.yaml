@@ -7,8 +7,8 @@ IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
 RepositoryNameRelease: xebialabsunsupported
-ImageTagRelease: 25.1.0-1024.113
-OperatorImageTagRelease: 25.1.0-master
+ImageTagRelease: 26.1.0
+OperatorImageTagRelease: 26.1.0-master
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
 XlrReplicaCount: 1
@@ -81,7 +81,7 @@ IdentityServiceConfRelease: |-
   rolesClaim: ""
   userNameClaim: "preferred_username"
   scopes: ["openid"]
-IngressTypeGeneric: 'none'
+IngressTypeGeneric: 'ingress-nginx-controller'
 IngressTypeOpenshift: 'route'
 ExternalIngressClass: ''
 HttpProtocolIngress: 'http'
@@ -127,7 +127,7 @@ CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameReleaseRunner: 'release-runner'
-ImageTagReleaseRunner: 25.1.0-1024.113
+ImageTagReleaseRunner: 26.1.0
 RemoteRunnerInstallType: 'no-install'
 RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
