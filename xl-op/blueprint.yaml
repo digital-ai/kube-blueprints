@@ -2060,9 +2060,9 @@ spec:
     - path: digitalai/dai-deploy/kubernetes-generic/template/503-postgresql-cluster.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/503-postgresql-cluster.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/helpers/postgresql-permissions.yaml.tmpl
+    - path: digitalai/dai-deploy/kubernetes-generic/helpers/cnpg-postgresql-permissions.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/helpers/postgresql-permissions.yaml.tmpl'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/helpers/cnpg-postgresql-permissions.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/502-postgresql-init-secret.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/502-postgresql-init-secret.yaml'"
@@ -2130,9 +2130,9 @@ spec:
     - path: digitalai/dai-release/kubernetes-generic/template/503-postgresql-cluster.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/503-postgresql-cluster.yaml'"
-    - path: digitalai/dai-release/kubernetes-generic/helpers/postgresql-permissions.yaml.tmpl
+    - path: digitalai/dai-release/kubernetes-generic/helpers/cnpg-postgresql-permissions.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/helpers/postgresql-permissions.yaml.tmpl'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/helpers/cnpg-postgresql-permissions.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/template/502-postgresql-init-secret.yaml
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/502-postgresql-init-secret.yaml'"
