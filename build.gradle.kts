@@ -48,7 +48,7 @@ val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?:
 
 project.extra.set("releasedVersion", releasedVersion)
 
-val languageLevel = properties["languageLevel"]
+val languageLevel = properties["languageLevel"] as String
 val helmVersion = properties["helmVersion"]
 
 val os = detectOs()
@@ -116,6 +116,10 @@ subprojects {
     }
 }
 
+interface InjectedExecOps {
+    @get:Inject val execOps: ExecOperations
+}
+
 tasks {
 
     val helmDir = layout.buildDirectory.dir("helm").get()
@@ -125,13 +129,17 @@ tasks {
         group = "helm"
         src("https://get.helm.sh/helm-v$helmVersion-$os-$arch.tar.gz")
         dest(helmDir.file("helm.tar.gz").getAsFile())
+        val injected = objects.newInstance<InjectedExecOps>()
+
         doLast {
             copy {
                 from(tarTree(helmDir.file("helm.tar.gz")))
                 into(helmDir)
-                fileMode = 0b111101101
+                filePermissions {
+                    unix("rwxr-xr-x")
+                }
             }
-            exec {
+            injected.execOps.exec {
                 workingDir(helmDir)
                 commandLine(helmCli, "version")
             }
@@ -235,8 +243,8 @@ tasks {
         group = "release"
         doLast {
             project.logger.lifecycle("Dumping version $releasedVersion")
-            file(buildDir).mkdirs()
-            file("$buildDir/version.dump").writeText("version=${releasedVersion}")
+            layout.buildDirectory.get().asFile.mkdirs()
+            layout.buildDirectory.file("version.dump").get().asFile.writeText("version=${releasedVersion}")
         }
     }
 
