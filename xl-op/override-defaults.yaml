@@ -1,6 +1,6 @@
 RepositoryNameDeploy: xebialabsunsupported
-OperatorImageTagDeploy: 24.3.12-1021.1043
-ImageTagDeploy: 24.3.12-1021.1043
+OperatorImageTagDeploy: 24.3.12-1026.130
+ImageTagDeploy: 24.3.12-1026.130
 RepositoryNameRelease: xebialabsunsupported
 OperatorImageTagRelease: 24.3.12-1026.130
 ImageTagRelease: 24.3.12-1026.130
