@@ -31,7 +31,7 @@ buildscript {
 plugins {
     kotlin("jvm") version "2.1.20"
     id("nebula.release") version (properties["nebulaReleasePluginVersion"] as String)
-    id("com.github.node-gradle.node") version "7.0.2"
+    id("com.github.node-gradle.node") version "7.1.0"
     id("maven-publish")
     id("idea")
     id("de.undercouch.download") version "5.6.0"
