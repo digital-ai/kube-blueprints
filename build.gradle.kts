@@ -154,7 +154,7 @@ tasks {
         group = "blueprint"
         helmChartName = "release-runner-helm-chart"
         helmChartCli = helmCli.toString()
-        gitProtocol = (project.findProperty("gitProtocol")?.toString() ?: "git")
+        gitProtocol = (project.findProperty("gitProtocol")?.toString() ?: "ssh")
         currentBranch = (project.findProperty("branch")?.toString() ?: "master")
         dependsOn(named("installHelm"))
     }

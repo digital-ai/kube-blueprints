@@ -41,8 +41,8 @@ abstract class GetHelmChartTask @Inject constructor(private val layout: ProjectL
 
         GitUtil.cloneRepository(
             logger,
-            GitUtil.toGithubUrl(repoName, GitUtil.getGithubProtocol(gitProtocol.get())),
-            GitUtil.getCurrentBranch(currentBranch.get()),
+            GitUtil.toGithubUrl(repoName, gitProtocol.get() ?: "ssh"),
+            currentBranch.get() ?: "master",
             destination
         )
 
