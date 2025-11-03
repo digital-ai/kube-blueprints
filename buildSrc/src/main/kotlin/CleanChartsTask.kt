@@ -1,7 +1,9 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.ProjectLayout
+import javax.inject.Inject
 
-open class CleanChartsTask : DefaultTask() {
+open class CleanChartsTask @Inject constructor(private val layout: ProjectLayout) : DefaultTask() {
 
     companion object {
         const val NAME = "cleanCharts"
@@ -9,10 +11,10 @@ open class CleanChartsTask : DefaultTask() {
 
     @TaskAction
     fun launch() {
-        project.logger.lifecycle("About to start CleanCheckedOutProjectsTask.")
-        Constants.getChartsBuild(project)
+        logger.lifecycle("About to start CleanCheckedOutProjectsTask.")
+        Constants.getChartsBuild(layout.buildDirectory)
             .deleteRecursively()
-        Constants.getChartsTarget(project)
+        Constants.getChartsTarget(layout.buildDirectory)
             .deleteRecursively()
     }
 }

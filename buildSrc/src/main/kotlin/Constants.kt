@@ -1,4 +1,4 @@
-import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import java.io.File
 import java.nio.file.Path
 
@@ -8,16 +8,13 @@ class Constants {
         const val buildChartsDestFolder = "buildCharts"
         const val targetChartsDestFolder = "charts"
 
-        fun getChartsBuild(project: Project): File {
-            return project.buildDir.toPath()
-                .resolve(buildChartsDestFolder)
-                .toFile()
+        fun getChartsBuild(buildDirectory: DirectoryProperty): File {
+            return buildDirectory.dir(buildChartsDestFolder).get().asFile
+
         }
 
-        fun getChartsTarget(project: Project): File {
-            return project.buildDir.toPath()
-                .resolve(targetChartsDestFolder)
-                .toFile()
+        fun getChartsTarget(buildDirectory: DirectoryProperty): File {
+            return buildDirectory.dir(targetChartsDestFolder).get().asFile
         }
     }
 }
