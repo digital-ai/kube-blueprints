@@ -157,7 +157,7 @@ spec:
                 subPath: gen-self-signed.sh
       containers:
         - name: install-self-signed-job
-          image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/xl-client:{{ .ImageTagDeploy }}
+          image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/xl-client:{{ .OperatorImageTagDeploy }}
           imagePullPolicy: Always
           command:
             - "/opt/xebialabs/ssl/install-self-signed.sh"
