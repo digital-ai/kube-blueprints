@@ -826,13 +826,6 @@ spec:
       prompt: "Provide the TLS secret name with the key and certificate:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType != "none" && HttpProtocolIngress != "http" && IngressKeystoreSource == "secret"
       description: Provide the TLS secret name with the key and certificate which was created earlier.
-    - name: IngressNginxControllerClean
-      type: Confirm
-      saveInXlvals: true
-      promptIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'ingress-nginx-controller')) > '0'
-      prompt: "Clean IngressNginx Controller?:"
-      description: "Type yes to delete IngressNginx Controller installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the controller is shared between applications"
-      default: false
     - name: AdminPassword
       type: Input
       saveInXlvals: true
@@ -1195,13 +1188,6 @@ spec:
           password: |-
             <xld-report-password>
           maxPoolSize: 10
-    - name: PostgresqlOperatorClean
-      type: Confirm
-      saveInXlvals: true
-      promptIf: !expr (ServerType == 'dai-release' || ServerType == 'dai-deploy') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'cnpg-controller-manager')) > '0'
-      prompt: "Clean Postgresql Operator?:"
-      description: "Type yes to delete Postgresql Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
-      default: false
     - name: RabbitmqInstall
       type: Select
       options:
@@ -1300,13 +1286,6 @@ spec:
           <password>
         driverClassName: <driver-class-name>
         queueType: <classic-or-quorum>
-    - name: RabbitmqOperatorClean
-      type: Confirm
-      saveInXlvals: true
-      promptIf: !expr ServerType == 'dai-deploy' && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'rabbitmq-cluster-operator')) > '0'
-      prompt: "Clean Rabbitmq Operator?:"
-      description: "Type yes to delete Rabbitmq Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
-      default: false
     - name: CrdName
       type: Select
       options:
@@ -1804,6 +1783,27 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       description: The name of your custom resource definition.
+    - name: IngressNginxControllerClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'ingress-nginx-controller')) > '0'
+      prompt: "Clean IngressNginx Controller (it can impact other installation of IngressNginx Controller):"
+      description: "Type yes to delete IngressNginx Controller installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the controller is shared between applications"
+      default: false
+    - name: PostgresqlOperatorClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr (ServerType == 'dai-release' || ServerType == 'dai-deploy') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'cnpg-controller-manager')) > '0'
+      prompt: "Clean Postgresql Operator (it can impact other installation of Postgresql Operator):"
+      description: "Type yes to delete Postgresql Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
+      default: false
+    - name: RabbitmqOperatorClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr ServerType == 'dai-deploy' && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'rabbitmq-cluster-operator')) > '0'
+      prompt: "Clean Rabbitmq Operator (it can impact other installation of Rabbitmq Operator):"
+      description: "Type yes to delete Rabbitmq Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
+      default: false
     - name: RemoteRunnerInstallType
       type: Select
       options:
