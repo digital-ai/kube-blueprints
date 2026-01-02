@@ -42,6 +42,7 @@ spec:
     - name: UseCustomNamespace
       type: Confirm
       default: false
+      overrideDefault: true
       saveInXlvals: true
       prompt: "Do you want to use an custom Kubernetes namespace (current default is 'digitalai'):"
       description: "Type yes to use a namespace, not 'digitalai', in your kubernetes cluster for doing an install, update or clean of the Digital.ai Devops Platform."
@@ -51,6 +52,7 @@ spec:
       promptIf: !expr "UseCustomNamespace"
       prompt: "Enter the name of the Kubernetes namespace where the Digital.ai DevOps Platform will be installed, updated or cleaned:"
       default: digitalai
+      overrideDefault: true
       saveInXlvals: true
       ignoreIfSkipped: true
       description: "Type the name of the Kubernetes namespace to install, update or clean the Digital.ai Devops Platform."
@@ -58,10 +60,11 @@ spec:
 
     - name: CreateNamespace
       type: Confirm
-      default: true
+      default: !expr "k8sResource(Namespace, 'namespace', Namespace) == ''"
+      overrideDefault: true
       saveInXlvals: true
       promptIf: !expr "ProcessType != 'clean' && k8sResource(Namespace, 'namespace', Namespace) == ''"
-      prompt:  !expr "'Do you want to create custom Kubernetes namespace ' + Namespace + ', it does not exist:'"
+      prompt: !expr "'Do you want to create custom Kubernetes namespace ' + Namespace + ', it does not exist:'"
       description: "Type yes to create a namespace in your kubernetes cluster."
 
     - name: ServerType
