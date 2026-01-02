@@ -38,8 +38,10 @@ users:
   - system:serviceaccount:{{ .Namespace }}:{{ $postgresqlFullName }}
 volumes:
   - configMap
+  - csi
   - downwardAPI
   - emptyDir
+  - ephemeral
   - persistentVolumeClaim
   - projected
   - secret
