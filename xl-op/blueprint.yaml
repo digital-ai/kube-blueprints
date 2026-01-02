@@ -1835,10 +1835,10 @@ spec:
       writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/08-openshift-scc.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/09-openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && EnablePostgresql && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/09-openshift-scc-postgresql.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/10-openshift-scc-rabbitmq.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && EnableRabbitmq && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/10-openshift-scc-rabbitmq.yaml.tmpl'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/06-manager-role.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
@@ -1872,10 +1872,10 @@ spec:
       writeIf: !expr ServerType == 'dai-release' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/08-openshift-scc.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/09-openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && EnablePostgresql && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/09-openshift-scc-postgresql.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/10-openshift-scc-rabbitmq.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && EnableRabbitmq && (K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/10-openshift-scc-rabbitmq.yaml.tmpl'"
     - path: digitalai/dai-release/kubernetes-generic/template/06-manager-role.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
