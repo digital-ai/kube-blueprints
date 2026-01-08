@@ -2,6 +2,9 @@
   {{- if eq .EnableSCC true }}
 ---
   {{- $deployFullName := printf "dai-ocp-%s-%s-deploy" .ShortServerName .Namespace }}
+  {{- if ne .Namespace "digitalai" }}
+    {{- $deployFullName = printf "dai-ocp-%s-%s-digitalai-deploy" .ShortServerName .Namespace }}
+  {{- end }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:

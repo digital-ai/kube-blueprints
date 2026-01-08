@@ -1,6 +1,7 @@
 K8sSetup: {{ .K8sSetup }}
 UseCustomNamespace: {{ .UseCustomNamespace }}
 Namespace: {{ .Namespace }}
+CreateNamespace: {{ .CreateNamespace }}
 ServerType: {{ .ServerType }}
 ImageRegistryType: {{ .ImageRegistryType }}
 IsCustomImageRegistry: {{ .IsCustomImageRegistry }}
@@ -39,8 +40,6 @@ PreserveCrValuesRelease: |-
   {{- end }}
 PostgresqlExternalConfigRelease: |-
 {{ .PostgresqlExternalConfigRelease | indent 2  }}
-RabbitmqExternalConfigRelease: |-
-{{ .RabbitmqExternalConfigRelease | indent 2 }}
 {{- end }}
 OidcConfigTypeInstall: '{{ .OidcConfigTypeInstall }}'
 OidcConfigTypeUpgrade: '{{ .OidcConfigTypeUpgrade }}'
@@ -66,21 +65,24 @@ IngressKeystoreSourceGeneric: '{{ .IngressKeystoreSourceGeneric }}'
 IngressKeystoreSourceHaproxy: '{{ .IngressKeystoreSourceHaproxy }}'
 IngressKeystoreSourceOpenshift: '{{ .IngressKeystoreSourceOpenshift }}'
 IngressTlsSecretName: '{{ .IngressTlsSecretName }}'
+IngressNginxControllerClean: '{{ .IngressNginxControllerClean }}'
 AdminPassword: '{{ .AdminPassword }}'
 StorageClass: '{{ .StorageClass }}'
 IngressHost: '{{ .IngressHost }}'
 HttpsProtocol: '{{ .HttpsProtocol }}'
-EnablePostgresql: {{ .EnablePostgresql }}
+PostgresqlInstall: {{ .PostgresqlInstall }}
 PostgresqlStorageClass: '{{ .PostgresqlStorageClass }}'
 PostgresqlResourcesPreset: '{{ .PostgresqlResourcesPreset }}'
 PostgresqlResourcesEditor: |-
 {{ .PostgresqlResourcesEditor | trim | indent 2 }}
-EnableRabbitmq: {{ .EnableRabbitmq }}
+PostgresqlOperatorClean: '{{ .PostgresqlOperatorClean }}'
+RabbitmqInstall: {{ .RabbitmqInstall }}
 RabbitmqReplicaCount: '{{ .RabbitmqReplicaCount }}'
 RabbitmqStorageClass: '{{ .RabbitmqStorageClass }}'
 RabbitmqResourcesPreset: '{{ .RabbitmqResourcesPreset }}'
 RabbitmqResourcesEditor: |-
 {{ .RabbitmqResourcesEditor | trim | indent 2 }}
+RabbitmqOperatorClean: '{{ .RabbitmqOperatorClean }}'
 LicenseSource: '{{ .LicenseSource }}'
 LicenseEditor:  |-
 {{ .LicenseEditor | trim | indent 2 }}

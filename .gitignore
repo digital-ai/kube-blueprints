@@ -7,5 +7,10 @@
 .gradle
 build
 bin/
+buildSrc/.kotlin
 
 kubeconfig
+node_modules/
+
+documentation/node_modules
+documentation/scripts/js/node_modules

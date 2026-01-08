@@ -1,15 +1,17 @@
 {{- if hasPrefix "Openshift" .K8sSetup }}
-  {{- if eq .EnableSCC true }}
+  {{- if eq .EnableSCC true }} 
 ---
+  {{- $releaseRunnerFullName := printf "dai-ocp-%s-%s-release-%s-install-runner" .ShortServerName .Namespace .ShortServerName }}
   {{- $releaseFullName := printf "dai-ocp-%s-%s-release" .ShortServerName .Namespace }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
-  name: {{ $releaseFullName }}-privileged
-allowHostNetwork: false
-allowHostPID: false
+  name: {{ $releaseRunnerFullName }}
+  namespace: {{ .Namespace }}
 allowHostDirVolumePlugin: false
 allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
 allowHostPorts: false
 allowPrivilegeEscalation: false
 allowPrivilegedContainer: false
@@ -22,7 +24,8 @@ fsGroup:
 groups: []
 priority: 100
 readOnlyRootFilesystem: false
-requiredDropCapabilities: []
+requiredDropCapabilities:
+  - MKNOD
 runAsUser:
   type: RunAsAny
 seLinuxContext:
@@ -30,8 +33,13 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-  - system:serviceaccount:{{ .Namespace }}:{{ $releaseFullName }}
+  - system:serviceaccount:{{- if eq .Values.k8sSetup.platform "OpenshiftCertified" }}{{ .Namespace }}:{{ $releaseFullName }}{{- else }}{{ .Namespace }}:default{{- end }}
 volumes:
-  - '*'
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - persistentVolumeClaim
+  - projected
+  - secret
   {{- end }}
 {{- end }}

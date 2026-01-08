@@ -47,7 +47,7 @@ RUN curl -LO https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_
     && chmod +x yq_linux_amd64 \
     && mv yq_linux_amd64 /usr/local/bin/yq
 
-RUN curl https://get.helm.sh/helm-v3.17.1-linux-amd64.tar.gz |\
+RUN curl https://get.helm.sh/helm-v3.19.0-linux-amd64.tar.gz |\
     tar xz && mv linux-amd64/helm /usr/local/bin/helm
 
 RUN helm plugin install https://github.com/nikhilsbhat/helm-images

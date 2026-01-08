@@ -30,6 +30,13 @@ rules:
 {{- end }}
 {{- if eq .K8sSetup "Openshift" }}
 - apiGroups:
+    - ""
+  resources:
+    - namespaces
+  verbs:
+    - "get"
+    - "list"
+- apiGroups:
     - policy
   resources:
     - poddisruptionbudgets

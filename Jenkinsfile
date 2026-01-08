@@ -15,7 +15,7 @@ pipeline {
     environment {
         REPOSITORY_NAME = 'kube-blueprints'
         RELEASE_EXPLICIT = "${getCurrentVersion()}-${getBranch()}"
-        LINUX_JDK_NAME = 'OpenJDK 17.0.2'
+        LINUX_JDK_NAME = 'OpenJDK 21.0.6'
     }
 
     stages {
@@ -75,7 +75,7 @@ pipeline {
 }
 
 def getCurrentVersion() {
-    return '25.1.0'
+    return '26.1.0'
 }
 
 def getBranch() {

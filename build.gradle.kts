@@ -1,8 +1,10 @@
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.github.gradle.node.yarn.task.YarnTask
-import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
+import com.github.gradle.node.task.NodeTask
+import com.github.gradle.node.npm.task.NpmTask
 import org.apache.commons.lang.SystemUtils.*
+import de.undercouch.gradle.tasks.download.Download
 
 buildscript {
     repositories {
@@ -27,11 +29,12 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "2.1.20"
     id("nebula.release") version (properties["nebulaReleasePluginVersion"] as String)
-    id("com.github.node-gradle.node") version "7.0.2"
+    id("com.github.node-gradle.node") version "7.1.0"
     id("maven-publish")
     id("idea")
+    id("de.undercouch.download") version "5.6.0"
 }
 
 apply(plugin = "ai.digital.gradle-commit")
@@ -40,17 +43,16 @@ apply(plugin = "com.xebialabs.dependency")
 group = "ai.digital.xlclient.blueprints"
 project.defaultTasks = listOf("build")
 
-val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?: if (project.version.toString().contains("SNAPSHOT")) {
-    project.version.toString()
-} else {
-    "25.1.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
-}
+val releasedVersion = System.getenv()["RELEASE_EXPLICIT"] ?:
+    "${project.version}-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
+
 project.extra.set("releasedVersion", releasedVersion)
+
+val languageLevel = properties["languageLevel"] as String
+val helmVersion = properties["helmVersion"]
 
 val os = detectOs()
 val arch = detectHostArch()
-val helmVersion = properties["helmVersion"]
-
 enum class Os {
     DARWIN {
         override fun toString(): String = "darwin"
@@ -98,8 +100,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.toVersion(languageLevel)
+    targetCompatibility = JavaVersion.toVersion(languageLevel)
 }
 
 subprojects {
@@ -114,6 +116,10 @@ subprojects {
     }
 }
 
+interface InjectedExecOps {
+    @get:Inject val execOps: ExecOperations
+}
+
 tasks {
 
     val helmDir = layout.buildDirectory.dir("helm").get()
@@ -123,13 +129,17 @@ tasks {
         group = "helm"
         src("https://get.helm.sh/helm-v$helmVersion-$os-$arch.tar.gz")
         dest(helmDir.file("helm.tar.gz").getAsFile())
+        val injected = objects.newInstance<InjectedExecOps>()
+
         doLast {
             copy {
                 from(tarTree(helmDir.file("helm.tar.gz")))
                 into(helmDir)
-                fileMode = 0b111101101
+                filePermissions {
+                    unix("rwxr-xr-x")
+                }
             }
-            exec {
+            injected.execOps.exec {
                 workingDir(helmDir)
                 commandLine(helmCli, "version")
             }
@@ -144,6 +154,8 @@ tasks {
         group = "blueprint"
         helmChartName = "release-runner-helm-chart"
         helmChartCli = helmCli.toString()
+        gitProtocol = (project.findProperty("gitProtocol")?.toString() ?: "ssh")
+        currentBranch = (project.findProperty("branch")?.toString() ?: "master")
         dependsOn(named("installHelm"))
     }
 
@@ -179,7 +191,7 @@ tasks {
             commandLine(commandUnzip.split(" "))
         } else {
             commandLine("echo",
-                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=25.1.0")
+                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=${project.version}")
         }
     }
 
@@ -198,7 +210,7 @@ tasks {
             commandLine(commandRsync.split(" "))
         } else {
             commandLine("echo",
-                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=25.1.0")
+                    "You have to specify which version you want to sync, ex. ./gradlew syncBlueprintsArchives -PversionToSync=${project.version}")
         }
     }
 
@@ -233,8 +245,8 @@ tasks {
         group = "release"
         doLast {
             project.logger.lifecycle("Dumping version $releasedVersion")
-            file(buildDir).mkdirs()
-            file("$buildDir/version.dump").writeText("version=${releasedVersion}")
+            layout.buildDirectory.get().asFile.mkdirs()
+            layout.buildDirectory.file("version.dump").get().asFile.writeText("version=${releasedVersion}")
         }
     }
 
@@ -249,6 +261,19 @@ tasks {
         workingDir.set(file("${rootDir}/documentation"))
     }
 
+    register<YarnTask>("yarnInstallJsScripts") {
+        group = "docusaurus"
+        args.set(listOf("install"))
+        workingDir.set(file("${rootDir}/documentation/scripts/js"))
+    }
+
+    register<YarnTask>("yarnRunBuildBlueprintDocs") {
+        group = "docusaurus"
+        dependsOn(named("yarnInstallJsScripts"))
+        args.set(listOf("run", "generate-blueprint-docs"))
+        workingDir.set(file("${rootDir}/documentation/scripts/js"))
+    }
+
     register<YarnTask>("yarnRunStart") {
         group = "docusaurus"
         dependsOn(named("yarn_install"))
@@ -258,7 +283,7 @@ tasks {
 
     register<YarnTask>("yarnRunBuild") {
         group = "docusaurus"
-        dependsOn(named("yarn_install"))
+        dependsOn(named("yarn_install"), named("yarnRunBuildBlueprintDocs"))
         args.set(listOf("run", "build"))
         workingDir.set(file("${rootDir}/documentation"))
     }
@@ -282,6 +307,7 @@ tasks {
         group = "docusaurus"
         dependsOn(named("docBuild"))
     }
+
 }
 
 tasks.withType<AbstractPublishToMaven> {
@@ -313,8 +339,8 @@ publishing {
 }
 
 node {
-    version.set("20.14.0")
-    yarnVersion.set("1.22.22")
+    version.set(properties["nodeVersion"] as String)
+    yarnVersion.set(properties["yarnVersion"] as String)
     download.set(true)
 }
 

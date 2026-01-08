@@ -2,6 +2,7 @@ package util
 
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -77,7 +78,7 @@ class ProcessUtil {
         }
 
         fun executeCommand(
-            project: Project?,
+            logger: Logger?,
             command: String,
             workDir: File? = null,
             logOutput: Boolean = true,
@@ -85,11 +86,11 @@ class ProcessUtil {
             waitTimeoutSeconds: Long = 10
         ): String {
             fun print(msg: String, error: Boolean = false) {
-                if (project != null && msg.isNotEmpty() && logOutput) {
+                if (logger != null && msg.isNotEmpty() && logOutput) {
                     if (error) {
-                        project.logger.error(msg)
+                        logger.error(msg)
                     } else {
-                        project.logger.lifecycle(msg)
+                        logger.lifecycle(msg)
                     }
                 }
             }

@@ -22,7 +22,9 @@ spec:
       ignoreIfSkipped: true
       saveInXlvals: true
       default: default
-      description: Select the type of the Image Registry to use for pulling all images required for the installation.
+      description: |
+        Select the type of the Image Registry to use for pulling all images required for the installation.
+        When selecting a custom image registry, all prerequisite images need to be available in the image registry. 
     - name: IsCustomImageRegistry
       type: Confirm
       saveInXlvals: true
@@ -73,7 +75,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy server image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: xl-deploy
-      description: Enter the Deploy server image name to use
+      description: Enter the Deploy server image name to use. Choose the default value, unless using a custom image with different name.
     - name: ImageNameRelease
       type: Input
       saveInXlvals: true
@@ -82,7 +84,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Release image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: xl-release
-      description: Enter the Release server image name to use
+      description: Enter the Release server image name to use. Choose the default value, unless using a custom image with different name.
     - name: ImageTagRelease
       type: Input
       saveInXlvals: true
@@ -90,7 +92,10 @@ spec:
       overrideDefault: true
       promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Release application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Release application server image tag to use
+      description: |
+        Enter the Release application server image tag to use. The default value is the latest version.
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/xl-release/tags      
     - name: ImageTagDeploy
       type: Input
       saveInXlvals: true
@@ -98,7 +103,12 @@ spec:
       overrideDefault: true
       promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Deploy application server image tag to use
+      description: |
+        Enter the Deploy application server image tag to use. The default value is the latest version. 
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/xl-deploy/tags
+        https://hub.docker.com/r/xebialabs/deploy-task-engine/tags
+        https://hub.docker.com/r/xebialabs/central-configuration/tags
     - name: ImageNameDeployTaskEngine
       type: Input
       saveInXlvals: true
@@ -107,7 +117,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy task engine image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: deploy-task-engine
-      description: Enter the Deploy task engine image name to use
+      description: Enter the Deploy task engine image name to use. Choose the default value, unless using a custom image with different name.
     - name: ImageNameCc
       type: Input
       saveInXlvals: true
@@ -116,7 +126,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Central Configuration image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: central-configuration
-      description: Enter the Central Configuration image name to use
+      description: Enter the Central Configuration image name to use. Choose the default value, unless using a custom image with different name.
     - name: LicenseSource
       type: Select
       options:
@@ -131,7 +141,9 @@ spec:
       overrideDefault: true
       prompt: "Select source of the license:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Provide source of the license file"
+      description: |
+        Provide source of the license file. Using generate option, the license is a temporary evaluation license
+        and should not be used for production. The license file/content can be plain text or base64 encoded.
       default: generate
     - name: LicenseEditor
       type: Editor
@@ -139,7 +151,7 @@ spec:
       ignoreIfSkipped: true
       prompt: "Provide license for the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && LicenseSource == "editor"
-      description: "Provide license for the server"
+      description: "Provide license for the server in the editor"
       default: ""
     - name: LicenseFile
       type: Input
@@ -148,7 +160,7 @@ spec:
       overrideDefault: true
       prompt: "Provide license file for the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && LicenseSource == "file"
-      description: "Provide license file for the server"
+      description: "Provide license file for the server. Input the path to the license file."
       validate: !expr "isFile(LicenseFile)"
       default: ""
     - name: License
@@ -179,7 +191,7 @@ spec:
       validate: !expr "regex('^([0-9])+(\\.)?([0-9])*$', PvcSizeDeploy)"
     - name: AccessModeDeploy
       type: Select
-      prompt: "Select between supported Access Modes for the Deploy pods:"
+      prompt: "Select between supported Access Modes for the Deploy application pods:"
       options:
         - label: ReadWriteOnce
           value: ReadWriteOnce
@@ -189,7 +201,11 @@ spec:
       ignoreIfSkipped: true
       saveInXlvals: true
       default: ReadWriteOnce
-      description: Select between supported Access Modes to define if the volume can be mounted as read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany). For all Deploy pods ReadWriteOnce access mode is enough, the pods are not sharing the volumes.
+      description: |
+        Select between supported Access Modes to define if the volume can be mounted as 
+        read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany).
+        For all Deploy pods ReadWriteOnce access mode is enough, the pods are not sharing the volumes.
+        Note, the same access mode will apply to Deploy task engine and Central configuration also.
     - name: EnableSCC
       type: Confirm
       saveInXlvals: true
@@ -198,7 +214,9 @@ spec:
       default: false
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Do you want to enable Security Context Constraints (SCCs)?"
-      description: "Security Context Constraints are disabled by default. If you are upgrading from a setup that had SCCs enabled, select 'yes' or configure them manually to avoid pod failures."
+      description: |
+        Security Context Constraints are disabled by default for openshift. If you are upgrading from a setup that had SCCs enabled,
+        select 'yes' or configure them manually to avoid pod failures.
     - name: XldWorkerCount
       type: Input
       saveInXlvals: true
@@ -251,7 +269,11 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       default: ReadWriteMany
-      description: Select between supported Access Modes to define if the volume can be mounted as read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany). For the Release pods if you plan to use multiple pods on different nodes use ReadWriteMany, the pods are sharing volumes.
+      description: |
+        Select between supported Access Modes to define if the volume can be mounted as
+        read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany).
+        For the Release pods if you plan to use multiple pods on different nodes use ReadWriteMany,
+        since the pods are sharing volumes.
     - name: StorageClass
       type: Select
       options:
@@ -276,7 +298,17 @@ spec:
       overrideDefault: true
       prompt: "Select source of the resource values (CPU and memory):"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Provide source of the resources (CPU and memory) requests and limits values for various containers. This selection will be used for specifying resources for all the installation components"
+      description: |
+        Provide source of the resources (CPU and memory) requests and limits values for various containers.
+        This type will be used for specifying resources for all the installation components.
+        You can choose to enter the resources values either as a preset, where we choose from a
+        predefined set of values or specify in editor the custom resource values for requests and limits.
+        If none is selected, resources will not be specified and will need to be done manually.
+        For example, if you select preset, the following prompts for specifying resource values
+        will use the preset configurations. Similarly, if you select custom resource values, the 
+        following prompts will use editor for specifying the custom resource values. If you choose
+        none, there will no prompts for specifying resources.
+        Note: In production, its recommended to have resource values specified through any of the options. 
       default: none
     - name: ResourcesPresetDeploy
       type: Select
@@ -322,7 +354,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Deploy master:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Deploy master"
+      description: "Provide resource allocation (requests and limits values) for Deploy master"
       default: !expr DefaultResourcesEditor
     - name: ResourcesPresetDeployCc
       type: Select
@@ -347,7 +379,7 @@ spec:
       prompt: "Select one of the predefined resource values for Central Configuration:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "preset"
       description: "Select one of the predefined resource values for Central Configuration"
-      default: nano         
+      default: nano
     - name: ResourcesEditorDeployCc
       type: Editor
       saveInXlvals: true
@@ -355,7 +387,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Central Configuration:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Central Configuration"
+      description: "Provide resource allocation (requests and limits values) for Central Configuration"
       default: !expr DefaultResourcesEditor
     - name: ResourcesPresetDeployTaskEngine
       type: Select
@@ -388,7 +420,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for the Deploy worker:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Deploy worker"
+      description: "Provide resource allocation (requests and limits values) for Deploy worker"
       default: !expr DefaultResourcesEditor
     - name: ResourcesPresetRelease
       type: Select
@@ -421,7 +453,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Release server:"
       promptIf: !expr ServerType == 'dai-release' && ProcessType == "install" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Release server"
+      description: "Provide resource allocation (requests and limits values) for Release server"
       default: !expr DefaultResourcesEditor
     - name: HttpProtocolRelease
       type: Select
@@ -438,7 +470,12 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      description: Select the protocol, for https and https2 you will need to provide the secret with key, or you will use autogenerated self-signed key
+      description: |
+        Select the application backend protocol. Ingress will connect using this backend protocol.
+        When selecting https or http2, ssl is enabled for the application server. 
+        And you will need to provide the ssl keystore with key, either through file, editor,
+        kubernetes secret in the same namespace. Or you will need to use an autogenerated self-signed key.
+        Note: This is only for the application server. The protocol for ingress will be selected later.
     - name: HttpProtocolDeploy
       type: Select
       options:
@@ -452,7 +489,12 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      description: Select the protocol, for https and https2 you will need to provide the secret with key, or you will use autogenerated self-signed key
+      description: |
+        Select the application backend protocol. Ingress will connect using this backend protocol.
+        When selecting https, ssl is enabled for the application server.
+        And you will need to provide the ssl keystore with key, either through file, editor,
+        kubernetes secret in the same namespace. Or you will need to use autogenerated self-signed key.
+        Note: This is only for the application server. The protocol for ingress will be selected later.
     - name: ApplicationKeystoreSource
       type: Select
       options:
@@ -469,7 +511,15 @@ spec:
       overrideDefault: true
       prompt: "Select source of the HTTPS keystore for the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
-      description: "Provide source of the HTTPS keystore in PKCS12 or JKS format"
+      description: |
+        Provide source of the HTTPS keystore in PKCS12 or JKS format. The keystore should contain the server certificate and private key. 
+        When selecting 'generate', a self-signed key will be generated for the server.
+        If you want to use your own keystore, select 'file' or 'editor' or 'secret'. Use openssl or keytool to create the keystore.
+        When selecting 'file', provide the path to the keystore file.
+        When selecting 'editor', provide the keystore content in base64 encoded format. 
+        When selecting 'secret', provide the generic secret name with the HTTPS keystore for the application server.
+        eg. `kubectl create secret generic app-tls-secret --from-file=ssl-keystore.p12=ssl-keystore.p12 -n digitalai`
+        And make sure the secret is already created in the same namespace.
       default: "generate"
       validate: !expr "ApplicationKeystoreSource == 'secret' ? length(k8sResources(Namespace, 'secrets')) > '0' : true"
     - name: ApplicationKeystoreEditor
@@ -479,7 +529,7 @@ spec:
       overrideDefault: true
       prompt: "Provide HTTPS keystore for the server:"
       promptIf: !expr "ServerType != 'dai-release-runner' && ProcessType == 'install' && ApplicationKeystoreSource == 'editor'"
-      description: "Provide HTTPS keystore for the server in pkcs12 format, generated with openssl"
+      description: "Provide HTTPS keystore for the server in jks or pkcs12 format"
       default: ""
     - name: ApplicationKeystoreFile
       type: Input
@@ -513,7 +563,7 @@ spec:
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      description: Provide the HTTPS keystore for the application server
+      description: Provide the application server HTTPS keystore
       value: !expr "ApplicationKeystoreSource == 'editor' ? ifBase64(ApplicationKeystoreEditor) : ifBase64(ifFileReadBytes(ApplicationKeystoreFile))"
       default: ""
     - name: ApplicationKeystoreType
@@ -526,7 +576,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       prompt: "Provide the application server HTTPS keystore format:"
-      description: Provide the HTTPS keystore type for the application server
+      description: Provide the application server HTTPS keystore type
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
       default: "pkcs12"
     - name: ApplicationKeystorePassword
@@ -537,15 +587,17 @@ spec:
       overrideDefault: true
       prompt: "Provide the server HTTPS keystore password:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
-      description: HTTPS keystore passphrase for the server
+      description: Passphrase for the application server HTTPS keystore
       default: !expr "ApplicationKeystoreSource == 'generate' ? randPassword() : ''"
     - name: IngressTypeGeneric
       type: Select
       prompt: "Select between supported ingress types:"
       options:
-        - label: NGINX
+        - label: Ingress NGINX controller (experimental/non-production)
+          value: ingress-nginx-controller
+        - label: NGINX Ingress Bitnami Helm Chart (deprecated)
           value: nginx
-        - label: HAProxy
+        - label: HAProxy Helm Chart (deprecated)
           value: haproxy
         - label: External - IngressClass resource should already exist
           value: external
@@ -554,7 +606,9 @@ spec:
       promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
       default: nginx
-      description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
+      description: |
+        Select between supported ingress types. If None is selected, the application will not be exposed
+        and therefore will not be accessible from the browser.
       validate: !expr "regex('.*external.*', IngressTypeGeneric) ? length(k8sResources(Namespace, 'ingressclasses')) > '0' : true"
     - name: IngressTypeOpenshift
       type: Select
@@ -562,9 +616,11 @@ spec:
       options:
         - label: Openshift Route
           value: route
-        - label: NGINX
+        - label: Ingress NGINX controller (experimental/non-production)
+          value: ingress-nginx-controller
+        - label: NGINX Bitnami Helm Chart (deprecated)
           value: nginx
-        - label: HAProxy
+        - label: HAProxy Helm Chart (deprecated)
           value: haproxy
         - label: External - IngressClass resource should already exist
           value: external
@@ -573,14 +629,18 @@ spec:
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
       default: route
-      description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
+      description: |
+        Select between supported ingress types. or just use Openshift Route which is supported by default in openshift.
+        If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
       validate: !expr "regex('.*external.*', IngressTypeOpenshift) ? length(k8sResources(Namespace, 'ingressclasses')) > '0' : true"
     - name: IngressType
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       value: !expr "regex('^Openshift.*', K8sSetup) ? IngressTypeOpenshift : IngressTypeGeneric"
-      description: Select between supported ingress types. If None is selected, the application will not be exposed and therefore will not be accessible from the browser.
+      description: |
+        Select between supported ingress types. If None is selected, the application will not be exposed
+        and therefore will not be accessible from the browser.
     - name: NginxResourcesPreset
       type: Select
       options:
@@ -612,7 +672,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for Nginx ingress:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "nginx" && ResourcesSource == "editor"
-      description: "Provide resource allocation for Nginx ingress"
+      description: "Provide resource allocation (requests and limits values) for Nginx ingress"
       default: !expr DefaultResourcesEditor
     - name: HAProxyResourcesEditor
       type: Editor
@@ -621,7 +681,7 @@ spec:
       overrideDefault: true
       prompt: "Provide resource allocation for HAProxy ingress:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "haproxy" && ResourcesSource != "none"
-      description: "Provide resource allocation for HAProxy ingress"
+      description: "Provide resource allocation (requests and limits values) for HAProxy ingress"
       default: !expr DefaultResourcesEditor
     - name: ExternalIngressClass
       type: Select
@@ -632,7 +692,7 @@ spec:
       overrideDefault: true
       prompt: "Provide external ingress class:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "external"
-      description: External ingress class
+      description: Select from an already available External ingress class
     - name: HttpProtocolIngress
       type: Select
       options:
@@ -646,7 +706,10 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      description: Select the ingress protocol, for https you will need to provide the secret with key, or you will use autogenerated self-signed key
+      description: |
+        Select the ingress protocol, for https you will need to provide the ssl keystore with key,
+        or you will need to use autogenerated self-signed key. 
+        Refer documentation on 'Configure SSL/TLS in kubernetes environment' for more details.
     - name: IngressKeystoreSourceGeneric
       type: Select
       options:
@@ -660,11 +723,15 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != 'http'"
-      description: "Provide source of the ingress keystore"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != 'http' && ((ServerType=='dai-release' && HttpProtocolRelease != 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy != 'http'))"
+      description: |
+        Provide source of the ingress keystore. 
+        If you select secret, provide the tls secret.
+        Like `kubectl create secret tls ingress-tls-secret --key=server.key --cert=server.crt`
+        If you select passthrough, the traffic will be passed onto the backend for ssl decryption.
       default: "generate"
       validate: !expr "IngressKeystoreSourceGeneric == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceGeneric == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
-    - name: IngressKeystoreSourceHaproxy
+    - name: IngressKeystoreSourceNoPassthrough
       type: Select
       options:
         - label: The ingress keystore will be automatically generated with self-signed key
@@ -675,10 +742,13 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType == 'haproxy' && HttpProtocolIngress != 'http'"
-      description: "Provide source of the ingress keystore"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && HttpProtocolIngress != 'http' && ( IngressType == 'haproxy' || ( IngressType != 'none' && IngressType != 'haproxy' && ((ServerType == 'dai-release' && HttpProtocolRelease == 'http') || (ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')) ) )"
+      description: |
+        Provide source of the ingress keystore.
+        If you select secret, provide the tls secret.
+        Like `kubectl create secret tls ingress-tls-secret --key=server.key --cert=server.crt`
       default: "generate"
-      validate: !expr "IngressKeystoreSourceHaproxy == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : true"
+      validate: !expr "IngressKeystoreSourceNoPassthrough == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : true"
     - name: IngressKeystoreSourceOpenshiftHttp
       type: Select
       options:
@@ -688,14 +758,16 @@ spec:
           value: generate
         - label: TLS Secret containing tls key and cert
           value: secret
-        - label: SSL passthrough (Cannot be choosen with backend protocol as http. It will pass the traffic to the backend without decryption. Application ssl keystore should be configured)
-          value: passthrough
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the keystore for the route:"
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease == 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')"
-      description: "Provide source of the keystore"
+      description: |
+        Provide source of the ingress keystore.
+        If you select default, the route will use its default certificate.
+        If you select secret, provide the tls secret.
+        Like `kubectl create secret tls ingress-tls-secret --key=server.key --cert=server.crt`
       default: "default"
       validate: !expr "IngressKeystoreSourceOpenshiftHttp == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttp == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
     - name: IngressKeystoreSourceOpenshiftHttps
@@ -708,7 +780,7 @@ spec:
       overrideDefault: true
       prompt: "Select source of the keystore for the secure route (only passthrough is supported in case of the secure backend):"
       promptIf: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http')"
-      description: "Provide source of the keystore"
+      description: "Provide source of the ingress keystore"
       default: "passthrough"
       validate: !expr "IngressKeystoreSourceOpenshiftHttps == 'secret' ? (length(k8sResources(Namespace, 'secrets')) > '0') : (IngressKeystoreSourceOpenshiftHttps == 'passthrough' ? (HttpProtocolRelease != 'http' || HttpProtocolDeploy != 'http') : true)"
     - name: IngressKeystoreSourceOpenshift
@@ -716,12 +788,12 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       value: !expr "regex('^Openshift.*', K8sSetup) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && (ServerType == 'dai-release' && HttpProtocolRelease != 'http' || ServerType == 'dai-deploy' && HttpProtocolDeploy != 'http') ? IngressKeystoreSourceOpenshiftHttps : IngressKeystoreSourceOpenshiftHttp"
-      description: "Provide source of the keystore"
+      description: "Provide source of the ingress keystore"
     - name: IngressKeystoreSource
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      value: !expr "regex('^Openshift.*', K8sSetup) ? IngressKeystoreSourceOpenshift : (IngressType == 'haproxy' ? IngressKeystoreSourceHaproxy : IngressKeystoreSourceGeneric)"
+      value: !expr "regex('^Openshift.*', K8sSetup) ? IngressKeystoreSourceOpenshift : ((IngressType == 'haproxy' || (IngressType != 'none' && IngressType != 'haproxy' && ((ServerType=='dai-release' && HttpProtocolRelease == 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy == 'http')))) ? IngressKeystoreSourceNoPassthrough : IngressKeystoreSourceGeneric)"
       description: Select between supported ingress keystore sources.
     - name: IngressHost
       type: Input
@@ -730,7 +802,9 @@ spec:
       overrideDefault: true
       prompt: "Provide DNS name for accessing UI of the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (IngressType != "none" || ServerType == 'dai-release')
-      description: "Provide DNS name for accessing UI of the server. For OpenShift, this is used with Routing, while for other providers this is set up only when Ingress is used."
+      description: |
+        Provide DNS name for accessing UI of the server. For OpenShift, this is used with Routing,
+        while for other providers this is set up only when Ingress is used.
       validate: !expr "regex('^[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}$', IngressHost)"
     - name: HttpsProtocol
       type: Confirm
@@ -739,7 +813,9 @@ spec:
       overrideDefault: true
       prompt: "The access to the Release host will be secured externally with HTTPS protocol:"
       promptIf: !expr ServerType == 'dai-release' && ProcessType == "install" && IngressType == "none" && HttpProtocolRelease == "http"
-      description: "Select true if the HTTPS protocol will be used that is setup somewhere externally, the server URL will start with https"
+      description: |
+        Select true if the HTTPS protocol will be used that is setup somewhere externally,
+        the server URL will start with https.
     - name: IngressTlsSecretName
       type: Select
       options:
@@ -749,7 +825,7 @@ spec:
       overrideDefault: true
       prompt: "Provide the TLS secret name with the key and certificate:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType != "none" && HttpProtocolIngress != "http" && IngressKeystoreSource == "secret"
-      description: Provide the TLS secret name with the key and certificate
+      description: Provide the TLS secret name with the key and certificate which was created earlier.
     - name: AdminPassword
       type: Input
       saveInXlvals: true
@@ -772,7 +848,8 @@ spec:
       overrideDefault: true
       prompt: "Type of the OIDC configuration:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: Provide the type of the OIDC configuration
+      description: |
+        Provide the type of the OIDC configuration. Based on the type, you will be providing the OIDC configuration.
       default: no-oidc
     - name: OidcConfigTypeUpgrade
       type: Select
@@ -790,7 +867,9 @@ spec:
       overrideDefault: true
       prompt: "Type of the OIDC configuration:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "upgrade"
-      description: Provide the type of the OIDC configuration
+      description: |
+        Provide the type of the OIDC configuration. Based on the type, you will be providing the OIDC configuration
+        or using the existing OIDC configuration.
       default: existing
     - name: OidcConfigType
       type: Input
@@ -820,6 +899,7 @@ spec:
         userNameClaimName: ""
         fullNameClaim: ""
         scopes: '["openid"]'
+      description: The external OIDC configuration
     - name: ExternalOidcConfGenericRelease
       type: Editor
       prompt: "Configure external oidc setup:"
@@ -842,12 +922,13 @@ spec:
         userAuthorizationUri: ""
         userNameClaim: ""
         scopes: '["openid"]'
+      description: The external OIDC configuration
     - name: ExternalOidcConfGeneric
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       value: !expr "OidcConfigType == 'external' ? (ServerType == 'dai-deploy' ? ExternalOidcConfGenericDeploy : ExternalOidcConfGenericRelease) : ''"
-      description: The type of the OIDC configuration
+      description: The external OIDC configuration
     - name: IdentityServiceConfDeploy
       type: Editor
       prompt: "Configure Identity Service setup:"
@@ -864,6 +945,7 @@ spec:
         rolesClaimName: ""
         userNameClaimName: "preferred_username"
         scopes: ["openid"]
+      description: The identity service OIDC configuration
     - name: IdentityServiceConfRelease
       type: Editor
       prompt: "Configure Identity Service setup:"
@@ -880,12 +962,13 @@ spec:
         rolesClaim: ""
         userNameClaim: "preferred_username"
         scopes: ["openid"]
+      description: The identity service OIDC configuration
     - name: IdentityServiceConf
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       value: !expr "OidcConfigType == 'identity-service' ? (ServerType == 'dai-deploy' ? IdentityServiceConfDeploy : IdentityServiceConfRelease) : ''"
-      description: The type of the OIDC configuration
+      description: The identity service OIDC configuration
     - name: ExternalOidcConf
       type: Input
       saveInXlvals: true
@@ -900,7 +983,7 @@ spec:
       prompt: "Enter the operator image to use (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       default: deploy-operator
-      description: Enter the Deploy operator image to use
+      description: Enter the Deploy operator image to use. Choose the default value, unless using a custom image with different name.
     - name: OperatorImageRelease
       type: Input
       saveInXlvals: true
@@ -909,7 +992,7 @@ spec:
       prompt: "Enter the operator image to use (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       default: release-operator
-      description: Enter the Release operator image to use
+      description: Enter the Release operator image to use. Choose the default value, unless using a custom image with different name.
     - name: OperatorImageTagRelease
       type: Input
       saveInXlvals: true
@@ -917,7 +1000,10 @@ spec:
       overrideDefault: true
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Release operator image tag to use
+      description: | 
+        Enter the Release operator image tag to use. The default is the latest tag.
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/release-operator/tags
     - name: OperatorImageTagDeploy
       type: Input
       saveInXlvals: true
@@ -925,7 +1011,10 @@ spec:
       overrideDefault: true
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Deploy operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Deploy operator image tag to use
+      description: | 
+        Enter the Deploy operator image tag to use. The default is the latest tag. 
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/deploy-operator/tags
     - name: RepositoryKeystoreSource
       type: Select
       options:
@@ -942,7 +1031,11 @@ spec:
       overrideDefault: true
       prompt: "Select source of the repository keystore:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Provide source of the repository keystore file"
+      description: |
+        Provide source of the repository keystore file.
+        Selecting generate will create a new repository keystore.
+        Selecting file and editor option will require to input the repository keystore.
+        Selecting default option will use the default internal repository keystore.
       default: generate
     - name: RepositoryKeystoreEditor
       type: Editor
@@ -960,7 +1053,9 @@ spec:
       overrideDefault: true
       prompt: "Provide repository keystore for the server:"
       promptIf: !expr "ProcessType == 'install' && RepositoryKeystoreSource == 'file'"
-      description: "Provide repository keystore for the server, generated with: `keytool -genseckey -alias deployit-passsword-key -keyalg aes -keysize 128 -keypass deployit -keystore repository-keystore.jceks -storetype jceks -storepass <KeystorePassphrase>`"
+      description: |
+        Provide repository keystore for the server, generated with:
+        `keytool -genseckey -alias deployit-passsword-key -keyalg aes -keysize 128 -keypass deployit -keystore repository-keystore.jceks -storetype jceks -storepass <KeystorePassphrase>`
       validate: !expr "isFile(RepositoryKeystoreFile)"
       default: ""
     - name: RepositoryKeystore
@@ -976,17 +1071,22 @@ spec:
       overrideDefault: true
       prompt: "Provide repository keystore passphrase:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && RepositoryKeystoreSource != 'default'
-      description: Repository keystore passphrase for the server
+      description: Enter the Repository keystore passphrase
       default: !expr "RepositoryKeystoreSource == 'generate' ? randPassword() : ''"
-    - name: EnablePostgresql
-      type: Confirm
-      default: !expr ServerType != 'dai-release-runner'
+    - name: PostgresqlInstall
+      type: Select
+      options:
+        - label: CloudNativePG Operator (experimental/non-production)
+          value: operator
+        - label: Bitnami Helm Chart (deprecated)
+          value: chart
+        - label: External Postgresql
+          value: external
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Do you want to install a new PostgreSQL on the cluster:"
-      promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Select 'yes' to install a new PostgreSQL instance using the subchart, or 'no' to configure an existing supported database instance."
+      prompt: "Do you want to install a new Postgresql on the cluster:"
+      promptIf: !expr "ServerType != 'dai-release-runner' && ProcessType == 'install'"
     - name: PostgresqlStorageClass
       type: Select
       options:
@@ -995,15 +1095,17 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide Storage Class to be defined for PostgreSQL:"
-      promptIf: !expr ProcessType == "install" && EnablePostgresql
-      description: Provide Storage Class to be defined for PostgreSQL
+      promptIf: !expr ProcessType == "install" && (PostgresqlInstall == "chart" || PostgresqlInstall == "operator")
+      description: |
+        Provide Storage Class to be defined for PostgreSQL that should be available in the cluster.
+        The storage class needs to support minimally ReadWriteOnce access mode.
     - name: PostgresqlPvcSize
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide PVC size for PostgreSQL (Gi):"
-      promptIf: !expr ProcessType == "install" && EnablePostgresql
+      promptIf: !expr ProcessType == "install" && (PostgresqlInstall == "chart" || PostgresqlInstall == "operator")
       default: 8
       description: Provide PVC size for PostgreSQL
       validate: !expr "regex('^([0-9])+(\\.)?([0-9])*$', PostgresqlPvcSize)"
@@ -1028,7 +1130,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select one of the predefined resource values for Postgresql:"
-      promptIf: !expr ProcessType == "install" && EnablePostgresql && ResourcesSource == "preset"
+      promptIf: !expr ProcessType == "install" && ResourcesSource == "preset" && (PostgresqlInstall == "chart" || PostgresqlInstall == "operator")
       description: "Select one of the predefined resource values for Postgresql"
       default: nano
     - name: PostgresqlResourcesEditor
@@ -1037,8 +1139,8 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide resource allocation for Postgresql:"
-      promptIf: !expr ProcessType == "install" && EnablePostgresql && ResourcesSource == "editor"
-      description: "Provide resource allocation for Postgresql"
+      promptIf: !expr ProcessType == "install" && ResourcesSource == "editor" && (PostgresqlInstall == "chart" || PostgresqlInstall == "operator")
+      description: "Provide resource allocation (requests and limits values) for Postgresql"
       default: !expr DefaultResourcesEditor
     - name: PostgresqlExternalConfigRelease
       type: Editor
@@ -1046,8 +1148,10 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Edit database external setup:"
-      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && EnablePostgresql == false"
-      description: Setup the PostgreSQL external parameters (JDBC URL, username, password)
+      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && (PostgresqlInstall == 'external')"
+      description: |
+        Setup the external DB parameters (such as JDBC URL, DB username, DB password).
+        Any of the supported external DB can be used. Modify the jdbc url accordingly.
       default: |-
         main:
           url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
@@ -1067,8 +1171,10 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Edit database external setup:"
-      promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && EnablePostgresql == false"
-      description: Setup the PostgreSQL external parameters (JDBC URL, username, password)
+      promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && (PostgresqlInstall == 'external')"
+      description: |
+        Setup the external DB parameters (such as JDBC URL, DB username, DB password).
+        Any of the supported external DB can be used. Modify the jdbc url accordingly.
       default: |-
         main:
           url: jdbc:postgresql://<xld-db-host>:5432/<xld-database-name>
@@ -1082,15 +1188,20 @@ spec:
           password: |-
             <xld-report-password>
           maxPoolSize: 10
-    - name: EnableRabbitmq
-      type: Confirm
-      default: !expr ServerType != 'dai-release-runner'
+    - name: RabbitmqInstall
+      type: Select
+      options:
+        - label: RabbitMQ Cluster Operator (experimental/non-production)
+          value: operator
+        - label: Bitnami Helm Chart (deprecated)
+          value: chart
+        - label: External RabbitMQ
+          value: external
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Do you want to install a new RabbitMQ on the cluster:"
-      promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install"
-      description: "Select 'yes' to install a new RabbitMQ instance using the subchart, or 'no' to configure an existing supported MQ instance."
+      promptIf: !expr "ServerType != 'dai-release-runner' && ServerType != 'dai-release' && ProcessType == 'install'"
     - name: RabbitmqReplicaCount
       type: Input
       saveInXlvals: true
@@ -1098,7 +1209,7 @@ spec:
       overrideDefault: true
       prompt: "Replica count to be defined for RabbitMQ:"
       default: 3
-      promptIf: !expr "ProcessType == 'install' && EnableRabbitmq"
+      promptIf: !expr "ProcessType == 'install' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: Replica count to be defined for RabbitMQ
       validate: !expr "regex('^([1-9])+$', RabbitmqReplicaCount)"
     - name: RabbitmqStorageClass
@@ -1110,8 +1221,10 @@ spec:
       overrideDefault: true
       prompt: "Storage Class to be defined for RabbitMQ:"
       default: !expr StorageClass
-      promptIf: !expr "ProcessType == 'install' && EnableRabbitmq"
-      description: Storage Class to be defined for RabbitMQ
+      promptIf: !expr "ProcessType == 'install' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
+      description: |
+        Storage Class to be defined for RabbitMQ.
+        The storage class needs to support minimally ReadWriteOnce access mode.
     - name: RabbitmqPvcSize
       type: Input
       saveInXlvals: true
@@ -1119,7 +1232,7 @@ spec:
       overrideDefault: true
       prompt: "Provide PVC size for RabbitMQ (Gi):"
       default: 8
-      promptIf: !expr "ProcessType == 'install' && EnableRabbitmq"
+      promptIf: !expr "ProcessType == 'install' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: Provide PVC size for RabbitMQ
       validate: !expr "regex('^([0-9])+(\\.)?([0-9])*$', RabbitmqPvcSize)"
     - name: RabbitmqResourcesPreset
@@ -1143,7 +1256,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select one of the predefined resource values for Rabbitmq:"
-      promptIf: !expr ProcessType == "install" && EnableRabbitmq && ResourcesSource == "preset"
+      promptIf: !expr ProcessType == "install" && ResourcesSource == "preset" && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')
       description: "Select one of the predefined resource values for Rabbitmq"
       default: nano
     - name: RabbitmqResourcesEditor
@@ -1152,33 +1265,19 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide resource allocation for Rabbitmq:"
-      promptIf: !expr ProcessType == "install" && EnableRabbitmq && ResourcesSource == "editor"
-      description: "Provide resource allocation for Rabbitmq"
+      promptIf: !expr ProcessType == "install" && ResourcesSource == "editor" && (RabbitmqInstall == 'external')
+      description: "Provide resource allocation (requests and limits values) for Rabbitmq"
       default: !expr DefaultResourcesEditor
-    - name: RabbitmqExternalConfigRelease
-      type: Editor
-      saveInXlvals: true
-      ignoreIfSkipped: true
-      overrideDefault: true
-      prompt: "Edit RabbitMQ external setup:"
-      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && EnableRabbitmq == false"
-      description: Setup the RabbitMQ external parameters
-      default: |-
-        url: <queue-url>
-        queueName: <queue-name>
-        username: <username>
-        password: |-
-          <password>
-        queueType: <classic-or-quorum>
-        connector: <rabbitmq-jms-or-activemq-jms>
     - name: RabbitmqExternalConfigDeploy
       type: Editor
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Edit RabbitMQ external setup:"
-      promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && EnableRabbitmq == false"
-      description: Setup the RabbitMQ external parameters
+      promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && (RabbitmqInstall == 'external')"
+      description: |
+        Setup the external RabbitMQ or ActiveMQ parameters (such as queue url, queue name, credentials).
+        Any of the supported external MQ can be used. Modify the driver class accordingly.
       default: |-
         url: <queue-url>
         queueName: <queue-name>
@@ -1224,7 +1323,32 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'upgrade'"
       saveInXlvals: true
       ignoreIfSkipped: true
-      description: "For all matched expressions in the cluster CR, the values will be migrated to the upgraded Deploy CR"
+      description: |
+        For all matched expressions in the cluster CR, the values will be migrated to the upgraded CR.
+        The keys present here are the paths in the new CR, which will be preserved from cluster CR
+        of earlier installed version.
+        These values will be migrated by moving values to new or same CR keys by matching old CR keys
+        in the format given below.
+        
+        In the example snippet:
+        ```
+        .metadata.name: .         # 1 Represents the same path in the upgraded new version CR
+        ```
+        1. The value . for a key represents the same path. This mapping defines that value from old 
+        version CR value under that path will be copied to the new version CR under the same path.
+        
+        In the example snippet:
+        ```
+        .spec.auth.adminPassword:   # Represents the path in the upgraded new version CR
+          0.0: .spec.AdminPassword  # 2 Matching path in the cluster CR (for version earlier than 23.3)
+          23.3: .                   # 3 Matching path in the cluster CR (for version from 23.3 onwards)
+        ```
+        2. The value for 0.0 represents the path in cluster CR before upgrade. This mapping defines that 
+        value from old version CR from cluster will be copied to the new version CR in the parent path of 0.0.
+        3. The value for 23.3 represents the path in cluster CR before upgrade. This mapping defines that
+        value from old version CR from cluster will be copied to the new version CR in the parent path of 23.3.
+        
+        Refer section 'Custom resource keys migration during upgrade' in the documentation for more details.
       default: |-
         .metadata.name: .
         .spec.centralConfiguration.persistence.storageClass:
@@ -1405,13 +1529,17 @@ spec:
           0.0:
           23.3: .
         .spec.ssl: .
-        .spec.hooks: .
+        .spec.hooks.genSelfSigned: .
+        .spec.hooks.getLicense: .
         .spec.centralConfiguration.configuration: .
         .spec.centralConfiguration.extraConfiguration: .
+        .spec.centralConfiguration.diagnosticMode: .
         .spec.master.configuration: .
         .spec.master.extraConfiguration: .
+        .spec.master.diagnosticMode: .
         .spec.worker.configuration: .
         .spec.worker.extraConfiguration: .
+        .spec.worker.diagnosticMode: .
         .spec.postgresql.primary.configuration: .
         .spec.postgresql.primary.extraConfiguration: .
         .spec.rabbitmq.configuration: .
@@ -1432,8 +1560,10 @@ spec:
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
         .spec.rabbitmq.resources: .
         .spec.rabbitmq.resourcesPreset: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.centralConfiguration.podSecurityContext: .
         .spec.centralConfiguration.containerSecurityContext: .
         .spec.centralConfiguration.volumePermissions: .
@@ -1456,7 +1586,32 @@ spec:
       promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'upgrade'"
       saveInXlvals: true
       ignoreIfSkipped: true
-      description: For all matched expressions in the cluster CR, the values will be migrated to the upgraded Release CR
+      description: |
+        For all matched expressions in the cluster CR, the values will be migrated to the upgraded CR.
+        The keys present here are the paths in the new CR, which will be preserved from cluster CR
+        of earlier installed version.
+        These values will be migrated by moving values to new or same CR keys by matching old CR keys
+        in the format given below.
+        
+        In the example snippet:
+        ```
+        .metadata.name: .         # 1 Represents the same path in the upgraded new version CR
+        ```
+        1. The value . for a key represents the same path. This mapping defines that value from old 
+        version CR value under that path will be copied to the new version CR under the same path.
+        
+        In the example snippet:
+        ```
+        .spec.auth.adminPassword:   # Represents the path in the upgraded new version CR
+          0.0: .spec.AdminPassword  # 2 Matching path in the cluster CR (for version earlier than 23.3)
+          23.3: .                   # 3 Matching path in the cluster CR (for version from 23.3 onwards)
+        ```
+        2. The value for 0.0 represents the path in cluster CR before upgrade. This mapping defines that 
+        value from old version CR from cluster will be copied to the new version CR in the parent path of 0.0.
+        3. The value for 23.3 represents the path in cluster CR before upgrade. This mapping defines that
+        value from old version CR from cluster will be copied to the new version CR in the parent path of 23.3.
+        
+        Refer section 'Custom resource keys migration during upgrade' in the documentation for more details.
       default: |-
         .metadata.name: .
         .spec.persistence.storageClass:
@@ -1471,6 +1626,7 @@ spec:
         .spec.appHostname:
           0.0:
           23.3: .
+        .spec.diagnosticMode: .
         .spec.replicaCount: .
         .spec.persistence.paths: .
         .spec.persistence.emptyDirPaths: .
@@ -1568,17 +1724,6 @@ spec:
         .spec.postgresql.image.tag: .
         .spec.haproxy-ingress.install: .
         .spec.nginx-ingress-controller.install: .
-        .spec.rabbitmq.install: .
-        .spec.rabbitmq.persistence.storageClass: .
-        .spec.rabbitmq.persistence.size: .
-        .spec.rabbitmq.replicaCount: .
-        .spec.rabbitmq.persistence.replicaCount: .
-        # upgrade to next supported MQ version (do the manual upgrade later)
-        .spec.rabbitmq.image.tag:
-          0.0:
-            existance: .spec.rabbitmq.image.tag
-            expression: .spec.rabbitmq.image.updateTag // "3.10.25"
-          23.3: .
         .spec.route.hostname:
           0.0: .spec.route.hosts.[0]
           23.3: .
@@ -1596,13 +1741,12 @@ spec:
           23.3: .
         .spec.http2.enabled: .
         .spec.ssl: .
-        .spec.hooks: .
+        .spec.hooks.genSelfSigned: .
+        .spec.hooks.getLicense: .
         .spec.configuration: .
         .spec.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
         .spec.postgresql.primary.extraConfiguration: .
-        .spec.rabbitmq.configuration: .
-        .spec.rabbitmq.extraConfiguration: .
         .spec.resourcesPreset: .
         .spec.resources: .
         .spec.defaultInitContainers.resources: .
@@ -1613,8 +1757,8 @@ spec:
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
-        .spec.rabbitmq.resources: .
-        .spec.rabbitmq.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
         .spec.volumePermissions: .
@@ -1622,9 +1766,6 @@ spec:
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
         .spec.postgresql.volumePermissions: .
-        .spec.rabbitmq.containerSecurityContext: .
-        .spec.rabbitmq.podSecurityContext: .
-        .spec.rabbitmq.volumePermissions: .
     - name: PreservePvc
       type: Confirm
       saveInXlvals: true
@@ -1642,6 +1783,27 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       description: The name of your custom resource definition.
+    - name: IngressNginxControllerClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'ingress-nginx-controller')) > '0'
+      prompt: "Clean IngressNginx Controller (it can impact other installation of IngressNginx Controller):"
+      description: "Type yes to delete IngressNginx Controller installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the controller is shared between applications"
+      default: false
+    - name: PostgresqlOperatorClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr (ServerType == 'dai-release' || ServerType == 'dai-deploy') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'cnpg-controller-manager')) > '0'
+      prompt: "Clean Postgresql Operator (it can impact other installation of Postgresql Operator):"
+      description: "Type yes to delete Postgresql Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
+      default: false
+    - name: RabbitmqOperatorClean
+      type: Confirm
+      saveInXlvals: true
+      promptIf: !expr ServerType == 'dai-deploy' && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'rabbitmq-cluster-operator')) > '0'
+      prompt: "Clean Rabbitmq Operator (it can impact other installation of Rabbitmq Operator):"
+      description: "Type yes to delete Rabbitmq Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
+      default: false
     - name: RemoteRunnerInstallType
       type: Select
       options:
@@ -1655,7 +1817,11 @@ spec:
       overrideDefault: true
       promptIf: !expr ServerType == 'dai-release' && ProcessType == 'install'
       prompt: "Install Digital.ai Release Runner:"
-      description: "Type yes to install Digital.ai Release Runner. The installation will start after Release is ready on the cluster."
+      description: |
+        Selecting no-install will skip the Release Runner installation. 
+        Selecting local-install will install Release Runner from the local.
+        Selecting cluster-install will install Release Runner from the cluster.
+        The installation will start after Release is ready on the cluster."
     - name: RemoteRunnerInstall
       type: Confirm
       saveInXlvals: true
@@ -1688,7 +1854,10 @@ spec:
       overrideDefault: true
       promptIf: !expr "RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release Runner image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: Enter the Release Runner image tag to use
+      description: |
+        Enter the Release Runner image tag to use. The default value is the latest version. 
+        The available versions can be seen from docker hub repository tags for the image. Such as
+        https://hub.docker.com/r/xebialabs/release-runner/tags
     - name: RemoteRunnerReleaseName
       type: Input
       saveInXlvals: true
@@ -1704,7 +1873,7 @@ spec:
       saveInXlvals: true
       promptIf: !expr RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Use default version of the Release Runner helm chart:"
-      description: "Type yes to use default internal version of the Release Runner helm chart, in other way you need to provide path to the helm chart."
+      description: "Type yes to use default internal version of the Release Runner helm chart, else you need to provide path to the helm chart."
     - name: RemoteRunnerHelmChartUrl
       type: Input
       saveInXlvals: true
@@ -1737,7 +1906,9 @@ spec:
       overrideDefault: true
       prompt: "Provide release-runner user email (for the user on the Release to send PAT expiration notifications):"
       promptIf: !expr RemoteRunnerInstall && ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      description: release-runner user is user on the Release, that will be used to generate Personal Access Token. The email will be used to send PAT expiration notifications.
+      description: |
+        release-runner user is user on the Release, that will be used to generate Personal Access Token.
+        The email will be used to send PAT expiration notifications.
       default: "release-runner@no.reply"
     - name: RemoteRunnerUserPassword
       type: Input
@@ -1788,7 +1959,10 @@ spec:
       saveInXlvals: true
       promptIf: !expr RemoteRunnerInstall && ServerType == 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enable truststore for Release Runner:"
-      description: "Type yes to setup truststore for Release Runner"
+      description: |
+        Type yes to setup truststore for Release Runner. Will be required when Release Runner connects 
+        with Release over ssl connection. The certificates will be used to establish a secure connection
+        to the Release.
     - name: RemoteRunnerRestClientCa
       type: Editor
       saveInXlvals: true
@@ -1797,7 +1971,9 @@ spec:
       overrideDefault: true
       prompt: "Provide base64 encoded cert in pem format:"
       promptIf: !expr IsRemoteRunnerTruststoreEnabled && RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')
-      description: The Release Runner trusted certificates in pem format.
+      description: |
+        The Release Runner trusted certificates in pem format. Add the certificate of Release.
+        Use openssl command to convert the certificate to pem format.
       default: ""
     - name: RemoteRunnerClean
       type: Confirm
@@ -1809,88 +1985,168 @@ spec:
   files:
     # Generic
     - path: digitalai/generated_answers.yaml.tmpl
-      renameTo: !expr "'digitalai/generated_answers_' + ServerType + '_' +  Namespace + '_' + ProcessType + '-' + GenerationDateTime + '.yaml.tmpl'"
+      renameTo: !expr "'digitalai/generated_answers_' + ServerType + '_' +  Namespace + '_' + ProcessType + '-' + GenerationDateTime + '.yaml'"
+    # RabbitMQ
+    - path: digitalai/rabbitmq-operator/111-rabbitmq-cluster-operator.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/111-rabbitmq-cluster-operator.yaml'"
+    - path: digitalai/rabbitmq-operator/112-rabbitmq-validating-webhook.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/112-rabbitmq-validating-webhook.yaml'"
+    - path: digitalai/rabbitmq-operator/113-rabbitmq-self-signed-job.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/113-rabbitmq-self-signed-job.yaml'"
+    - path: digitalai/rabbitmq-operator/114-rabbitmq-topology-operator.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/114-rabbitmq-topology-operator.yaml'"
+    # Postgresql
+    - path: digitalai/postgresql-operator/131-openshift-scc-postgresql.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && EnableSCC && (PostgresqlInstall == 'operator') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/131-openshift-scc-postgresql.yaml'"
+    - path: digitalai/postgresql-operator/135-postgresql-cluster-operator.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator') || (ProcessType == 'clean' && PostgresqlOperatorClean && K8sSetup != 'OpenshiftCertified'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/135-postgresql-cluster-operator.yaml'"
+    # Ingress Nginx
+    - path: digitalai/ingress-nginx-controller/151-openshift-scc-ingress-nginx.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && EnableSCC && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && IngressType == 'ingress-nginx-controller') || (ProcessType == 'clean' && IngressNginxControllerClean && K8sSetup != 'OpenshiftCertified'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/151-openshift-scc-ingress-nginx.yaml'"
+    - path: digitalai/ingress-nginx-controller/155-ingress-nginx-controller.yaml.tmpl
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && IngressType == 'ingress-nginx-controller') || (ProcessType == 'clean' && IngressNginxControllerClean && K8sSetup != 'OpenshiftCertified'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/155-ingress-nginx-controller.yaml'"
     # Deploy
-    - path: digitalai/dai-deploy/kubernetes-generic/template/leader-election-role.yaml
+    - path: digitalai/dai-deploy/kubernetes-generic/template/802-leader-election-role.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-role.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/leader-election-rolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/802-leader-election-role.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/803-leader-election-rolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-rolebinding.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/manager-clusterrole.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/803-leader-election-rolebinding.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/804-manager-clusterrole.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrole.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/manager-clusterrolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/804-manager-clusterrole.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/805-manager-clusterrolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrolebinding.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/805-manager-clusterrolebinding.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/808-openshift-scc.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-postgresql.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/openshift-scc-rabbitmq.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-rabbitmq.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/manager-role.yaml
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/808-openshift-scc.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/809-openshift-scc-postgresql.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (PostgresqlInstall == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/809-openshift-scc-postgresql.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/810-openshift-scc-rabbitmq.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (RabbitmqInstall == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/810-openshift-scc-rabbitmq.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/806-manager-role.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-role.yaml'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/manager-rolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/806-manager-role.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/807-manager-rolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-rolebinding.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/custom-resource-definition.yaml
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/807-manager-rolebinding.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/801-custom-resource-definition.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/custom-resource-definition.yaml'"
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/801-custom-resource-definition.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/dai-deploy_cr_default.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/dai-deploy_cr_default.yaml.tmpl'"
-    - path: digitalai/dai-deploy/kubernetes-generic/template/deployment.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/dai-deploy_cr_default.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/811-deployment.yaml.tmpl
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/deployment.yaml.tmpl'"
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/811-deployment.yaml'"
+
+    - path: digitalai/dai-deploy/kubernetes-generic/template/500-openshift-scc-postgresql.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (PostgresqlInstall == 'operator') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/500-openshift-scc-postgresql.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/501-postgresql-admin-secret.yaml
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/501-postgresql-admin-secret.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/503-postgresql-cluster.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/503-postgresql-cluster.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/helpers/cnpg-postgresql-permissions.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/helpers/cnpg-postgresql-permissions.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/502-postgresql-init-secret.yaml
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/502-postgresql-init-secret.yaml'"
+
+    - path: digitalai/dai-deploy/kubernetes-generic/template/300-openshift-scc-rabbitmq.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (RabbitmqInstall == 'operator') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && RabbitmqInstall == 'operator'
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/300-openshift-scc-rabbitmq.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/301-rabbitmq-admin-secret.yaml
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/301-rabbitmq-admin-secret.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/302-rabbitmq-cluster.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/302-rabbitmq-cluster.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/304-rabbitmq-cluster-admin.yaml
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/304-rabbitmq-cluster-admin.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/305-rabbitmq-cluster-admin-permissions.yaml
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/305-rabbitmq-cluster-admin-permissions.yaml'"
+    - path: digitalai/dai-deploy/kubernetes-generic/template/303-rabbitmq-cluster-vhost.yaml
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/303-rabbitmq-cluster-vhost.yaml'"
+
     # Release
-    - path: digitalai/dai-release/kubernetes-generic/template/leader-election-role.yaml
+    - path: digitalai/dai-release/kubernetes-generic/template/802-leader-election-role.yaml
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-role.yaml'"
-    - path: digitalai/dai-release/kubernetes-generic/template/leader-election-rolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/802-leader-election-role.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/803-leader-election-rolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/leader-election-rolebinding.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/manager-clusterrole.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/803-leader-election-rolebinding.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/804-manager-clusterrole.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrole.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/manager-clusterrolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/804-manager-clusterrole.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/805-manager-clusterrolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (IngressType == "nginx" || IngressType == "haproxy" || K8sSetup == 'Openshift') && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-clusterrolebinding.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/openshift-scc.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/805-manager-clusterrolebinding.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/808-openshift-scc.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-postgresql.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/openshift-scc-rabbitmq.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-rabbitmq.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/manager-role.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/808-openshift-scc.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/809-openshift-scc-postgresql.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (PostgresqlInstall == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/809-openshift-scc-postgresql.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/806-manager-role.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-role.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/manager-rolebinding.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/806-manager-role.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/807-manager-rolebinding.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/manager-rolebinding.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/custom-resource-definition.yaml
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/807-manager-rolebinding.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/801-custom-resource-definition.yaml
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/custom-resource-definition.yaml'"
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/801-custom-resource-definition.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/dai-release_cr_default.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/dai-release_cr_default.yaml.tmpl'"
-    - path: digitalai/dai-release/kubernetes-generic/template/deployment.yaml.tmpl
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/dai-release_cr_default.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/810-deployment.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
-      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/deployment.yaml.tmpl'"
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/810-deployment.yaml'"
+
+    - path: digitalai/dai-release/kubernetes-generic/template/500-openshift-scc-postgresql.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (PostgresqlInstall == 'operator') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/500-openshift-scc-postgresql.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/501-postgresql-admin-secret.yaml
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/501-postgresql-admin-secret.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/503-postgresql-cluster.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/503-postgresql-cluster.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/helpers/cnpg-postgresql-permissions.yaml.tmpl
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/helpers/cnpg-postgresql-permissions.yaml'"
+    - path: digitalai/dai-release/kubernetes-generic/template/502-postgresql-init-secret.yaml
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
+      renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/502-postgresql-init-secret.yaml'"
+
     # Runner
     - path: digitalai/dai-release-runner/values-cli.yaml.tmpl
       writeIf: !expr RemoteRunnerInstall && (RemoteRunnerGeneration || ServerType == 'dai-release-runner')
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/values-cli.yaml.tmpl'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/values-cli.yaml'"
     - path: digitalai/dai-release-runner/install.yaml
       writeIf: !expr RemoteRunnerInstall && ServerType != 'dai-release-runner' || ServerType == 'dai-release-runner' && RemoteRunnerInstallType == 'cluster-install'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/install.yaml'"
     - path: digitalai/dai-release-runner/create-release-runner-user.yaml.tmpl
       writeIf: !expr RemoteRunnerInstall && ServerType != 'dai-release-runner' || ServerType == 'dai-release-runner' && RemoteRunnerInstallType == 'cluster-install'
-      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/create-release-runner-user.yaml.tmpl'"
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/create-release-runner-user.yaml'"
+    - path: digitalai/dai-release-runner/openshift-scc-release-runner.yaml.tmpl
+      writeIf: !expr EnableSCC && regex('^Openshift.*', K8sSetup) && ((RemoteRunnerInstall && ServerType != 'dai-release-runner') || (ServerType == 'dai-release-runner' && RemoteRunnerInstallType == 'cluster-install'))
+      renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/openshift-scc-release-runner.yaml'"

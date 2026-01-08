@@ -1,0 +1,63 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: dai-xld-rabbitmq
+spec:
+  tls:
+    disableNonTLSListeners: false
+  replicas: {{ .RabbitmqReplicaCount }}
+  persistence:
+    storageClassName: {{ .RabbitmqStorageClass }}
+    storage: {{ .RabbitmqPvcSize }}Gi
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+
+  # RabbitMQ runtime configuration and plugins
+  rabbitmq:
+    # Bitnami: extraPlugins (space-separated). Operator uses a list.
+    additionalPlugins:
+      - rabbitmq_jms_topic_exchange
+
+    # Bitnami: extraConfiguration (rabbitmq.conf lines) + loadDefinition
+    # Adds your config and instructs the broker to load definitions from a mounted Secret file.
+    additionalConfig: |
+      raft.wal_max_size_bytes = 1048576
+      quorum_queue.continuous_membership_reconciliation.enabled = true
+      quorum_queue.continuous_membership_reconciliation.target_group_size = {{ .RabbitmqReplicaCount }}
+      quorum_queue.continuous_membership_reconciliation.auto_remove = true
+      quorum_queue.continuous_membership_reconciliation.interval = 600000
+
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            containers:
+              - name: rabbitmq
+                env:
+                  - name: RABBITMQ_ERLANG_COOKIE
+                    valueFrom:
+                      secretKeyRef:
+                        name: dai-xld-rabbitmq-secret
+                        key: rabbitmq-erlang-cookie
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  readOnlyRootFilesystem: true
+                  runAsNonRoot: true
+                  capabilities:
+                    drop:
+                      - ALL
+            initContainers:
+              - name: setup-container
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  readOnlyRootFilesystem: true
+                  runAsNonRoot: true
+                  capabilities:
+                    drop:
+                      - ALL
+            securityContext:
+              seccompProfile:
+                type: RuntimeDefault

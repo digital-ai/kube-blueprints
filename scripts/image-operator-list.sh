@@ -26,6 +26,6 @@ docker.io/${RepositoryNameDeploy}/deploy-task-engine:${ImageTagDeploy}-ubuntu
 docker.io/${RepositoryNameDeploy}/deploy-task-engine:${ImageTagDeploy}-ubuntu-slim
 docker.io/${RepositoryNameDeploy}/deploy-task-engine:${ImageTagDeploy}-redhat
 docker.io/${RepositoryNameDeploy}/deploy-task-engine:${ImageTagDeploy}-redhat-slim
-docker.io/${RepositoryNameRelease}/xl-client:${ImageTagRelease}
+docker.io/${RepositoryNameRelease}/xl-client:${OperatorImageTagRelease}
 docker.io/${RepositoryNameReleaseRunner}/release-runner:${ImageTagReleaseRunner}
 EOF
