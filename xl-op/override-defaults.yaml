@@ -5,4 +5,4 @@ RepositoryNameRelease: 'xebialabsunsupported'
 OperatorImageTagRelease: 26.1.0-beta.127
 ImageTagRelease: 26.1.0-beta.127
 RepositoryNameReleaseRunner: xebialabsunsupported
-ImageTagReleaseRunner: 26.1.0-beta.123
+ImageTagReleaseRunner: 26.1.0-beta.127
