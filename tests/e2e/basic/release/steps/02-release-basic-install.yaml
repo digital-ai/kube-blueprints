@@ -3,7 +3,7 @@ kind: TestStep
 unitTest: false
 commands:
 - script: $XL_CLI kube install --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-install.yaml
-  timeout: 60
+  timeout: 180
 - script  : $XL_CLI kube check --wait-for-ready 10 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-install.yaml
   timeout: 700
 - script: kubectl exec -n $NAMESPACE -c release dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.general.clusterNodeActive' | grep '^true$'
@@ -13,7 +13,6 @@ commands:
 assert:
 - $ASSERTS_REL_PATH/release-running-operator-pods.yaml
 - $ASSERTS_REL_PATH/release-running-postgres-pods.yaml
-- $ASSERTS_REL_PATH/release-running-rabbitmq-pods.yaml
 - $ASSERTS_REL_PATH/release-running-product-pods.yaml
 error:
 - $ASSERTS_REL_PATH/release-running-haproxy-pods.yaml

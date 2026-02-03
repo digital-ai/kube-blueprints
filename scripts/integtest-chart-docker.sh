@@ -1,4 +1,17 @@
 #!/bin/bash
+# This script runs integration tests inside a Docker container for different providers or local kube context for plain K8s.
+# Usage: ./scripts/integtest-chart-docker-local.sh <app_type> <app_tests> <app_target> <login_mode>
+# Where:
+#   <app_type>    : 'deploy' or 'release'
+#   <app_tests>   : 'basic' or 'external'
+#   <app_target>  : 'plain', 'aws', 'gcp', 'openshift'
+#   <login_mode>  : 'withLogin' for cloud providers, 'localhost' for plain local kube context.
+# Note: 1. Ensure you have Docker installed and running, and that you have access to the required Nexus repository for downloading xl-cli.
+#       2. Set necessary environment variables for cloud provider authentication when using 'withLogin' mode.
+#       3. Invoke the script from the kube-blueprints root directory.
+# Example: cd kube-blueprints && ./scripts/integtest-chart-docker-local.sh release basic gcp withLogin
+#       cd kube-blueprints && ./scripts/integtest-chart-docker-local.sh release basic plain localhost
+#       cd kube-blueprints && ./scripts/integtest-chart-docker-local.sh deploy external openshift withLogin
 
 if [ -z "$1" ]; then
     echo "Use first argument to select app, for example: 'deploy', or 'release'."
@@ -15,10 +28,14 @@ if [ -z "$3" ]; then
     exit 1
 fi
 
+if [ -z "$4" ]; then
+    echo "Use fourth argument to specify login mode, for example: 'withLogin' for provider, 'localhost' for plain local kube context."
+    exit 1
+fi
+
 APP_TYPE="$1"
 APP_TESTS="$2"
 APP_TARGET="$3"
-XL_APP_VERSION_DEFAULT=""
 
 APP_SHORT_TYPE=xlr
 if [ "$APP_TYPE" = "deploy" ]; then
@@ -26,21 +43,32 @@ if [ "$APP_TYPE" = "deploy" ]; then
 fi
 
 APP_OPERATOR="operator-${APP_TYPE}-${APP_TESTS}"
-OUTPUT_HOST_DIR=$(pwd)/build/integtest
+# Use WORKSPACE env var if available (Jenkins), otherwise use current directory
+WORKSPACE_ROOT="${WORKSPACE:-$(pwd)}"
+OUTPUT_HOST_DIR="$WORKSPACE_ROOT/build/integtest"
 OUTPUT_CONTAINER_DIR="/opt/project"
 TEST_DIR="${OUTPUT_CONTAINER_DIR}/tests/e2e/${APP_OPERATOR}.yaml"
 VERSION_FILE=./xl-op/override-defaults.yaml
-XL_CLIENT_VERSION_DEFAULT=26.1.0-master
-XL_CLIENT_VERSION=${XL_CLIENT_VERSION:-$XL_CLIENT_VERSION_DEFAULT}
+
+XL_APP_VERSION_DEFAULT=""
+XL_APP_OPERATOR_VERSION_DEFAULT=""
 if [ "$APP_TYPE" = "deploy" ]; then
     XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTagDeploy" "$VERSION_FILE")
+    XL_APP_OPERATOR_VERSION_DEFAULT=$(yq eval ".OperatorImageTagDeploy" "$VERSION_FILE")
 fi
 if [ "$APP_TYPE" = "release" ]; then
     XL_APP_VERSION_DEFAULT=$(yq eval ".ImageTagRelease" "$VERSION_FILE")
+    XL_APP_OPERATOR_VERSION_DEFAULT=$(yq eval ".OperatorImageTagRelease" "$VERSION_FILE")
 fi
 XL_APP_VERSION=${XL_APP_VERSION:-$XL_APP_VERSION_DEFAULT}
+XL_APP_OPERATOR_VERSION=${XL_APP_OPERATOR_VERSION:-$XL_APP_OPERATOR_VERSION_DEFAULT}
+
 XL_RR_VERSION_DEFAULT=$(yq eval ".ImageTagReleaseRunner" "$VERSION_FILE")
 XL_RR_VERSION=${XL_RR_VERSION:-$XL_RR_VERSION_DEFAULT}
+
+XL_CLIENT_VERSION_DEFAULT=${XL_APP_OPERATOR_VERSION}
+XL_CLIENT_VERSION=${XL_CLIENT_VERSION:-$XL_CLIENT_VERSION_DEFAULT}
+
 EXTRA_CONTAINER_ARGS=""
 
 # Validate required environment variables
@@ -51,32 +79,44 @@ if [[ -z "$APP_TARGET" || -z "$APP_SHORT_TYPE" || -z "$APP_TYPE" || -z "$APP_OPE
 fi
 
 echo "Prepare tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
+echo "Working directory: $(pwd)"
+echo "Workspace root: $WORKSPACE_ROOT" 
+echo "Output directory: $OUTPUT_HOST_DIR"
 
-rm -fr $OUTPUT_HOST_DIR/tests
-mkdir -p $OUTPUT_HOST_DIR
-cp -R ./tests $OUTPUT_HOST_DIR
+rm -fr "$OUTPUT_HOST_DIR/tests"
+mkdir -p "$OUTPUT_HOST_DIR"
+cp -R ./tests "$OUTPUT_HOST_DIR"
 mkdir -p "$OUTPUT_HOST_DIR"/{tools,logs,kube}
-chmod -R 777 $OUTPUT_HOST_DIR
+chmod -R 777 "$OUTPUT_HOST_DIR"
 
 echo "Download latest xl-cli ${XL_CLIENT_VERSION}"
 
-curl -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
-    -o $OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin \
-    https://nexus.xebialabs.com/nexus/content/repositories/releases/com/xebialabs/xlclient/xl-client/${XL_CLIENT_VERSION}/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin
-chmod 755 $OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin
+curl -f --progress-bar -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
+    -o "$OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin" \
+    "https://nexus.xebialabs.com/nexus/content/repositories/releases/com/xebialabs/xlclient/xl-client/${XL_CLIENT_VERSION}/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin"
+chmod 755 "$OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin"
 
 echo "Setup versions:"
 echo "  XL_CLIENT_VERSION=$XL_CLIENT_VERSION"
+echo "  XL_APP_OPERATOR_VERSION=$XL_APP_OPERATOR_VERSION"
 echo "  XL_APP_VERSION=$XL_APP_VERSION"
 echo "  XL_RR_VERSION=$XL_RR_VERSION"
 
 if [ "$APP_TYPE" = "deploy" ]; then
-    yq eval ".ImageTagDeploy = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}/*.yaml -i
+    for file in "$OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}"/*.yaml; do
+        yq eval ".ImageTagDeploy = \"$XL_APP_VERSION\"" "$file" -i
+        yq eval ".OperatorImageTagDeploy = \"$XL_APP_OPERATOR_VERSION\"" "$file" -i
+    done
 fi
 if [ "$APP_TYPE" = "release" ]; then
-    yq eval ".ImageTagRelease = \"$XL_APP_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}/*.yaml -i
+    for file in "$OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}"/*.yaml; do
+        yq eval ".ImageTagRelease = \"$XL_APP_VERSION\"" "$file" -i
+        yq eval ".OperatorImageTagRelease = \"$XL_APP_OPERATOR_VERSION\"" "$file" -i
+    done
 fi
-yq eval ".ImageTagReleaseRunner = \"$XL_RR_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}/*.yaml -i
+for file in "$OUTPUT_HOST_DIR/tests/answers/generated/${APP_TARGET}"/*.yaml; do
+    yq eval ".ImageTagReleaseRunner = \"$XL_RR_VERSION\"" "$file" -i
+done
 
 if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
     if [[ -z "$REDHAT_OC_URL" || -z "$REDHAT_OC_LOGIN" || -z "$REDHAT_OC_PASSWORD" || -z "$REDHAT_REGISTRY_SA" || -z "$REDHAT_REGISTRY_SA_TOKEN" ]]; then
@@ -89,7 +129,7 @@ if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
     docker login -u="$REDHAT_REGISTRY_SA" -p="$REDHAT_REGISTRY_SA_TOKEN" registry.redhat.io
     docker run --rm \
         -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+        -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
         -u $(id -u):$(id -g) \
         registry.redhat.io/openshift4/ose-cli:latest \
         oc login $REDHAT_OC_URL --username $REDHAT_OC_LOGIN --password $REDHAT_OC_PASSWORD
@@ -111,13 +151,13 @@ elif [[ "$APP_TARGET" = "aws" && "$4" == "withLogin" ]]; then
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
         -e K8S_AUTH_TOKEN=$TOKEN \
         -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+        -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
         -u $(id -u):$(id -g) \
         amazon/aws-cli:latest \
         eks --region $AWS_REGION update-kubeconfig --name $AWS_CLUSTER_NAME
     TOKEN=$(aws eks get-token --region $AWS_REGION --cluster-name $AWS_CLUSTER_NAME --output json | jq -r '.status.token')
-    kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-credentials kuttl-user --token=$TOKEN
-    kubectl --kubeconfig=$OUTPUT_HOST_DIR/kube/config config set-context --current --user=kuttl-user
+    kubectl --kubeconfig="$OUTPUT_HOST_DIR/kube/config" config set-credentials kuttl-user --token=$TOKEN
+    kubectl --kubeconfig="$OUTPUT_HOST_DIR/kube/config" config set-context --current --user=kuttl-user
 
 elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
    echo "Setting up for Azure"
@@ -132,7 +172,7 @@ elif [[ "$APP_TARGET" = "azure" && "$4" == "withLogin" ]]; then
        -e AZURE_USER=$AZURE_USER \
        -e AZURE_PASSWORD=$AZURE_PASSWORD \
        -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
-       -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+       -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
        mcr.microsoft.com/azure-cli:latest \
        az login -u $AZURE_USER -p $AZURE_PASSWORD && az aks get-credentials --name $AZURE_CLUSTER_NAME --resource-group $AZURE_RESOURCE_GROUP --overwrite-existing
 
@@ -149,7 +189,7 @@ elif [[ "$APP_TARGET" = "gcp" && "$4" == "withLogin" ]]; then
         -e HOME=$OUTPUT_CONTAINER_DIR \
         -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
         -e CLOUDSDK_CORE_PROJECT=$GCP_PROJECT \
-        -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+        -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
         -u $(id -u):$(id -g) \
         google/cloud-sdk:latest \
         sh -c "gcloud auth activate-service-account --key-file=$GCP_KEYFILE_JSON && \
@@ -162,7 +202,7 @@ elif [[ "$APP_TARGET" = "plain" && "$4" == "localhost" ]]; then
 
     echo "Using exising kube context"
 
-    cp -f $HOME/.kube/config $OUTPUT_HOST_DIR/kube/
+    cp -f $HOME/.kube/config "$OUTPUT_HOST_DIR/kube/"
     EXTRA_CONTAINER_ARGS="--network=host"
 fi
 
@@ -170,11 +210,11 @@ if [ "$APP_TARGET" = "openshift" ]; then
 
     echo "Change CR name to dai-ocp-$APP_SHORT_TYPE"
 
-    grep -rl "dai-$APP_SHORT_TYPE" $OUTPUT_HOST_DIR/tests/e2e/apply | xargs sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
-    grep -rl "dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-" $OUTPUT_HOST_DIR/tests/e2e/asserts | xargs sed -i "s/dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-/dai-ocp-$APP_SHORT_TYPE-digitalai-$APP_TYPE-ocp-/g"
-    grep -rl "dai-$APP_SHORT_TYPE" $OUTPUT_HOST_DIR/tests/e2e/asserts | xargs sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
-    grep -rl "dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-" $OUTPUT_HOST_DIR/tests/e2e/*/$APP_TYPE/steps | xargs sed -i "s/dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-/dai-ocp-$APP_SHORT_TYPE-digitalai-$APP_TYPE-ocp-/g"
-    grep -rl "dai-$APP_SHORT_TYPE" $OUTPUT_HOST_DIR/tests/e2e/*/$APP_TYPE/steps | xargs sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
+    grep -rlZ "dai-$APP_SHORT_TYPE" "$OUTPUT_HOST_DIR"/tests/e2e/apply | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
+    grep -rlZ "dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-" "$OUTPUT_HOST_DIR"/tests/e2e/asserts | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-/dai-ocp-$APP_SHORT_TYPE-digitalai-$APP_TYPE-ocp-/g"
+    grep -rlZ "dai-$APP_SHORT_TYPE" "$OUTPUT_HOST_DIR"/tests/e2e/asserts | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
+    grep -rlZ "dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-" "$OUTPUT_HOST_DIR"/tests/e2e/*/$APP_TYPE/steps | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-/dai-ocp-$APP_SHORT_TYPE-digitalai-$APP_TYPE-ocp-/g"
+    grep -rlZ "dai-$APP_SHORT_TYPE" "$OUTPUT_HOST_DIR"/tests/e2e/*/$APP_TYPE/steps | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
 fi
 
 echo "Starting tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
@@ -191,7 +231,7 @@ docker run --rm $EXTRA_CONTAINER_ARGS \
     -e XL_SKIP_TOOL_CHECK=true \
     -e XL_CLI=$OUTPUT_CONTAINER_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin \
     -e XL_CLI_CLEAN_EXTRA="--clean-force --clean-grace-period 1" \
-    -v $OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw \
+    -v "$OUTPUT_HOST_DIR:$OUTPUT_CONTAINER_DIR:rw" \
     -u $(id -u):$(id -g) \
     xldevdocker/kuttl:latest \
     --artifacts-dir $OUTPUT_CONTAINER_DIR/logs --config $TEST_DIR

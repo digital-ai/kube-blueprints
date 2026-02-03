@@ -9,5 +9,4 @@ error:
 - $ASSERTS_REL_PATH/release-running-nginx-pods.yaml
 - $ASSERTS_REL_PATH/release-running-haproxy-pods.yaml
 - $ASSERTS_REL_PATH/release-running-postgres-pods.yaml
-- $ASSERTS_REL_PATH/release-running-rabbitmq-pods.yaml
 - $ASSERTS_REL_PATH/release-running-product-pods.yaml
