@@ -1,5 +1,5 @@
-ImageTagRelease: 25.1.0-beta.2
-OperatorImageTagRelease: 25.1.0-beta.2
+ImageTagRelease: 26.1
+OperatorImageTagRelease: 26.1.0-master
 XlrReplicaCount: 1
 PreserveCrValuesRelease: |-
         .metadata.name: .
@@ -15,6 +15,7 @@ PreserveCrValuesRelease: |-
         .spec.appHostname:
           0.0:
           23.3: .
+        .spec.diagnosticMode: .
         .spec.replicaCount: .
         .spec.persistence.paths: .
         .spec.persistence.emptyDirPaths: .
@@ -112,17 +113,6 @@ PreserveCrValuesRelease: |-
         .spec.postgresql.image.tag: .
         .spec.haproxy-ingress.install: .
         .spec.nginx-ingress-controller.install: .
-        .spec.rabbitmq.install: .
-        .spec.rabbitmq.persistence.storageClass: .
-        .spec.rabbitmq.persistence.size: .
-        .spec.rabbitmq.replicaCount: .
-        .spec.rabbitmq.persistence.replicaCount: .
-        # upgrade to next supported MQ version (do the manual upgrade later)
-        .spec.rabbitmq.image.tag:
-          0.0:
-            existance: .spec.rabbitmq.image.tag
-            expression: .spec.rabbitmq.image.updateTag // "3.10.25"
-          23.3: .
         .spec.route.hostname:
           0.0: .spec.route.hosts.[0]
           23.3: .
@@ -140,13 +130,12 @@ PreserveCrValuesRelease: |-
           23.3: .
         .spec.http2.enabled: .
         .spec.ssl: .
-        .spec.hooks: .
+        .spec.hooks.genSelfSigned: .
+        .spec.hooks.getLicense: .
         .spec.configuration: .
         .spec.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
         .spec.postgresql.primary.extraConfiguration: .
-        .spec.rabbitmq.configuration: .
-        .spec.rabbitmq.extraConfiguration: .
         .spec.resourcesPreset: .
         .spec.resources: .
         .spec.defaultInitContainers.resources: .
@@ -157,8 +146,8 @@ PreserveCrValuesRelease: |-
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
-        .spec.rabbitmq.resources: .
-        .spec.rabbitmq.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
         .spec.volumePermissions: .
@@ -166,10 +155,9 @@ PreserveCrValuesRelease: |-
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
         .spec.postgresql.volumePermissions: .
-        .spec.rabbitmq.containerSecurityContext: .
-        .spec.rabbitmq.podSecurityContext: .
-        .spec.rabbitmq.volumePermissions: .
+PostgresqlOperatorClean: 'false'
 UpgradeType: operatorToOperator
+ReleaseName: 'dai-xlr'
 CrdName: 'digitalaireleases.xlr.digital.ai'
 PreservePvc: true
-ImageTagReleaseRunner: 25.1.0-beta.2
+ImageTagReleaseRunner: 26.1.0-beta.1226

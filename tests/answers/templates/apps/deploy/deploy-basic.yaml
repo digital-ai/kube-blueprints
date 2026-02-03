@@ -1,10 +1,12 @@
 UseCustomNamespace: false
 Namespace: digitalai
+CreateNamespace: true
 ServerType: dai-deploy
 ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
+EnableSCC: false
 RepositoryNameDeploy: xebialabsunsupported
 ImageNameDeploy: xl-deploy
 ImageNameDeployTaskEngine: deploy-task-engine
@@ -83,19 +85,19 @@ IdentityServiceConfRelease: |-
   rolesClaim: ""
   userNameClaim: "preferred_username"
   scopes: ["openid"]
-IsCrdReused: false
+CrdName: ''
+IsCrdReused: 'false'
+CrName: ''
 ImageNameReleaseRunner: 'release-runner'
-RemoteRunnerInstallType: ''
+RemoteRunnerInstallType: 'no-install'
 RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
-RemoteRunnerHelmChartUrl: ''
+RemoteRunnerHelmChartUrl: 'http://dai-xlr-digitalai-release.digitalai'
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
 RemoteRunnerUserPassword: 'HQTNYjCjEQklwGng'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
-RemoteRunnerTruststore: |-
-
-RemoteRunnerTruststorePassword:
+RemoteRunnerRestClientCa: ''

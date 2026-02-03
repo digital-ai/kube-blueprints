@@ -1,5 +1,5 @@
-ImageTagDeploy: 25.1.0-beta.2
-OperatorImageTagDeploy: 25.1.0-beta.2
+ImageTagDeploy: 26.1
+OperatorImageTagDeploy: 26.1.0-master
 XldMasterCount: 2
 XldWorkerCount: 2
 PreserveCrValuesDeploy: |-
@@ -182,13 +182,17 @@ PreserveCrValuesDeploy: |-
           0.0:
           23.3: .
         .spec.ssl: .
-        .spec.hooks: .
+        .spec.hooks.genSelfSigned: .
+        .spec.hooks.getLicense: .
         .spec.centralConfiguration.configuration: .
         .spec.centralConfiguration.extraConfiguration: .
+        .spec.centralConfiguration.diagnosticMode: .
         .spec.master.configuration: .
         .spec.master.extraConfiguration: .
+        .spec.master.diagnosticMode: .
         .spec.worker.configuration: .
         .spec.worker.extraConfiguration: .
+        .spec.worker.diagnosticMode: .
         .spec.postgresql.primary.configuration: .
         .spec.postgresql.primary.extraConfiguration: .
         .spec.rabbitmq.configuration: .
@@ -209,8 +213,10 @@ PreserveCrValuesDeploy: |-
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
         .spec.rabbitmq.resources: .
         .spec.rabbitmq.resourcesPreset: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.centralConfiguration.podSecurityContext: .
         .spec.centralConfiguration.containerSecurityContext: .
         .spec.centralConfiguration.volumePermissions: .
@@ -227,7 +233,10 @@ PreserveCrValuesDeploy: |-
         .spec.rabbitmq.containerSecurityContext: .
         .spec.rabbitmq.podSecurityContext: .
         .spec.rabbitmq.volumePermissions: .
+PostgresqlOperatorClean: 'false'
+RabbitmqOperatorClean: 'false'
 UpgradeType: operatorToOperator
+ReleaseName: 'dai-xld'
 CrdName: 'digitalaideploys.xld.digital.ai'
 PreservePvc: true
-ImageTagReleaseRunner: 25.1.0-beta.2
+ImageTagReleaseRunner: 26.1.0-beta.1226

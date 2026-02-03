@@ -1,7 +1,7 @@
-ImageTagDeploy: 25.1.0
-OperatorImageTagDeploy: 25.1.0-master
-XldMasterCount: 3
-XldWorkerCount: 3
+ImageTagDeploy: 26.1
+OperatorImageTagDeploy: 26.1.0-master
+XldMasterCount: 1
+XldWorkerCount: 1
 CrdName: 'digitalaideploys.xld.digital.ai'
 PreservePvc: false
-ImageTagReleaseRunner: 25.1.0-1024.113
+ImageTagReleaseRunner: 26.1.0-beta.1226

@@ -1,10 +1,12 @@
 UseCustomNamespace: false
 Namespace: digitalai
+CreateNamespace: true
 ServerType: dai-release
 ImageRegistryType: default
 IsCustomImageRegistry: false
 CustomImageRegistryName: docker.io
 CustomPrivateImageRegistrySecret:
+EnableSCC: false
 RepositoryNameRelease: xebialabsunsupported
 ImageNameRelease: xl-release
 OperatorImageRelease: release-operator
@@ -22,12 +24,6 @@ PostgresqlExternalConfigRelease: |-
       <xlr-report-password>
     maxPoolSize: 10
 PostgresqlOperatorClean: true
-RabbitmqExternalConfigRelease: |-
-  url: <queue-url>
-  queueName: <queue-name>
-  username: <username>
-  password: |-
-    <password>
 IngressNginxControllerClean: true
 OidcConfigTypeInstall: 'no-oidc'
 OidcConfigTypeUpgrade: 'existing'
@@ -79,20 +75,20 @@ IdentityServiceConfRelease: |-
   rolesClaim: ""
   userNameClaim: "preferred_username"
   scopes: ["openid"]
+CrdName: ''
 IsCrdReused: false
+CrName: ''
 ImageNameReleaseRunner: 'release-runner'
 RemoteRunnerInstallType: ''
 RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
 RemoteRunnerHelmChartUrl: ''
+RemoteRunnerReleaseUrl: ''
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
 RemoteRunnerUserPassword: 'HQTNYjCjEQklwGng'
 RemoteRunnerTokenExpiration: '0'
 RemoteRunnerCount: 1
 IsRemoteRunnerTruststoreEnabled: false
-RemoteRunnerTruststore: |-
-
-RemoteRunnerTruststorePassword:
-RemoteRunnerClean: true
+RemoteRunnerRestClientCa: ''

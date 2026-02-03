@@ -3,13 +3,12 @@ kind: TestStep
 unitTest: false
 commands:
 - script: $XL_CLI kube upgrade --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-upgrade.yaml
-  timeout: 120
+  timeout: 300
 - script: $XL_CLI kube check --wait-for-ready 10 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-upgrade.yaml
   timeout: 700
 assert:
 - $ASSERTS_REL_PATH/release-running-operator-pods.yaml
 - $ASSERTS_REL_PATH/release-running-postgres-pods.yaml
-- $ASSERTS_REL_PATH/release-running-rabbitmq-pods.yaml
 - $ASSERTS_REL_PATH/release-running-product-pods.yaml
 - $ASSERTS_REL_PATH/release-deployit-defaults.yaml
 error:

@@ -3,13 +3,13 @@ kind: TestStep
 unitTest: false
 commands:
 - script: $XL_CLI kube install --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/deploy-basic-install.yaml
-  timeout: 60
+  timeout: 180
 - script: $XL_CLI kube check --wait-for-ready 15 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/deploy-basic-install.yaml
   timeout: 1000
 - script: kubectl exec -n $NAMESPACE -c deploy-master dai-xld-digitalai-deploy-master-0 -- curl 'http://localhost:4516/xldeploy/support/system-information' --user 'admin:OEi9o1PHyQ89mwxm' | jq '.general.isNodeActive' | grep '^true$'
   timeout: 15
 - script: kubectl exec -n $NAMESPACE -c deploy-master dai-xld-digitalai-deploy-master-0 -- curl 'http://localhost:4516/xldeploy/support/system-information' --user 'admin:OEi9o1PHyQ89mwxm' | jq '.cluster.numberOfNodes' | grep '^1$'
-  timeout: 15  
+  timeout: 15
 assert:
 - $ASSERTS_REL_PATH/deploy-running-operator-pods.yaml
 - $ASSERTS_REL_PATH/deploy-running-postgres-pods.yaml

@@ -1,5 +1,6 @@
 {{- if hasPrefix "Openshift" .K8sSetup }}
-  {{- if and .EnableSCC (eq .RabbitmqInstall "chart") }}
+  {{- /* Applies when SCC enabled and Rabbitmq chart install or upgrade (where RabbitmqInstall is not set). */ -}}
+  {{- if and .EnableSCC (or (eq .RabbitmqInstall "chart") (eq .RabbitmqInstall "") (not (hasKey . "RabbitmqInstall"))) }}
 ---
     {{- $rabbitmqFullName := printf "dai-ocp-%s-rabbitmq" .ShortServerName }}
     {{- if ne .Namespace "digitalai" }}
