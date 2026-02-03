@@ -1,16 +1,5 @@
-K8sSetup: PlainK8s
-UseCustomNamespace: false
-Namespace: digitalai
-ServerType: dai-release
-ImageRegistryType: default
-IsCustomImageRegistry: false
-CustomImageRegistryName: docker.io
-CustomPrivateImageRegistrySecret:
-RepositoryNameRelease: xebialabsunsupported
-ImageTagRelease: 25.1.0-1024.113
-OperatorImageTagRelease: 25.1.0-master
-ImageNameRelease: xl-release
-OperatorImageRelease: release-operator
+ImageTagRelease: 25.3
+OperatorImageTagRelease: 25.3.0-master
 XlrReplicaCount: 1
 PreserveCrValuesRelease: |-
         .metadata.name: .
@@ -26,6 +15,7 @@ PreserveCrValuesRelease: |-
         .spec.appHostname:
           0.0:
           23.3: .
+        .spec.diagnosticMode: .
         .spec.replicaCount: .
         .spec.persistence.paths: .
         .spec.persistence.emptyDirPaths: .
@@ -123,17 +113,6 @@ PreserveCrValuesRelease: |-
         .spec.postgresql.image.tag: .
         .spec.haproxy-ingress.install: .
         .spec.nginx-ingress-controller.install: .
-        .spec.rabbitmq.install: .
-        .spec.rabbitmq.persistence.storageClass: .
-        .spec.rabbitmq.persistence.size: .
-        .spec.rabbitmq.replicaCount: .
-        .spec.rabbitmq.persistence.replicaCount: .
-        # upgrade to next supported MQ version (do the manual upgrade later)
-        .spec.rabbitmq.image.tag:
-          0.0:
-            existance: .spec.rabbitmq.image.tag
-            expression: .spec.rabbitmq.image.updateTag // "3.10.25"
-          23.3: .
         .spec.route.hostname:
           0.0: .spec.route.hosts.[0]
           23.3: .
@@ -151,13 +130,12 @@ PreserveCrValuesRelease: |-
           23.3: .
         .spec.http2.enabled: .
         .spec.ssl: .
-        .spec.hooks: .
+        .spec.hooks.genSelfSigned: .
+        .spec.hooks.getLicense: .
         .spec.configuration: .
         .spec.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
         .spec.postgresql.primary.extraConfiguration: .
-        .spec.rabbitmq.configuration: .
-        .spec.rabbitmq.extraConfiguration: .
         .spec.resourcesPreset: .
         .spec.resources: .
         .spec.defaultInitContainers.resources: .
@@ -168,8 +146,8 @@ PreserveCrValuesRelease: |-
         .spec.nginx-ingress-controller.resourcesPreset: .
         .spec.postgresql.primary.resources: .
         .spec.postgresql.primary.resourcesPreset: .
-        .spec.rabbitmq.resources: .
-        .spec.rabbitmq.resourcesPreset: .
+        .spec.postgresql.diagnosticMode: .
+        .spec.rabbitmq.diagnosticMode: .
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
         .spec.volumePermissions: .
@@ -177,97 +155,11 @@ PreserveCrValuesRelease: |-
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
         .spec.postgresql.volumePermissions: .
-        .spec.rabbitmq.containerSecurityContext: .
-        .spec.rabbitmq.podSecurityContext: .
-        .spec.rabbitmq.volumePermissions: .
-PostgresqlExternalConfigRelease: |-
-  main:
-    url: jdbc:postgresql://<xlr-db-host>:5432/<xlr-database-name>
-    username: <xlr-username>
-    password: |-
-      <xlr-password>
-    maxPoolSize: 10
-  report:
-    url: jdbc:postgresql://<xlr-report-db-host>:5432/<xlr-report-database-name>
-    username: <xlr-report-username>
-    password: |-
-      <xlr-report-password>
-    maxPoolSize: 10
-RabbitmqExternalConfigRelease: |-
-  url: <queue-url>
-  queueName: <queue-name>
-  username: <username>
-  password: |-
-    <password>
-OidcConfigTypeInstall: 'no-oidc'
-OidcConfigTypeUpgrade: 'existing'
-ExternalOidcConfGenericDeploy: |-
-  accessTokenUri: ""
-  clientId: ""
-  clientSecret: ""
-  emailClaim: ""
-  issuer: ""
-  keyRetrievalUri: ""
-  logoutUri: ""
-  postLogoutRedirectUri: ""
-  redirectUri: ""
-  rolesClaimName: ""
-  userAuthorizationUri: ""
-  userNameClaimName: ""
-  fullNameClaim: ""
-  scopes: '["openid"]'
-ExternalOidcConfGenericRelease: |-
-  accessTokenUri: ""
-  clientId: ""
-  clientSecret: ""
-  emailClaim: ""
-  fullNameClaim: ""
-  issuer: ""
-  keyRetrievalUri: ""
-  logoutUri: ""
-  postLogoutRedirectUri: ""
-  redirectUri: ""
-  rolesClaim: ""
-  userAuthorizationUri: ""
-  userNameClaim: ""
-  scopes: '["openid"]'
-IdentityServiceConfDeploy: |-
-  clientId: ""
-  clientSecret: ""
-  issuer: ""
-  redirectUri: ""
-  postLogoutRedirectUri: ""
-  rolesClaimName: ""
-  userNameClaimName: "preferred_username"
-  scopes: ["openid"]
-IdentityServiceConfRelease: |-
-  clientId: ""
-  clientSecret: ""
-  issuer: ""
-  redirectUri: ""
-  postLogoutRedirectUri: ""
-  rolesClaim: ""
-  userNameClaim: "preferred_username"
-  scopes: ["openid"]
+PostgresqlOperatorClean: 'false'
 UpgradeType: operatorToOperator
+ReleaseName: 'dai-xlr'
 CrdName: 'digitalaireleases.xlr.digital.ai'
 IsCrdReused: false
 CrName: 'dai-xlr'
 PreservePvc: true
-ImageNameReleaseRunner: 'release-runner'
-ImageTagReleaseRunner: 25.1.0-1024.113
-RemoteRunnerInstallType: ''
-RepositoryNameReleaseRunner: 'xebialabsunsupported'
-RemoteRunnerReleaseName: 'release-runner'
-RemoteRunnerUseDefaultLocation: true
-RemoteRunnerHelmChartUrl: ''
-RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
-RemoteRunnerToken: ''
-RemoteRunnerUserEmail: 'release-runner@no.reply'
-RemoteRunnerUserPassword: 'rBNGELKKBks0y29A'
-RemoteRunnerTokenExpiration: '0'
-RemoteRunnerCount: 1
-IsRemoteRunnerTruststoreEnabled: false
-RemoteRunnerTruststore: |-
-  
-EnableSCC: true
+ImageTagReleaseRunner: 25.3.4-208.1600

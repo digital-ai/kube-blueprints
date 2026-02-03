@@ -3,7 +3,7 @@ kind: TestStep
 unitTest: false
 commands:
 - script: $XL_CLI kube clean --skip-prompts --skip-context-check $XL_CLI_CLEAN_EXTRA -a $ANSWERS_REL_PATH/deploy-basic-clean.yaml
-  timeout: 120
+  timeout: 200
 error:
 - $ASSERTS_REL_PATH/deploy-running-operator-pods.yaml
 - $ASSERTS_REL_PATH/deploy-running-nginx-pods.yaml

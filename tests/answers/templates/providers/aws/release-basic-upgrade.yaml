@@ -1,0 +1,3 @@
+K8sSetup: AWSEKS
+CrName: dai-xlr
+RemoteRunnerReleaseUrl: http://dai-xlr-digitalai-release.digitalai
