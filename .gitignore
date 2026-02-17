@@ -8,6 +8,7 @@
 build
 bin/
 buildSrc/.kotlin
+tmp/
 
 kubeconfig
 node_modules/

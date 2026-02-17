@@ -1,3 +1,33 @@
+{{- $presets := dict
+  "nano" (dict
+      "requests" (dict "cpu" "100m" "memory" "128Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "150m" "memory" "192Mi" "ephemeral-storage" "2Gi")
+   )
+  "micro" (dict
+      "requests" (dict "cpu" "250m" "memory" "256Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "375m" "memory" "384Mi" "ephemeral-storage" "2Gi")
+   )
+  "small" (dict
+      "requests" (dict "cpu" "500m" "memory" "512Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "750m" "memory" "768Mi" "ephemeral-storage" "2Gi")
+   )
+  "medium" (dict
+      "requests" (dict "cpu" "500m" "memory" "1024Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "750m" "memory" "1536Mi" "ephemeral-storage" "2Gi")
+   )
+  "large" (dict
+      "requests" (dict "cpu" "1.0" "memory" "2048Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "1.5" "memory" "3072Mi" "ephemeral-storage" "2Gi")
+   )
+  "xlarge" (dict
+      "requests" (dict "cpu" "1.0" "memory" "3072Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "3.0" "memory" "6144Mi" "ephemeral-storage" "2Gi")
+   )
+  "2xlarge" (dict
+      "requests" (dict "cpu" "1.0" "memory" "3072Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "6.0" "memory" "12288Mi" "ephemeral-storage" "2Gi")
+   )
+ }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -5,12 +35,22 @@ metadata:
   annotations:
     "cnpg.io/hibernation": "off"
 spec:
+  enablePDB: false
 
   # Number of PostgreSQL instances (1 primary). Add replicas by increasing this.
   instances: 1
 
   # PostgreSQL major version to use
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.5-minimal-bookworm
+  {{- if eq .IsCustomImageRegistry true }}
+  imageName: {{ .CustomImageRegistryName }}/{{ .RepositoryNameRelease }}/postgresql:18.1-minimal-trixie
+  {{- else }}
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.1-minimal-trixie
+  {{- end }}
+
+  {{- if eq .ImageRegistryType "private" }}
+  imagePullSecrets:
+    - name: {{ .CustomPrivateImageRegistrySecret }}
+  {{- end }}
 
   # Storage (maps from primary.persistence.*)
   storage:
@@ -27,14 +67,21 @@ spec:
       #   matchLabels:
       #     my: pg
 
-  # Resources (no direct resourcesPreset; set explicitly)
+  # Resources
+  {{- if eq .ResourcesSource "preset" }}
   resources:
+    {{- $preset := index $presets .PostgresqlResourcesPreset }}
     requests:
-      cpu: "250m"
-      memory: "256Mi"
+      cpu: {{ $preset.requests.cpu | quote }}
+      memory: {{ $preset.requests.memory | quote }}
+      ephemeral-storage: {{ index $preset.requests "ephemeral-storage" | quote }}
     limits:
-      cpu: "1"
-      memory: "1Gi"
+      cpu: {{ $preset.limits.cpu | quote }}
+      memory: {{ $preset.limits.memory | quote }}
+      ephemeral-storage: {{ index $preset.limits "ephemeral-storage" | quote }}
+  {{- else if eq .ResourcesSource "editor" }}
+{{ .PostgresqlResourcesEditor | indent 2 }}
+  {{- end }}
 
   # Service configuration (maps from primary.service.*)
   managed:

@@ -1,18 +1,70 @@
+{{- $presets := dict
+  "nano" (dict
+      "requests" (dict "cpu" "100m" "memory" "128Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "150m" "memory" "192Mi" "ephemeral-storage" "2Gi")
+   )
+  "micro" (dict
+      "requests" (dict "cpu" "250m" "memory" "256Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "375m" "memory" "384Mi" "ephemeral-storage" "2Gi")
+   )
+  "small" (dict
+      "requests" (dict "cpu" "500m" "memory" "512Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "750m" "memory" "768Mi" "ephemeral-storage" "2Gi")
+   )
+  "medium" (dict
+      "requests" (dict "cpu" "500m" "memory" "1024Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "750m" "memory" "1536Mi" "ephemeral-storage" "2Gi")
+   )
+  "large" (dict
+      "requests" (dict "cpu" "1.0" "memory" "2048Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "1.5" "memory" "3072Mi" "ephemeral-storage" "2Gi")
+   )
+  "xlarge" (dict
+      "requests" (dict "cpu" "1.0" "memory" "3072Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "3.0" "memory" "6144Mi" "ephemeral-storage" "2Gi")
+   )
+  "2xlarge" (dict
+      "requests" (dict "cpu" "1.0" "memory" "3072Mi" "ephemeral-storage" "50Mi")
+      "limits" (dict "cpu" "6.0" "memory" "12288Mi" "ephemeral-storage" "2Gi")
+   )
+ }}
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
   name: dai-xld-rabbitmq
 spec:
+  {{- if eq .IsCustomImageRegistry true }}
+  image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameRelease }}/rabbitmq:4.2.3-management
+  {{- else }}
+  image: docker.io/library/rabbitmq:4.2.3-management
+  {{- end }}
+
+  {{- if eq .ImageRegistryType "private" }}
+  imagePullSecrets:
+    - name: {{ .CustomPrivateImageRegistrySecret }}
+  {{- end }}
+
   tls:
     disableNonTLSListeners: false
   replicas: {{ .RabbitmqReplicaCount }}
   persistence:
     storageClassName: {{ .RabbitmqStorageClass }}
     storage: {{ .RabbitmqPvcSize }}Gi
+
+  {{- if eq .ResourcesSource "preset" }}
   resources:
+    {{- $preset := index $presets .RabbitmqResourcesPreset }}
     requests:
-      cpu: "500m"
-      memory: "1Gi"
+      cpu: {{ $preset.requests.cpu | quote }}
+      memory: {{ $preset.requests.memory | quote }}
+      ephemeral-storage: {{ index $preset.requests "ephemeral-storage" | quote }}
+    limits:
+      cpu: {{ $preset.limits.cpu | quote }}
+      memory: {{ $preset.limits.memory | quote }}
+      ephemeral-storage: {{ index $preset.limits "ephemeral-storage" | quote }}
+  {{- else if eq .ResourcesSource "editor" }}
+{{ .RabbitmqResourcesPreset | indent 2 }}
+  {{- end }}
 
   # RabbitMQ runtime configuration and plugins
   rabbitmq:
@@ -28,6 +80,9 @@ spec:
       quorum_queue.continuous_membership_reconciliation.target_group_size = {{ .RabbitmqReplicaCount }}
       quorum_queue.continuous_membership_reconciliation.auto_remove = true
       quorum_queue.continuous_membership_reconciliation.interval = 600000
+      default_user = guest
+      default_pass = guest
+      default_vhost = /
 
   override:
     statefulSet:
