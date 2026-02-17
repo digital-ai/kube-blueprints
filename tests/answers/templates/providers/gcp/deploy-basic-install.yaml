@@ -1,0 +1,5 @@
+K8sSetup: GoogleGKE
+StorageClass: 'standard-rwo'
+PostgresqlStorageClass: 'standard-rwo'
+RabbitmqStorageClass: 'standard-rwo'
+RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'

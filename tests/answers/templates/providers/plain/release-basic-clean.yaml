@@ -1,0 +1,3 @@
+K8sSetup: PlainK8s
+CrName: 'dai-xlr'
+RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
