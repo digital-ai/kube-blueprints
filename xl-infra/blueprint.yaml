@@ -69,7 +69,7 @@ spec:
       overrideDefault: true
       saveInXlvals: true
       promptIf: !expr "ProcessType != 'clean' && k8sResource(Namespace, 'namespace', Namespace) == ''"
-      prompt: !expr "'Do you want to create custom Kubernetes namespace ' + Namespace + ', it does not exist:'"
+      prompt: !expr "'Do you want to create Kubernetes namespace ' + Namespace + ', it does not exist:'"
       description: |
         Always Type yes to create a namespace in your kubernetes cluster. since the namespace does not already exist. 
         And setup can proceed only if namespace is created. 
