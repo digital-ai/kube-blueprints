@@ -97,22 +97,39 @@ spec:
                       secretKeyRef:
                         name: dai-xld-rabbitmq-secret
                         key: rabbitmq-erlang-cookie
+                {{- if hasPrefix "Openshift" .K8sSetup }}
+                # Empty securityContext removes operator defaults (runAsUser: 999)
+                # Lets OpenShift assign UID/GID from allowed range
+                securityContext: {}
+                {{- else }}
                 securityContext:
                   allowPrivilegeEscalation: false
-                  readOnlyRootFilesystem: true
+                  readOnlyRootFilesystem: false
                   runAsNonRoot: true
                   capabilities:
                     drop:
                       - ALL
+                {{- end }}
             initContainers:
               - name: setup-container
+                {{- if hasPrefix "Openshift" .K8sSetup }}
+                securityContext: {}
+                {{- else }}
                 securityContext:
                   allowPrivilegeEscalation: false
-                  readOnlyRootFilesystem: true
+                  readOnlyRootFilesystem: false
                   runAsNonRoot: true
                   capabilities:
                     drop:
                       - ALL
+                {{- end }}
+            {{- if hasPrefix "Openshift" .K8sSetup }}
+            # Empty securityContext removes operator defaults (fsGroup: 0, runAsUser: 999)
+            # Lets OpenShift assign values from the namespace's allowed range
+            securityContext: {}
+            {{- else }}
             securityContext:
+              runAsNonRoot: true
               seccompProfile:
                 type: RuntimeDefault
+            {{- end }}
