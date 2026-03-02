@@ -1,0 +1,6 @@
+ImageTagRelease: 26.1
+OperatorImageTagRelease: 26.1.0-master
+XlrReplicaCount: 1
+CrdName: 'digitalaireleases.xlr.digital.ai'
+PreservePvc: false
+ImageTagReleaseRunner: 26.1.0-beta.1226
