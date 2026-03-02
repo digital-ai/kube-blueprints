@@ -1,0 +1,3 @@
+K8sSetup: AzureAKS
+CrName: 'dai-xlr'
+RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'

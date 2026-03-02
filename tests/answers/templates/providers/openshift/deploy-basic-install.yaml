@@ -1,0 +1,7 @@
+K8sSetup: Openshift
+EnableSCC: true
+CrName: 'dai-ocp-xld'
+StorageClass: 'gp2-csi'
+PostgresqlStorageClass: 'gp2-csi'
+RabbitmqStorageClass: 'gp2-csi'
+RemoteRunnerReleaseUrl: 'http://dai-ocp-xlr-digitalai-release.digitalai'
