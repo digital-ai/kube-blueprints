@@ -63,7 +63,7 @@ spec:
       memory: {{ $preset.limits.memory | quote }}
       ephemeral-storage: {{ index $preset.limits "ephemeral-storage" | quote }}
   {{- else if eq .ResourcesSource "editor" }}
-{{ .RabbitmqResourcesPreset | indent 2 }}
+{{ .RabbitmqResourcesEditor | indent 2 }}
   {{- end }}
 
   # RabbitMQ runtime configuration and plugins
@@ -124,6 +124,7 @@ spec:
                       - ALL
                 {{- end }}
             {{- if hasPrefix "Openshift" .K8sSetup }}
+            # https://github.com/rabbitmq/cluster-operator/tree/main/docs/examples/default-security-context
             # Empty securityContext removes operator defaults (fsGroup: 0, runAsUser: 999)
             # Lets OpenShift assign values from the namespace's allowed range
             securityContext: {}
