@@ -1095,7 +1095,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide Storage Class to be defined for PostgreSQL:"
-      promptIf: !expr ProcessType == "install" && (PostgresqlInstall == "chart" || PostgresqlInstall == "operator")
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlInstall == 'chart' || PostgresqlInstall == 'operator')"
       description: |
         Provide Storage Class to be defined for PostgreSQL that should be available in the cluster.
         The storage class needs to support minimally ReadWriteOnce access mode.
@@ -1105,7 +1105,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide PVC size for PostgreSQL (Gi):"
-      promptIf: !expr ProcessType == "install" && (PostgresqlInstall == "chart" || PostgresqlInstall == "operator")
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlInstall == 'chart' || PostgresqlInstall == 'operator')"
       default: 8
       description: Provide PVC size for PostgreSQL
       validate: !expr "regex('^([0-9])+(\\.)?([0-9])*$', PostgresqlPvcSize)"
@@ -1130,7 +1130,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select one of the predefined resource values for Postgresql:"
-      promptIf: !expr ProcessType == "install" && ResourcesSource == "preset" && (PostgresqlInstall == "chart" || PostgresqlInstall == "operator")
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'preset' && (PostgresqlInstall == 'chart' || PostgresqlInstall == 'operator')"
       description: "Select one of the predefined resource values for Postgresql"
       default: nano
     - name: PostgresqlResourcesEditor
@@ -1139,7 +1139,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide resource allocation for Postgresql:"
-      promptIf: !expr ProcessType == "install" && ResourcesSource == "editor" && (PostgresqlInstall == "chart" || PostgresqlInstall == "operator")
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'editor' && (PostgresqlInstall == 'chart' || PostgresqlInstall == 'operator')"
       description: "Provide resource allocation (requests and limits values) for Postgresql"
       default: !expr DefaultResourcesEditor
     - name: PostgresqlExternalConfigRelease
@@ -1209,7 +1209,7 @@ spec:
       overrideDefault: true
       prompt: "Replica count to be defined for RabbitMQ:"
       default: 3
-      promptIf: !expr "ProcessType == 'install' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: Replica count to be defined for RabbitMQ
       validate: !expr "regex('^([1-9])+$', RabbitmqReplicaCount)"
     - name: RabbitmqStorageClass
@@ -1221,7 +1221,7 @@ spec:
       overrideDefault: true
       prompt: "Storage Class to be defined for RabbitMQ:"
       default: !expr StorageClass
-      promptIf: !expr "ProcessType == 'install' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: |
         Storage Class to be defined for RabbitMQ.
         The storage class needs to support minimally ReadWriteOnce access mode.
@@ -1232,7 +1232,7 @@ spec:
       overrideDefault: true
       prompt: "Provide PVC size for RabbitMQ (Gi):"
       default: 8
-      promptIf: !expr "ProcessType == 'install' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: Provide PVC size for RabbitMQ
       validate: !expr "regex('^([0-9])+(\\.)?([0-9])*$', RabbitmqPvcSize)"
     - name: RabbitmqResourcesPreset
@@ -1256,7 +1256,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select one of the predefined resource values for Rabbitmq:"
-      promptIf: !expr ProcessType == "install" && ResourcesSource == "preset" && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'preset' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: "Select one of the predefined resource values for Rabbitmq"
       default: nano
     - name: RabbitmqResourcesEditor
@@ -1265,7 +1265,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide resource allocation for Rabbitmq:"
-      promptIf: !expr ProcessType == "install" && ResourcesSource == "editor" && (RabbitmqInstall == 'external')
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'editor' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: "Provide resource allocation (requests and limits values) for Rabbitmq"
       default: !expr DefaultResourcesEditor
     - name: RabbitmqExternalConfigDeploy
