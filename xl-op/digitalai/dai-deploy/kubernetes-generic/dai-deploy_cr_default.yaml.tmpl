@@ -43,11 +43,11 @@ spec:
 {{- end }}
   external:
     db:
-      {{- if eq .PostgresqlInstall "external" }}
+      {{- if eq .PostgresqlType "external" }}
       enabled: true
 {{ .PostgresqlExternalConfigDeploy | indent 6 }}
       {{- else }}
-      {{- if eq .PostgresqlInstall "operator" }}
+      {{- if eq .PostgresqlType "operator" }}
       enabled: true
       main:
         url: jdbc:postgresql://dai-xld-postgres-rw:5432/xld-db
@@ -62,11 +62,11 @@ spec:
       {{- end }}
       {{- end }}
     mq:
-      {{- if eq .RabbitmqInstall "external" }}
+      {{- if eq .RabbitmqType "external" }}
       enabled: true
 {{ .RabbitmqExternalConfigDeploy | indent 6 }}
       {{- else }}
-      {{- if eq .PostgresqlInstall "operator" }}
+      {{- if eq .PostgresqlType "operator" }}
       enabled: true
       url: "amqp://dai-xld-rabbitmq:5672"
       queueName: "xld"
@@ -536,7 +536,7 @@ spec:
       {{- /* registry name defined in global section */}}
       repository: {{ .RepositoryNameDeploy }}/postgresql
     {{- end }}
-    {{- if eq .PostgresqlInstall "chart" }}
+    {{- if eq .PostgresqlType "chart" }}
     install: true
     {{- else }}
     install: false
@@ -590,7 +590,7 @@ spec:
       {{- /* registry name defined in global section */}}
       repository: {{ .RepositoryNameDeploy }}/rabbitmq
     {{- end }}
-    {{- if eq .RabbitmqInstall "chart" }}
+    {{- if eq .RabbitmqType "chart" }}
     install: true
     {{- else }}
     install: false
