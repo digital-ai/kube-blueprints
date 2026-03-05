@@ -13,7 +13,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx
+  name: dai-ingress-nginx
 ---
 apiVersion: v1
 automountServiceAccountToken: true
@@ -25,7 +25,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-admission
+  name: dai-ingress-nginx-admission
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -36,7 +36,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx
+  name: dai-ingress-nginx
 rules:
   - apiGroups:
       - ""
@@ -88,7 +88,7 @@ rules:
   - apiGroups:
       - coordination.k8s.io
     resourceNames:
-      - ingress-nginx-leader
+      - dai-ingress-nginx-leader
     resources:
       - leases
     verbs:
@@ -125,7 +125,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-admission
+  name: dai-ingress-nginx-admission
 rules:
   - apiGroups:
       - ""
@@ -143,7 +143,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx
+  name: dai-ingress-nginx
 rules:
   - apiGroups:
       - ""
@@ -225,7 +225,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-admission
+  name: dai-ingress-nginx-admission
 rules:
   - apiGroups:
       - admissionregistration.k8s.io
@@ -244,14 +244,14 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx
+  name: dai-ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: ingress-nginx
+  name: dai-ingress-nginx
 subjects:
   - kind: ServiceAccount
-    name: ingress-nginx
+    name: dai-ingress-nginx
     namespace: {{ .Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -263,14 +263,14 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-admission
+  name: dai-ingress-nginx-admission
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: ingress-nginx-admission
+  name: dai-ingress-nginx-admission
 subjects:
   - kind: ServiceAccount
-    name: ingress-nginx-admission
+    name: dai-ingress-nginx-admission
     namespace: {{ .Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -281,14 +281,14 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx
+  name: dai-ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: ingress-nginx
+  name: dai-ingress-nginx
 subjects:
   - kind: ServiceAccount
-    name: ingress-nginx
+    name: dai-ingress-nginx
     namespace: {{ .Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -300,14 +300,14 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-admission
+  name: dai-ingress-nginx-admission
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: ingress-nginx-admission
+  name: dai-ingress-nginx-admission
 subjects:
   - kind: ServiceAccount
-    name: ingress-nginx-admission
+    name: dai-ingress-nginx-admission
     namespace: {{ .Namespace }}
 ---
 apiVersion: v1
@@ -320,7 +320,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-controller
+  name: dai-ingress-nginx-controller
 ---
 apiVersion: v1
 kind: Service
@@ -331,7 +331,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-controller
+  name: dai-ingress-nginx-controller
 spec:
   externalTrafficPolicy: Local
   ipFamilies:
@@ -363,7 +363,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-controller-admission
+  name: dai-ingress-nginx-controller-admission
 spec:
   ports:
     - appProtocol: https
@@ -385,7 +385,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-controller
+  name: dai-ingress-nginx-controller
 spec:
   minReadySeconds: 0
   revisionHistoryLimit: 10
@@ -411,11 +411,11 @@ spec:
       containers:
         - args:
             - /nginx-ingress-controller
-            - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller
-            - --election-id=ingress-nginx-leader
+            - --publish-service=$(POD_NAMESPACE)/dai-ingress-nginx-controller
+            - --election-id=dai-ingress-nginx-leader
             - --controller-class=k8s.io/ingress-nginx
             - --ingress-class=nginx
-            - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
+            - --configmap=$(POD_NAMESPACE)/dai-ingress-nginx-controller
             - --validating-webhook=:8443
             - --validating-webhook-certificate=/usr/local/certificates/cert
             - --validating-webhook-key=/usr/local/certificates/key
@@ -524,12 +524,12 @@ spec:
       dnsPolicy: ClusterFirst
       nodeSelector:
         kubernetes.io/os: linux
-      serviceAccountName: ingress-nginx
+      serviceAccountName: dai-ingress-nginx
       terminationGracePeriodSeconds: 300
       volumes:
         - name: webhook-cert
           secret:
-            secretName: ingress-nginx-admission
+            secretName: dai-ingress-nginx-admission
         - emptyDir: {}
           name: empty-dir
         - emptyDir: {}
@@ -545,7 +545,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-admission-create
+  name: dai-ingress-nginx-admission-create
 spec:
   template:
     metadata:
@@ -555,15 +555,15 @@ spec:
         app.kubernetes.io/name: ingress-nginx
         app.kubernetes.io/part-of: ingress-nginx
         app.kubernetes.io/version: 1.13.2
-      name: ingress-nginx-admission-create
+      name: dai-ingress-nginx-admission-create
     spec:
       automountServiceAccountToken: true
       containers:
         - args:
             - create
-            - --host=ingress-nginx-controller-admission,ingress-nginx-controller-admission.$(POD_NAMESPACE).svc
+            - --host=dai-ingress-nginx-controller-admission,dai-ingress-nginx-controller-admission.$(POD_NAMESPACE).svc
             - --namespace=$(POD_NAMESPACE)
-            - --secret-name=ingress-nginx-admission
+            - --secret-name=dai-ingress-nginx-admission
           env:
             - name: POD_NAMESPACE
               valueFrom:
@@ -586,7 +586,7 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       restartPolicy: OnFailure
-      serviceAccountName: ingress-nginx-admission
+      serviceAccountName: dai-ingress-nginx-admission
   ttlSecondsAfterFinished: 0
 ---
 apiVersion: admissionregistration.k8s.io/v1
@@ -598,13 +598,13 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-admission
+  name: dai-ingress-nginx-admission
 webhooks:
   - admissionReviewVersions:
       - v1
     clientConfig:
       service:
-        name: ingress-nginx-controller-admission
+        name: dai-ingress-nginx-controller-admission
         namespace: {{ .Namespace }}
         path: /networking/v1/ingresses
         port: 443
@@ -632,7 +632,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.13.2
-  name: ingress-nginx-admission-patch
+  name: dai-ingress-nginx-admission-patch
 spec:
   template:
     metadata:
@@ -642,16 +642,16 @@ spec:
         app.kubernetes.io/name: ingress-nginx
         app.kubernetes.io/part-of: ingress-nginx
         app.kubernetes.io/version: 1.13.2
-      name: ingress-nginx-admission-patch
+      name: dai-ingress-nginx-admission-patch
     spec:
       automountServiceAccountToken: true
       containers:
         - args:
             - patch
-            - --webhook-name=ingress-nginx-admission
+            - --webhook-name=dai-ingress-nginx-admission
             - --namespace=$(POD_NAMESPACE)
             - --patch-mutating=false
-            - --secret-name=ingress-nginx-admission
+            - --secret-name=dai-ingress-nginx-admission
             - --patch-failure-policy=Fail
           env:
             - name: POD_NAMESPACE
@@ -675,7 +675,7 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       restartPolicy: OnFailure
-      serviceAccountName: ingress-nginx-admission
+      serviceAccountName: dai-ingress-nginx-admission
   ttlSecondsAfterFinished: 0
 ---
 apiVersion: networking.k8s.io/v1

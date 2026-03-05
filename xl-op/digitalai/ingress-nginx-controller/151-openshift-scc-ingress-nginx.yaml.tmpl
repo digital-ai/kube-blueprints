@@ -1,14 +1,14 @@
 {{- if hasPrefix "Openshift" .K8sSetup }}
   {{- if and .EnableSCC (eq .IngressType "ingress-nginx-controller") }}
 ---
-  {{- $postgresqlFullName := printf "dai-ocp-%s-ingress-nginx" .ShortServerName }}
+  {{- $ingressControllerFullName := printf "dai-ocp-%s-ingress-nginx" .ShortServerName }}
   {{- if ne .Namespace "digitalai" }}
-    {{- $postgresqlFullName = printf "dai-ocp-%s-%s-ingress-nginx" .ShortServerName .Namespace }}
+    {{- $ingressControllerFullName = printf "dai-ocp-%s-%s-ingress-nginx" .ShortServerName .Namespace }}
   {{- end }}
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
-  name: {{ $postgresqlFullName }}
+  name: {{ $ingressControllerFullName }}
   namespace: {{ .Namespace }}
 allowHostDirVolumePlugin: false
 allowHostIPC: false
@@ -36,8 +36,8 @@ seccompProfiles:
 supplementalGroups:
   type: RunAsAny
 users:
-- system:serviceaccount:{{ .Namespace }}:ingress-nginx-admission
-- system:serviceaccount:{{ .Namespace }}:ingress-nginx
+- system:serviceaccount:{{ .Namespace }}:dai-ingress-nginx-admission
+- system:serviceaccount:{{ .Namespace }}:dai-ingress-nginx
 volumes:
   - configMap
   - csi
