@@ -70,13 +70,13 @@ AdminPassword: '{{ .AdminPassword }}'
 StorageClass: '{{ .StorageClass }}'
 IngressHost: '{{ .IngressHost }}'
 HttpsProtocol: '{{ .HttpsProtocol }}'
-PostgresqlType: {{ .PostgresqlType }}
+PostgresqlInstall: {{ .PostgresqlInstall }}
 PostgresqlStorageClass: '{{ .PostgresqlStorageClass }}'
 PostgresqlResourcesPreset: '{{ .PostgresqlResourcesPreset }}'
 PostgresqlResourcesEditor: |-
 {{ .PostgresqlResourcesEditor | trim | indent 2 }}
 PostgresqlOperatorClean: '{{ .PostgresqlOperatorClean }}'
-RabbitmqType: {{ .RabbitmqType }}
+RabbitmqInstall: {{ .RabbitmqInstall }}
 RabbitmqReplicaCount: '{{ .RabbitmqReplicaCount }}'
 RabbitmqStorageClass: '{{ .RabbitmqStorageClass }}'
 RabbitmqResourcesPreset: '{{ .RabbitmqResourcesPreset }}'

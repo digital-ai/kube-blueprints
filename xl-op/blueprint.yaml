@@ -1073,7 +1073,7 @@ spec:
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && RepositoryKeystoreSource != 'default'
       description: Enter the Repository keystore passphrase
       default: !expr "RepositoryKeystoreSource == 'generate' ? randPassword() : ''"
-    - name: PostgresqlType
+    - name: PostgresqlInstall
       type: Select
       options:
         - label: CloudNativePG Operator (experimental/non-production)
@@ -1095,7 +1095,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide Storage Class to be defined for PostgreSQL:"
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlType == 'chart' || PostgresqlType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlInstall == 'chart' || PostgresqlInstall == 'operator')"
       description: |
         Provide Storage Class to be defined for PostgreSQL that should be available in the cluster.
         The storage class needs to support minimally ReadWriteOnce access mode.
@@ -1105,7 +1105,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide PVC size for PostgreSQL (Gi):"
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlType == 'chart' || PostgresqlType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlInstall == 'chart' || PostgresqlInstall == 'operator')"
       default: 8
       description: Provide PVC size for PostgreSQL
       validate: !expr "regex('^([0-9])+(\\.)?([0-9])*$', PostgresqlPvcSize)"
@@ -1130,7 +1130,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select one of the predefined resource values for Postgresql:"
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'preset' && (PostgresqlType == 'chart' || PostgresqlType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'preset' && (PostgresqlInstall == 'chart' || PostgresqlInstall == 'operator')"
       description: "Select one of the predefined resource values for Postgresql"
       default: nano
     - name: PostgresqlResourcesEditor
@@ -1139,7 +1139,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide resource allocation for Postgresql:"
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'editor' && (PostgresqlType == 'chart' || PostgresqlType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'editor' && (PostgresqlInstall == 'chart' || PostgresqlInstall == 'operator')"
       description: "Provide resource allocation (requests and limits values) for Postgresql"
       default: !expr DefaultResourcesEditor
     - name: PostgresqlExternalConfigRelease
@@ -1148,7 +1148,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Edit database external setup:"
-      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && (PostgresqlType == 'external')"
+      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && (PostgresqlInstall == 'external')"
       description: |
         Setup the external DB parameters (such as JDBC URL, DB username, DB password).
         Any of the supported external DB can be used. Modify the jdbc url accordingly.
@@ -1171,7 +1171,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Edit database external setup:"
-      promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && (PostgresqlType == 'external')"
+      promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && (PostgresqlInstall == 'external')"
       description: |
         Setup the external DB parameters (such as JDBC URL, DB username, DB password).
         Any of the supported external DB can be used. Modify the jdbc url accordingly.
@@ -1188,7 +1188,7 @@ spec:
           password: |-
             <xld-report-password>
           maxPoolSize: 10
-    - name: RabbitmqType
+    - name: RabbitmqInstall
       type: Select
       options:
         - label: RabbitMQ Cluster Operator (experimental/non-production)
@@ -1209,7 +1209,7 @@ spec:
       overrideDefault: true
       prompt: "Replica count to be defined for RabbitMQ:"
       default: 3
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqType == 'chart' || RabbitmqType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: "Replica count to be defined for RabbitMQ"
       validate: !expr "regex('^([1-9])+$', RabbitmqReplicaCount)"
     - name: RabbitmqStorageClass
@@ -1221,7 +1221,7 @@ spec:
       overrideDefault: true
       prompt: "Storage Class to be defined for RabbitMQ:"
       default: !expr StorageClass
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqType == 'chart' || RabbitmqType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: |
         Storage Class to be defined for RabbitMQ.
         The storage class needs to support minimally ReadWriteOnce access mode.
@@ -1232,7 +1232,7 @@ spec:
       overrideDefault: true
       prompt: "Provide PVC size for RabbitMQ (Gi):"
       default: 8
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqType == 'chart' || RabbitmqType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: Provide PVC size for RabbitMQ
       validate: !expr "regex('^([0-9])+(\\.)?([0-9])*$', RabbitmqPvcSize)"
     - name: RabbitmqResourcesPreset
@@ -1256,7 +1256,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select one of the predefined resource values for Rabbitmq:"
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'preset' && (RabbitmqType == 'chart' || RabbitmqType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'preset' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: "Select one of the predefined resource values for Rabbitmq"
       default: nano
     - name: RabbitmqResourcesEditor
@@ -1265,7 +1265,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide resource allocation for Rabbitmq:"
-      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'editor' && (RabbitmqType == 'chart' || RabbitmqType == 'operator')"
+      promptIf: !expr "(ProcessType == 'install' || ProcessType == 'upgrade') && ResourcesSource == 'editor' && (RabbitmqInstall == 'chart' || RabbitmqInstall == 'operator')"
       description: "Provide resource allocation (requests and limits values) for Rabbitmq"
       default: !expr DefaultResourcesEditor
     - name: RabbitmqExternalConfigDeploy
@@ -1274,7 +1274,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Edit RabbitMQ external setup:"
-      promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && (RabbitmqType == 'external')"
+      promptIf: !expr "ServerType == 'dai-deploy' && ProcessType == 'install' && (RabbitmqInstall == 'external')"
       description: |
         Setup the external RabbitMQ or ActiveMQ parameters (such as queue url, queue name, credentials).
         Any of the supported external MQ can be used. Modify the driver class accordingly.
@@ -1988,7 +1988,7 @@ spec:
       renameTo: !expr "'digitalai/generated_answers_' + ServerType + '_' +  Namespace + '_' + ProcessType + '-' + GenerationDateTime + '.yaml'"
     # RabbitMQ
     - path: digitalai/rabbitmq-operator/111-rabbitmq-cluster-operator.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqType == 'operator'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/111-rabbitmq-cluster-operator.yaml'"
     - path: digitalai/rabbitmq-operator/112-rabbitmq-validating-webhook.yaml.tmpl
       writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (((ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator') || (ProcessType == 'clean' && RabbitmqOperatorClean && K8sSetup != 'OpenshiftCertified'))
@@ -2001,10 +2001,10 @@ spec:
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/114-rabbitmq-topology-operator.yaml'"
     # Postgresql
     - path: digitalai/postgresql-operator/131-openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlType == 'operator'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/131-openshift-scc-postgresql.yaml'"
     - path: digitalai/postgresql-operator/135-postgresql-cluster-operator.yaml.tmpl
-      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/135-postgresql-cluster-operator.yaml'"
     # Ingress Nginx
     - path: digitalai/ingress-nginx-controller/151-openshift-scc-ingress-nginx.yaml.tmpl
@@ -2030,10 +2030,10 @@ spec:
       writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/808-openshift-scc.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/809-openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (PostgresqlType == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (PostgresqlInstall == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/809-openshift-scc-postgresql.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/810-openshift-scc-rabbitmq.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (RabbitmqType == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && (RabbitmqInstall == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/810-openshift-scc-rabbitmq.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/806-manager-role.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
@@ -2052,29 +2052,29 @@ spec:
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/811-deployment.yaml'"
 
     - path: digitalai/dai-deploy/kubernetes-generic/template/500-openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/500-openshift-scc-postgresql.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/501-postgresql-admin-secret.yaml
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/501-postgresql-admin-secret.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/503-postgresql-cluster.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/503-postgresql-cluster.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/helpers/cnpg-postgresql-permissions.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/helpers/cnpg-postgresql-permissions.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/502-postgresql-init-secret.yaml
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/502-postgresql-init-secret.yaml'"
 
     - path: digitalai/dai-deploy/kubernetes-generic/template/300-openshift-scc-rabbitmq.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && RabbitmqType == 'operator'
+      writeIf: !expr ServerType == 'dai-deploy' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && RabbitmqInstall == 'operator'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/300-openshift-scc-rabbitmq.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/301-rabbitmq-admin-secret.yaml
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqType == 'operator'
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/301-rabbitmq-admin-secret.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/302-rabbitmq-cluster.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqType == 'operator'
+      writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
       renameTo: !expr "'digitalai/dai-deploy/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/302-rabbitmq-cluster.yaml'"
     - path: digitalai/dai-deploy/kubernetes-generic/template/304-rabbitmq-cluster-admin.yaml
       writeIf: !expr ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && RabbitmqInstall == 'operator'
@@ -2103,7 +2103,7 @@ spec:
       writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/808-openshift-scc.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/template/809-openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (PostgresqlType == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && (PostgresqlInstall == 'chart') && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade')
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/809-openshift-scc-postgresql.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/template/806-manager-role.yaml.tmpl
       writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified'
@@ -2122,19 +2122,19 @@ spec:
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/810-deployment.yaml'"
 
     - path: digitalai/dai-release/kubernetes-generic/template/500-openshift-scc-postgresql.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-release' && EnableSCC && regex('^Openshift.*', K8sSetup) && (ProcessType == 'install' || ProcessType == 'upgrade') && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/500-openshift-scc-postgresql.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/template/501-postgresql-admin-secret.yaml
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/501-postgresql-admin-secret.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/template/503-postgresql-cluster.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/503-postgresql-cluster.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/helpers/cnpg-postgresql-permissions.yaml.tmpl
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/' + ServerType + '/' + Namespace + '/' + GenerationDateTime + '/kubernetes/helpers/cnpg-postgresql-permissions.yaml'"
     - path: digitalai/dai-release/kubernetes-generic/template/502-postgresql-init-secret.yaml
-      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlType == 'operator'
+      writeIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && K8sSetup != 'OpenshiftCertified' && PostgresqlInstall == 'operator'
       renameTo: !expr "'digitalai/dai-release/' + Namespace + '/' + GenerationDateTime + '/kubernetes/template/502-postgresql-init-secret.yaml'"
 
     # Runner

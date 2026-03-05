@@ -54,11 +54,11 @@ spec:
   replicaCount: {{ .XlrReplicaCount }}
   external:
     db:
-      {{- if eq .PostgresqlType "external"  }}
+      {{- if eq .PostgresqlInstall "external"  }}
       enabled: true
 {{ .PostgresqlExternalConfigRelease | indent 6 }}
       {{- else }}
-      {{- if eq .PostgresqlType "operator" }}
+      {{- if eq .PostgresqlInstall "operator" }}
       enabled: true
       main:
         url: jdbc:postgresql://dai-xlr-postgres-rw:5432/xlr-db
@@ -440,7 +440,7 @@ spec:
       {{- /* registry name defined in global section */}}
       repository: {{ .RepositoryNameRelease }}/postgresql
     {{- end }}
-    {{- if eq .PostgresqlType "chart"  }}
+    {{- if eq .PostgresqlInstall "chart"  }}
     install: true
     {{- else }}
     install: false
