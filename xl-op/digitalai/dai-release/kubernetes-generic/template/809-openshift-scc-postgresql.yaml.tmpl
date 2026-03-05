@@ -1,6 +1,5 @@
 {{- if hasPrefix "Openshift" .K8sSetup }}
-  {{- /* Applies when SCC enabled and Postgresql chart install or upgrade (where PostgresqlInstall is not set). */ -}}
-  {{- if and .EnableSCC (or (eq .PostgresqlInstall "chart") (eq .PostgresqlInstall "") (not (hasKey . "PostgresqlInstall"))) }}
+  {{- if and .EnableSCC (eq .PostgresqlInstall "chart") }}
 ---
   {{- $postgresqlFullName := printf "dai-ocp-%s-postgresql" .ShortServerName }}
   {{- if ne .Namespace "digitalai" }}
