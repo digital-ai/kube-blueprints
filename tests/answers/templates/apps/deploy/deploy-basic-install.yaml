@@ -30,7 +30,7 @@ IngressNginxControllerClean: 'false'
 AdminPassword: 'OEi9o1PHyQ89mwxm'
 IngressHost: 'digitalai.deploy.local'
 HttpsProtocol: 'false'
-PostgresqlInstall: 'chart'
+PostgresqlType: chart
 PostgresqlResourcesPreset: 'small'
 PostgresqlResourcesEditor: |-
   resources:
@@ -41,7 +41,7 @@ PostgresqlResourcesEditor: |-
       cpu:
       memory:
 PostgresqlOperatorClean: 'false'
-RabbitmqInstall: 'chart'
+RabbitmqType: chart
 RabbitmqReplicaCount: '1'
 RabbitmqResourcesPreset: 'small'
 RabbitmqResourcesEditor: |-
