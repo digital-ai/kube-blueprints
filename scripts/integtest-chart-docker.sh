@@ -6,12 +6,12 @@ if [ -z "$1" ]; then
 fi
 
 if [ -z "$2" ]; then
-    echo "Use first argument to select tests, for example: 'basic', or 'external'."
+    echo "Use second argument to select tests, for example: 'basic', or 'external'."
     exit 1
 fi
 
 if [ -z "$3" ]; then
-    echo "Use second argument to select tests 'plain', or 'openshift'"
+    echo "Use third argument to select provider, for example: 'plain', 'aws', 'gcp' or 'openshift'"
     exit 1
 fi
 
@@ -61,6 +61,13 @@ XL_RR_VERSION_DEFAULT=$(yq eval ".ImageTagReleaseRunner" "$VERSION_FILE")
 XL_RR_VERSION=${XL_RR_VERSION:-$XL_RR_VERSION_DEFAULT}
 EXTRA_CONTAINER_ARGS=""
 
+# Validate required environment variables
+if [[ -z "$APP_TARGET" || -z "$APP_SHORT_TYPE" || -z "$APP_TYPE" || -z "$APP_OPERATOR" ]]; then
+    echo "Error: Required environment variables not set"
+    echo "Required: APP_TARGET, APP_SHORT_TYPE, APP_TYPE, APP_OPERATOR"
+    exit 1
+fi
+
 echo "Prepare tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
 
 rm -fr $OUTPUT_HOST_DIR/tests
@@ -71,7 +78,7 @@ mkdir -p $OUTPUT_HOST_DIR/logs
 mkdir -p $OUTPUT_HOST_DIR/kube
 chmod -R 777 $OUTPUT_HOST_DIR
 
-echo "Download leatest xl-cli ${XL_CLIENT_VERSION}"
+echo "Download latest xl-cli ${XL_CLIENT_VERSION}"
 
 curl -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
     -o $OUTPUT_HOST_DIR/tools/xl-client-${XL_CLIENT_VERSION}-linux-amd64.bin \
@@ -92,7 +99,10 @@ fi
 yq eval ".ImageTagReleaseRunner = \"$XL_RR_VERSION\"" $OUTPUT_HOST_DIR/tests/answers/${APP_TARGET}/*.yaml -i
 
 if [[ "$APP_TARGET" = "openshift" && "$4" == "withLogin" ]]; then
-
+    if [[ -z "$REDHAT_OC_URL" || -z "$REDHAT_OC_LOGIN" || -z "$REDHAT_OC_PASSWORD" || -z "$REDHAT_REGISTRY_SA" || -z "$REDHAT_REGISTRY_SA_TOKEN" ]]; then
+        echo "Openshift environment variables are not set. Please set REDHAT_OC_URL, REDHAT_OC_LOGIN, REDHAT_OC_PASSWORD, REDHAT_REGISTRY_SA and REDHAT_REGISTRY_SA_TOKEN."
+        exit 1
+    fi
     echo "Auth to $APP_TARGET"
 
     # uses https://catalog.redhat.com/software/containers/openshift4/ose-cli/5cd9ba3f5a13467289f4d51d?container-tabs=overview
@@ -125,7 +135,7 @@ fi
 
 echo "Starting tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
 
-# tools: xl-client keytool yq helm 
+# tools: xl-client keytool yq helm
 docker run --rm $EXTRA_CONTAINER_ARGS \
     -e HOME=$OUTPUT_CONTAINER_DIR \
     -e KUBECONFIG=$OUTPUT_CONTAINER_DIR/kube/config \
@@ -146,10 +156,10 @@ echo "TEST RESULT:"
 cat "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"
 echo ""
 
-# check for fauilure in file
+# check for failure in file
 if grep -q '"failure"' "$OUTPUT_HOST_DIR/logs/${APP_OPERATOR}.json"; then
-  echo "Tests failed"
-  exit 1
-else 
-  echo "Tests success"
+    echo "Tests failed"
+    exit 1
+else
+    echo "Tests success"
 fi
