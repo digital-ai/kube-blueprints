@@ -1786,7 +1786,7 @@ spec:
     - name: IngressNginxControllerClean
       type: Confirm
       saveInXlvals: true
-      promptIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'dai-ingress-nginx-controller')) > '0'
+      promptIf: !expr (ServerType == 'dai-deploy' || ServerType == 'dai-release') && (CleanBefore || ProcessType == 'clean') && (length(k8sResources(Namespace, 'deployment', 'dai-ingress-nginx-controller', 'dai-ingress-nginx')) > '0' || length(k8sResources(Namespace, 'deployment', 'dai-' + ShortServerName + '-nginx-ingress-controller', 'dai-' + ShortServerName)) > '0')
       prompt: "Clean IngressNginx Controller (it can impact other installation of IngressNginx Controller):"
       description: "Type yes to delete IngressNginx Controller installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the controller is shared between applications"
       default: false
