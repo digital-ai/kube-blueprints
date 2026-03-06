@@ -6,9 +6,9 @@ commands:
   timeout: 60
 - script: $XL_CLI kube check --wait-for-ready 5 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-install.yaml
   timeout: 400
-- script: kubectl exec -n $NAMESPACE -c release -it dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.general.clusterNodeActive' | grep '^true$'
+- script: kubectl exec -n $NAMESPACE -c release dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.general.clusterNodeActive' | grep '^true$'
   timeout: 15
-- script: kubectl exec -n $NAMESPACE -c release -it dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.cluster.clusterNumberOfNodes' | grep '^1$'
+- script: kubectl exec -n $NAMESPACE -c release dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.cluster.clusterNumberOfNodes' | grep '^1$'
   timeout: 15  
 assert:
 - $ASSERTS_REL_PATH/release-running-operator-pods.yaml
