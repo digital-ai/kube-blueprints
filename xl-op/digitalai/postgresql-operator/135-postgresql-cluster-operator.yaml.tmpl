@@ -19454,7 +19454,7 @@ spec:
         env:
         - name: OPERATOR_IMAGE_NAME
           {{- if eq .IsCustomImageRegistry true }}
-          value: {{ .CustomImageRegistryName }}/{{ .RepositoryNameRelease }}/cloudnative-pg:1.28.0
+          value: {{ .CustomImageRegistryName }}/{{ if eq .ServerType "dai-deploy" }}{{ .RepositoryNameDeploy }}{{ else }}{{ .RepositoryNameRelease }}{{ end }}/cloudnative-pg:1.28.0
           {{- else }}
           value: ghcr.io/cloudnative-pg/cloudnative-pg:1.28.0
           {{- end }}
@@ -19469,7 +19469,7 @@ spec:
         - name: MONITORING_QUERIES_CONFIGMAP
           value: cnpg-default-monitoring
         {{- if eq .IsCustomImageRegistry true }}
-        image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameRelease }}/cloudnative-pg:1.28.0
+        image: {{ .CustomImageRegistryName }}/{{ if eq .ServerType "dai-deploy" }}{{ .RepositoryNameDeploy }}{{ else }}{{ .RepositoryNameRelease }}{{ end }}/cloudnative-pg:1.28.0
         {{- else }}
         image: ghcr.io/cloudnative-pg/cloudnative-pg:1.28.0
         {{- end }}
