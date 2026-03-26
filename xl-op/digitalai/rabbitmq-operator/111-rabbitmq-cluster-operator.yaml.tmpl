@@ -5813,7 +5813,7 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         {{- if eq .IsCustomImageRegistry true }}
-        image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameRelease }}/cluster-operator:2.19.0
+        image: {{ .CustomImageRegistryName }}/{{ if eq .ServerType "dai-deploy" }}{{ .RepositoryNameDeploy }}{{ else }}{{ .RepositoryNameRelease }}{{ end }}/cluster-operator:2.19.0
         {{- else }}
         image: rabbitmqoperator/cluster-operator:2.19.0
         {{- end }}
