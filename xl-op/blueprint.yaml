@@ -1793,16 +1793,18 @@ spec:
     - name: PostgresqlOperatorClean
       type: Confirm
       saveInXlvals: true
-      promptIf: !expr (ServerType == 'dai-release' || ServerType == 'dai-deploy') && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'cnpg-controller-manager')) > '0'
+      promptIf: !expr "(ServerType == 'dai-release' || ServerType == 'dai-deploy') && (CleanBefore || ProcessType == 'clean') && !PreservePvc && length(k8sResources(Namespace, 'deployment', 'cnpg-controller-manager')) > '0'"
       prompt: "Clean Postgresql Operator (it can impact other installation of Postgresql Operator):"
       description: "Type yes to delete Postgresql Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
+      overrideDefault: true
       default: false
     - name: RabbitmqOperatorClean
       type: Confirm
       saveInXlvals: true
-      promptIf: !expr ServerType == 'dai-deploy' && (CleanBefore || ProcessType == 'clean') && length(k8sResources(Namespace, 'deployment', 'rabbitmq-cluster-operator')) > '0'
+      promptIf: !expr "ServerType == 'dai-deploy' && (CleanBefore || ProcessType == 'clean') && !PreservePvc && length(k8sResources(Namespace, 'deployment', 'rabbitmq-cluster-operator')) > '0'"
       prompt: "Clean Rabbitmq Operator (it can impact other installation of Rabbitmq Operator):"
       description: "Type yes to delete Rabbitmq Operator installation. The cleanup will be performed alongside at the end of cleanup process. Please note that this will delete all related resources if the operator is shared between applications"
+      overrideDefault: true
       default: false
     - name: RemoteRunnerInstallType
       type: Select
