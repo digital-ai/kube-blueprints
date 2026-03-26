@@ -34,7 +34,7 @@ metadata:
   name: dai-xld-rabbitmq
 spec:
   {{- if eq .IsCustomImageRegistry true }}
-  image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameRelease }}/rabbitmq:4.2.3-management
+  image: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/rabbitmq:4.2.3-management
   {{- else }}
   image: docker.io/library/rabbitmq:4.2.3-management
   {{- end }}
