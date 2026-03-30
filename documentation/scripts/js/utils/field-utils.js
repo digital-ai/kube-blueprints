@@ -162,7 +162,7 @@ export function extractPlatform(promptIf) {
     validPlatforms = platforms.filter((p) => /^Openshift.*/.test(p));
   }
 
-  return platforms;
+  return validPlatforms;
 }
 
 /**
@@ -173,4 +173,56 @@ export function extractPlatform(promptIf) {
  */
 export function pascalCaseToWords(pascalCaseString) {
   return pascalCaseString.replace(/([A-Z][a-z]+)/g, ' $1').trim();
+}
+
+/**
+ * Determine which products (Release, Deploy, Release Runner) a parameter applies to
+ * by inspecting the promptIf expression.
+ *
+ * @param {string} promptIf
+ * @returns {Array<string>}
+ */
+export function extractProducts(promptIf) {
+  const allProducts = ['Release', 'Deploy', 'Release Runner'];
+  if (!promptIf) return allProducts;
+  const expr = processExprField(promptIf) || '';
+
+  // Special case: RemoteRunnerInstall fields have no ServerType; infer from exclusion pattern
+  if (expr.includes('RemoteRunnerInstall')) {
+    if (expr.includes("ServerType != 'dai-release-runner'")) return ['Release'];
+    return ['Release', 'Release Runner'];
+  }
+
+  if (expr.includes('PostgresqlType') && !expr.includes('ServerType')) {
+    return ['Release', 'Deploy'];
+  }
+
+  if (expr.includes('RabbitmqType') && !expr.includes('ServerType')) {
+    return ['Deploy'];
+  }
+
+  if (expr.includes('ServerType')) {
+    const SERVER_TYPE_TO_PRODUCT = {
+      'dai-release': 'Release',
+      'dai-deploy': 'Deploy',
+      'dai-release-runner': 'Release Runner',
+    };
+    const included = new Set();
+    const excluded = new Set();
+
+    // Regex: ServerType, optional spaces, == or !=, optional spaces, quoted value captured in group 1
+    for (const match of expr.matchAll(/ServerType\s*==\s*['"]([^'"]+)['"]/g)) {
+      const product = SERVER_TYPE_TO_PRODUCT[match[1]];
+      if (product) included.add(product);
+    }
+    for (const match of expr.matchAll(/ServerType\s*!=\s*['"]([^'"]+)['"]/g)) {
+      const product = SERVER_TYPE_TO_PRODUCT[match[1]];
+      if (product) excluded.add(product);
+    }
+
+    if (included.size > 0 && excluded.size === 0) return [...included];
+    if (excluded.size > 0 && included.size === 0) return allProducts.filter((p) => !excluded.has(p));
+    if (included.size > 0 && excluded.size > 0) return [...included].filter((p) => !excluded.has(p));
+  }
+  return allProducts;
 }

@@ -2,6 +2,7 @@ import fs from 'fs';
 import { sprintf } from 'sprintf-js';
 import {
   extractPlatform,
+  extractProducts,
   processExprField,
   processExprFieldWithConcatenation,
   pascalCaseToWords,
@@ -31,6 +32,9 @@ export function generateMarkdown(parameters, outputFile) {
 
     const platform = extractPlatform(param.promptIf || '');
     markdownContent += sprintf('**Platform:** %s\n\n', platform.join(', '));
+
+    const products = extractProducts(param.promptIf || '');
+    markdownContent += sprintf('**Product:** %s\n\n', products.join(', '));
 
     markdownContent += '**Available Values:** ';
     if (param.type === 'Confirm') {
