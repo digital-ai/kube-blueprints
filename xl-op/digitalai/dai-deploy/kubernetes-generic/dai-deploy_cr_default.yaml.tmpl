@@ -141,6 +141,16 @@ spec:
         {{- end }}
     volumePermissions:
       enabled: false
+      script: |
+        #!/bin/bash
+        declare -a paths=( {{`{{ range $path := .Values.centralConfiguration.persistence.paths }} "{{ $path }}"{{ end }}`}} )
+        for path in "${paths[@]}"; do
+          echo "Changing ownership to {{`{{ .Values.centralConfiguration.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.centralConfiguration.podSecurityContext.fsGroup }}`}} for ${path}"
+          chown "{{`{{ .Values.centralConfiguration.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.centralConfiguration.podSecurityContext.fsGroup }}`}}" "${path}"
+          chmod 775 "${path}"
+          find "${path}" -mindepth 1 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
+            xargs -r chown -R "{{`{{ .Values.centralConfiguration.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.centralConfiguration.podSecurityContext.fsGroup }}`}}"
+        done
       image:
         repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
         tag: "{{ .ImageTagDeploy }}"
@@ -183,6 +193,16 @@ spec:
         {{- end }}
     volumePermissions:
       enabled: false
+      script: |
+        #!/bin/bash
+        declare -a paths=( {{`{{ range $path := .Values.master.persistence.paths }} "{{ $path }}"{{ end }}`}} )
+        for path in "${paths[@]}"; do
+          echo "Changing ownership to {{`{{ .Values.master.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.master.podSecurityContext.fsGroup }}`}} for ${path}"
+          chown "{{`{{ .Values.master.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.master.podSecurityContext.fsGroup }}`}}" "${path}"
+          chmod 775 "${path}"
+          find "${path}" -mindepth 1 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
+            xargs -r chown -R "{{`{{ .Values.master.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.master.podSecurityContext.fsGroup }}`}}"
+        done
       image:
         repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
         tag: "{{ .ImageTagDeploy }}"
@@ -235,6 +255,16 @@ spec:
       {{- end }}
     volumePermissions:
       enabled: false
+      script: |
+        #!/bin/bash
+        declare -a paths=( {{`{{ range $path := .Values.worker.persistence.paths }} "{{ $path }}"{{ end }}`}} )
+        for path in "${paths[@]}"; do
+          echo "Changing ownership to {{`{{ .Values.worker.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.worker.podSecurityContext.fsGroup }}`}} for ${path}"
+          chown "{{`{{ .Values.worker.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.worker.podSecurityContext.fsGroup }}`}}" "${path}"
+          chmod 775 "${path}"
+          find "${path}" -mindepth 1 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
+            xargs -r chown -R "{{`{{ .Values.worker.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.worker.podSecurityContext.fsGroup }}`}}"
+        done
       image:
         repository: {{ .RepositoryNameDeploy }}/{{ .ImageNameDeploy }}
         tag: "{{ .ImageTagDeploy }}"

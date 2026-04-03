@@ -165,6 +165,16 @@ spec:
   {{- end }}
   volumePermissions:
     enabled: false
+    script: |
+      #!/bin/bash
+      declare -a paths=( {{`{{ range $path := .Values.persistence.paths }} "{{ $path }}"{{ end }}`}} )
+      for path in "${paths[@]}"; do
+        echo "Changing ownership to {{`{{ .Values.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.podSecurityContext.fsGroup }}`}} for ${path}"
+        chown "{{`{{ .Values.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.podSecurityContext.fsGroup }}`}}" "${path}"
+        chmod 775 "${path}"
+        find "${path}" -mindepth 1 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
+          xargs -r chown -R "{{`{{ .Values.containerSecurityContext.runAsUser }}`}}:{{`{{ .Values.podSecurityContext.fsGroup }}`}}"
+      done
     image:
       repository: {{ .RepositoryNameRelease }}/{{ .ImageNameRelease }}
       tag: "{{ .ImageTagRelease }}"
