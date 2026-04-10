@@ -39,6 +39,7 @@ rules:
   - "apps"
   resources:
   - "deployments"
+  - "replicasets"
   - "statefulsets"
   - "daemonsets"
   verbs:
