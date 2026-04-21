@@ -162,7 +162,7 @@ export function extractPlatform(promptIf) {
     validPlatforms = platforms.filter((p) => /^Openshift.*/.test(p));
   }
 
-  return platforms;
+  return validPlatforms;
 }
 
 /**
