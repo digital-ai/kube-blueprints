@@ -155,6 +155,16 @@ PreserveCrValuesRelease: |-
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
         .spec.postgresql.volumePermissions: .
+PostgresqlType: chart
+PostgresqlResourcesPreset: 'small'
+PostgresqlResourcesEditor: |-
+  resources:
+    requests:
+      cpu:
+      memory:
+    limits:
+      cpu:
+      memory:
 PostgresqlOperatorClean: 'false'
 UpgradeType: operatorToOperator
 ReleaseName: 'dai-xlr'
