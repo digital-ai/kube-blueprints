@@ -5813,9 +5813,9 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         {{- if eq .IsCustomImageRegistry true }}
-        image: {{ .CustomImageRegistryName }}/{{ if eq .ServerType "dai-deploy" }}{{ .RepositoryNameDeploy }}{{ else }}{{ .RepositoryNameRelease }}{{ end }}/cluster-operator:2.19.0
+        image: {{ .CustomImageRegistryName }}/{{ if eq .ServerType "dai-deploy" }}{{ .RepositoryNameDeploy }}{{ else }}{{ .RepositoryNameRelease }}{{ end }}/cluster-operator:{{ .RabbitmqOperatorImageTag }}
         {{- else }}
-        image: rabbitmqoperator/cluster-operator:2.19.0
+        image: rabbitmqoperator/cluster-operator:{{ .RabbitmqOperatorImageTag }}
         {{- end }}
         name: operator
         ports:
