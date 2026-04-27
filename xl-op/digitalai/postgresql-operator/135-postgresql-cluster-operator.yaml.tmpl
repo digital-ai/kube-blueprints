@@ -18141,7 +18141,7 @@ spec:
             - /manager
           env:
             - name: OPERATOR_IMAGE_NAME
-              value: ghcr.io/cloudnative-pg/cloudnative-pg:1.27.0
+              value: ghcr.io/cloudnative-pg/cloudnative-pg:{{ .PostgresqlOperatorImageTag }}
             - name: OPERATOR_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -18152,7 +18152,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: MONITORING_QUERIES_CONFIGMAP
               value: cnpg-default-monitoring
-          image: ghcr.io/cloudnative-pg/cloudnative-pg:1.27.0
+          image: ghcr.io/cloudnative-pg/cloudnative-pg:{{ .PostgresqlOperatorImageTag }}
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
