@@ -1823,7 +1823,7 @@ spec:
         Selecting no-install will skip the Release Runner installation. 
         Selecting local-install will install Release Runner from the local.
         Selecting cluster-install will install Release Runner from the cluster.
-        The installation will start after Release is ready on the cluster."
+        The installation will start after Release is ready on the cluster.
     - name: RemoteRunnerInstall
       type: Confirm
       saveInXlvals: true
