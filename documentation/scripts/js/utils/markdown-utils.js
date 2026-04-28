@@ -18,8 +18,11 @@ export function generateMarkdown(parameters, outputFile) {
   let markdownContent = '# Kube Blueprint Parameters Documentation\n\n';
 
   parameters.forEach((param) => {
-    // skip the param for doc if prompt is not present
-    if (!param.prompt) {
+    // skip the param for doc if prompt is not present or promptIf is statically false
+    const isPromptIfFalse = param.promptIf === false ||
+      param.promptIf === 'false' ||
+      /^!expr\s+["']?false["']?$/.test(param.promptIf);
+    if (!param.prompt || isPromptIfFalse){
       return;
     }
     markdownContent += sprintf('## %s\n', pascalCaseToWords(param.name));
