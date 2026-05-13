@@ -5626,7 +5626,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          image: rabbitmqoperator/cluster-operator:2.16.0
+          image: rabbitmqoperator/cluster-operator:{{ .RabbitmqOperatorImageTag }}
           name: operator
           ports:
             - containerPort: 9782

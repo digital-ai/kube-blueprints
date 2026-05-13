@@ -3,6 +3,8 @@ kind: RabbitmqCluster
 metadata:
   name: dai-xld-rabbitmq
 spec:
+  image: docker.io/library/rabbitmq:{{ .RabbitmqClusterImageTag }}
+
   tls:
     disableNonTLSListeners: false
   replicas: {{ .RabbitmqReplicaCount }}

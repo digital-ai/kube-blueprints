@@ -1188,7 +1188,23 @@ spec:
           password: |-
             <xld-report-password>
           maxPoolSize: 10
-    - name: RabbitmqInstall
+    - name: PostgresqlOperatorImageTag
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      prompt: "Enter the CloudNativePG operator image tag to use (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      promptIf: !expr "false"
+      description: "CloudNativePG operator image tag to use. Will not be prompted, but will be used during installation or upgrade."
+    - name: PostgresqlClusterImageTag
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: false
+      overrideDefault: true
+      prompt: "Enter the PostgreSQL image tag to use in the CNPG Cluster resource (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      promptIf: !expr "false"
+      description: "PostgreSQL image tag to use in the CNPG Cluster resource. Will not be prompted, but will be used during installation or upgrade."
+    - name: RabbitmqType
       type: Select
       options:
         - label: RabbitMQ Cluster Operator (experimental/non-production)
@@ -1286,6 +1302,22 @@ spec:
           <password>
         driverClassName: <driver-class-name>
         queueType: <classic-or-quorum>
+    - name: RabbitmqOperatorImageTag
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      prompt: "Enter the RabbitMQ operator image tag to use (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      promptIf: !expr "false"
+      description: "RabbitMQ cluster operator image tag to use. Will not be prompted, but will be used during installation or upgrade."
+    - name: RabbitmqClusterImageTag
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      prompt: "Enter the RabbitMQ image tag to use in the RabbitmqCluster resource (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
+      promptIf: !expr "false"
+      description: "RabbitMQ image tag to use in the RabbitmqCluster resource. Will not be prompted, but will be used during installation or upgrade."
     - name: CrdName
       type: Select
       options:
