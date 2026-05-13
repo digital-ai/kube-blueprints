@@ -40,9 +40,9 @@ spec:
 
   # PostgreSQL major version to use
   {{- if eq .IsCustomImageRegistry true }}
-  imageName: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/postgresql:18.1-minimal-trixie
+  imageName: {{ .CustomImageRegistryName }}/{{ .RepositoryNameDeploy }}/postgresql:{{ .PostgresqlClusterImageTag }}
   {{- else }}
-  imageName: ghcr.io/cloudnative-pg/postgresql:18.1-minimal-trixie
+  imageName: ghcr.io/cloudnative-pg/postgresql:{{ .PostgresqlClusterImageTag }}
   {{- end }}
 
   {{- if eq .ImageRegistryType "private" }}

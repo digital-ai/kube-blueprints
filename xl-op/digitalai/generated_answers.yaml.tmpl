@@ -75,6 +75,8 @@ PostgresqlStorageClass: '{{ .PostgresqlStorageClass }}'
 PostgresqlResourcesPreset: '{{ .PostgresqlResourcesPreset }}'
 PostgresqlResourcesEditor: |-
 {{ .PostgresqlResourcesEditor | trim | indent 2 }}
+PostgresqlOperatorImageTag: '{{ .PostgresqlOperatorImageTag }}'
+PostgresqlClusterImageTag: '{{ .PostgresqlClusterImageTag }}'
 PostgresqlOperatorClean: '{{ .PostgresqlOperatorClean }}'
 RabbitmqType: {{ .RabbitmqType }}
 RabbitmqReplicaCount: '{{ .RabbitmqReplicaCount }}'
@@ -82,6 +84,8 @@ RabbitmqStorageClass: '{{ .RabbitmqStorageClass }}'
 RabbitmqResourcesPreset: '{{ .RabbitmqResourcesPreset }}'
 RabbitmqResourcesEditor: |-
 {{ .RabbitmqResourcesEditor | trim | indent 2 }}
+RabbitmqOperatorImageTag: '{{ .RabbitmqOperatorImageTag }}'
+RabbitmqClusterImageTag: '{{ .RabbitmqClusterImageTag }}'
 RabbitmqOperatorClean: '{{ .RabbitmqOperatorClean }}'
 LicenseSource: '{{ .LicenseSource }}'
 LicenseEditor:  |-

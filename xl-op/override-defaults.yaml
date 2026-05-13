@@ -6,3 +6,7 @@ OperatorImageTagRelease: 26.1.2-503.130
 ImageTagRelease: 26.1.2-503.130
 RepositoryNameReleaseRunner: xebialabsunsupported
 ImageTagReleaseRunner: 26.1.2-503.130
+PostgresqlOperatorImageTag: 1.28.0
+PostgresqlClusterImageTag: 18.1-minimal-trixie
+RabbitmqOperatorImageTag: 2.19.0
+RabbitmqClusterImageTag: 4.2.3-management
