@@ -593,19 +593,13 @@ spec:
       type: Select
       prompt: "Select between supported ingress types:"
       options:
-        - label: Ingress NGINX controller (experimental/non-production)
-          value: ingress-nginx-controller
-        - label: NGINX Ingress Bitnami Helm Chart (deprecated)
-          value: nginx
-        - label: HAProxy Helm Chart (deprecated)
-          value: haproxy
         - label: External - IngressClass resource should already exist
           value: external
         - label: None - Ingress will not be set up during installation
           value: none
       promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
-      default: nginx
+      default: external
       description: |
         Select between supported ingress types. If None is selected, the application will not be exposed
         and therefore will not be accessible from the browser.
@@ -616,12 +610,6 @@ spec:
       options:
         - label: Openshift Route
           value: route
-        - label: Ingress NGINX controller (experimental/non-production)
-          value: ingress-nginx-controller
-        - label: NGINX Bitnami Helm Chart (deprecated)
-          value: nginx
-        - label: HAProxy Helm Chart (deprecated)
-          value: haproxy
         - label: External - IngressClass resource should already exist
           value: external
         - label: None - Ingress will not be set up during installation
@@ -641,48 +629,6 @@ spec:
       description: |
         Select between supported ingress types. If None is selected, the application will not be exposed
         and therefore will not be accessible from the browser.
-    - name: NginxResourcesPreset
-      type: Select
-      options:
-        - label: Request - 100m cpu, 128Mi memory. Limit - 150m cpu, 192Mi memory
-          value: nano
-        - label: Request - 250m cpu, 256Mi memory. Limit - 375m cpu, 384Mi memory
-          value: micro
-        - label: Request - 500m cpu, 512Mi memory. Limit - 750m cpu, 768Mi memory
-          value: small
-        - label: Request - 500m cpu, 1024Mi memory. Limit - 750m cpu, 1536Mi memory
-          value: medium
-        - label: Request - 1.0 cpu, 2048Mi memory. Limit - 1.5 cpu, 3072Mi memory
-          value: large
-        - label: Request - 1.5 cpu, 4096Mi memory. Limit - 3.0 cpu, 6144Mi memory
-          value: xlarge
-        - label: Request - 1.5 cpu, 4096Mi memory. Limit - 6.0 cpu, 12288Mi memory
-          value: 2xlarge
-      saveInXlvals: true
-      ignoreIfSkipped: true
-      overrideDefault: true
-      prompt: "Select one of the predefined resource values for Nginx ingress:"
-      promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "nginx" && ResourcesSource == "preset"
-      description: "Select one of the predefined resource values for Nginx ingress"
-      default: nano
-    - name: NginxResourcesEditor
-      type: Editor
-      saveInXlvals: true
-      ignoreIfSkipped: true
-      overrideDefault: true
-      prompt: "Provide resource allocation for Nginx ingress:"
-      promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "nginx" && ResourcesSource == "editor"
-      description: "Provide resource allocation (requests and limits values) for Nginx ingress"
-      default: !expr DefaultResourcesEditor
-    - name: HAProxyResourcesEditor
-      type: Editor
-      saveInXlvals: true
-      ignoreIfSkipped: true
-      overrideDefault: true
-      prompt: "Provide resource allocation for HAProxy ingress:"
-      promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && IngressType == "haproxy" && ResourcesSource != "none"
-      description: "Provide resource allocation (requests and limits values) for HAProxy ingress"
-      default: !expr DefaultResourcesEditor
     - name: ExternalIngressClass
       type: Select
       options:
@@ -723,7 +669,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'haproxy' && IngressType != 'none' && HttpProtocolIngress != 'http' && ((ServerType=='dai-release' && HttpProtocolRelease != 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy != 'http'))"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && ((ServerType=='dai-release' && HttpProtocolRelease != 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy != 'http'))"
       description: |
         Provide source of the ingress keystore. 
         If you select secret, provide the tls secret.
@@ -742,7 +688,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select source of the secure ingress keystore:"
-      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && HttpProtocolIngress != 'http' && ( IngressType == 'haproxy' || ( IngressType != 'none' && IngressType != 'haproxy' && ((ServerType == 'dai-release' && HttpProtocolRelease == 'http') || (ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http')) ) )"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && HttpProtocolIngress != 'http' && IngressType != 'none' && ((ServerType == 'dai-release' && HttpProtocolRelease == 'http') || (ServerType == 'dai-deploy' && HttpProtocolDeploy == 'http'))"
       description: |
         Provide source of the ingress keystore.
         If you select secret, provide the tls secret.
@@ -793,7 +739,7 @@ spec:
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      value: !expr "regex('^Openshift.*', K8sSetup) ? IngressKeystoreSourceOpenshift : ((IngressType == 'haproxy' || (IngressType != 'none' && IngressType != 'haproxy' && ((ServerType=='dai-release' && HttpProtocolRelease == 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy == 'http')))) ? IngressKeystoreSourceNoPassthrough : IngressKeystoreSourceGeneric)"
+      value: !expr "regex('^Openshift.*', K8sSetup) ? IngressKeystoreSourceOpenshift : ((IngressType != 'none' && ((ServerType=='dai-release' && HttpProtocolRelease == 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy == 'http'))) ? IngressKeystoreSourceNoPassthrough : IngressKeystoreSourceGeneric)"
       description: Select between supported ingress keystore sources.
     - name: IngressHost
       type: Input
