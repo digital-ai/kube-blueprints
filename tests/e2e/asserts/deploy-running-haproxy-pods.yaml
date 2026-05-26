@@ -1,9 +1,0 @@
----
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:    
-    app.kubernetes.io/instance: dai-xld
-    app.kubernetes.io/name: haproxy-ingress
-status:
-  phase: Running
