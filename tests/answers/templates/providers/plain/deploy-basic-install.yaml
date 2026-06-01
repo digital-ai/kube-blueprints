@@ -1,0 +1,5 @@
+K8sSetup: PlainK8s
+StorageClass: 'local-path'
+PostgresqlStorageClass: 'local-path'
+RabbitmqStorageClass: 'local-path'
+RemoteRunnerReleaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
