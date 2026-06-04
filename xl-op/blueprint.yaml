@@ -1204,7 +1204,7 @@ spec:
       prompt: "Enter the PostgreSQL image tag to use in the CNPG Cluster resource (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
       promptIf: !expr "false"
       description: "PostgreSQL image tag to use in the CNPG Cluster resource. Will not be prompted, but will be used during installation or upgrade."
-    - name: RabbitmqType
+    - name: RabbitmqInstall
       type: Select
       options:
         - label: RabbitMQ Cluster Operator (experimental/non-production)

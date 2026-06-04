@@ -240,8 +240,12 @@ PreserveCrValuesDeploy: |-
         .spec.rabbitmq.containerSecurityContext: .
         .spec.rabbitmq.podSecurityContext: .
         .spec.rabbitmq.volumePermissions: .
-PostgresqlInstall: chart
-PostgresqlResourcesPreset: 'small'
+UpgradeType: operatorToOperator
+CrdName: 'digitalaideploys.xld.digital.ai'
+PreservePvc: true
+PostgresqlInstall: 'chart'
+PostgresqlPvcSize: '1'
+PostgresqlResourcesPreset: 'micro'
 PostgresqlResourcesEditor: |-
   resources:
     requests:
@@ -250,10 +254,12 @@ PostgresqlResourcesEditor: |-
     limits:
       cpu:
       memory:
-PostgresqlOperatorClean: 'false'
-RabbitmqInstall: chart
+PostgresqlOperatorImageTag: ''
+PostgresqlClusterImageTag: ''
+RabbitmqInstall: 'chart'
 RabbitmqReplicaCount: '1'
-RabbitmqResourcesPreset: 'small'
+RabbitmqPvcSize: '1'
+RabbitmqResourcesPreset: 'micro'
 RabbitmqResourcesEditor: |-
   resources:
     requests:
@@ -261,11 +267,7 @@ RabbitmqResourcesEditor: |-
       memory:
     limits:
       cpu:
-      memory: 
-RabbitmqOperatorClean: 'false'
-PostgresqlPvcSize: '1'
-RabbitmqPvcSize: '1'
-UpgradeType: operatorToOperator
-CrdName: 'digitalaideploys.xld.digital.ai'
-PreservePvc: true
+      memory:
+RabbitmqOperatorImageTag: ''
+RabbitmqClusterImageTag: ''
 ImageTagReleaseRunner: 25.3.4-208.1600

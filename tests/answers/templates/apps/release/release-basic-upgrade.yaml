@@ -177,8 +177,10 @@ PreserveCrValuesRelease: |-
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
         .spec.postgresql.volumePermissions: .
-PostgresqlInstall: chart
-PostgresqlResourcesPreset: 'small'
+PostgresqlOperatorClean: 'false'
+PostgresqlInstall: 'chart'
+PostgresqlPvcSize: '1'
+PostgresqlResourcesPreset: 'micro'
 PostgresqlResourcesEditor: |-
   resources:
     requests:
@@ -187,13 +189,13 @@ PostgresqlResourcesEditor: |-
     limits:
       cpu:
       memory:
-PostgresqlOperatorClean: 'false'
-PostgresqlPvcSize: '1'
+PostgresqlOperatorImageTag: ''
+PostgresqlClusterImageTag: ''
 UpgradeType: operatorToOperator
 CrdName: 'digitalaireleases.xlr.digital.ai'
 PreservePvc: true
 ImageNameReleaseRunner: 'release-runner'
-ImageTagReleaseRunner: 25.1.0-1024.113
+ImageTagReleaseRunner: 25.3.4-208.1600
 RemoteRunnerInstallType: ''
 RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
