@@ -51,6 +51,25 @@ IdentityServiceConfDeploy: |-
 {{ .IdentityServiceConfDeploy | indent 2 }}
 IdentityServiceConfRelease: |-
 {{ .IdentityServiceConfRelease | indent 2 }}
+PostgresqlInstall: '{{ .PostgresqlInstall }}'
+PostgresqlStorageClass: '{{ .PostgresqlStorageClass }}'
+PostgresqlPvcSize: '{{ .PostgresqlPvcSize }}'
+PostgresqlResourcesPreset: '{{ .PostgresqlResourcesPreset }}'
+PostgresqlResourcesEditor: |-
+{{ .PostgresqlResourcesEditor | trim | indent 2 }}
+PostgresqlOperatorImageTag: '{{ .PostgresqlOperatorImageTag }}'
+PostgresqlClusterImageTag: '{{ .PostgresqlClusterImageTag }}'
+{{- if eq .ServerType "dai-deploy" }}
+RabbitmqInstall: '{{ .RabbitmqInstall }}'
+RabbitmqReplicaCount: '{{ .RabbitmqReplicaCount }}'
+RabbitmqStorageClass: '{{ .RabbitmqStorageClass }}'
+RabbitmqPvcSize: '{{ .RabbitmqPvcSize }}'
+RabbitmqResourcesPreset: '{{ .RabbitmqResourcesPreset }}'
+RabbitmqResourcesEditor: |-
+{{ .RabbitmqResourcesEditor | trim | indent 2 }}
+RabbitmqOperatorImageTag: '{{ .RabbitmqOperatorImageTag }}'
+RabbitmqClusterImageTag: '{{ .RabbitmqClusterImageTag }}'
+{{- end }}
 {{- if eq .ProcessType "install" }}
 IngressTypeGeneric: '{{ .IngressTypeGeneric }}'
 IngressTypeOpenshift: '{{ .IngressTypeOpenshift }}'
@@ -70,22 +89,7 @@ AdminPassword: '{{ .AdminPassword }}'
 StorageClass: '{{ .StorageClass }}'
 IngressHost: '{{ .IngressHost }}'
 HttpsProtocol: '{{ .HttpsProtocol }}'
-PostgresqlInstall: {{ .PostgresqlInstall }}
-PostgresqlStorageClass: '{{ .PostgresqlStorageClass }}'
-PostgresqlResourcesPreset: '{{ .PostgresqlResourcesPreset }}'
-PostgresqlResourcesEditor: |-
-{{ .PostgresqlResourcesEditor | trim | indent 2 }}
-PostgresqlOperatorImageTag: '{{ .PostgresqlOperatorImageTag }}'
-PostgresqlClusterImageTag: '{{ .PostgresqlClusterImageTag }}'
 PostgresqlOperatorClean: '{{ .PostgresqlOperatorClean }}'
-RabbitmqInstall: {{ .RabbitmqInstall }}
-RabbitmqReplicaCount: '{{ .RabbitmqReplicaCount }}'
-RabbitmqStorageClass: '{{ .RabbitmqStorageClass }}'
-RabbitmqResourcesPreset: '{{ .RabbitmqResourcesPreset }}'
-RabbitmqResourcesEditor: |-
-{{ .RabbitmqResourcesEditor | trim | indent 2 }}
-RabbitmqOperatorImageTag: '{{ .RabbitmqOperatorImageTag }}'
-RabbitmqClusterImageTag: '{{ .RabbitmqClusterImageTag }}'
 RabbitmqOperatorClean: '{{ .RabbitmqOperatorClean }}'
 LicenseSource: '{{ .LicenseSource }}'
 LicenseEditor:  |-
@@ -97,8 +101,6 @@ RepositoryKeystoreEditor: |-
 RepositoryKeystoreFile: '{{ .RepositoryKeystoreFile }}'
 KeystorePassphrase: '{{ .KeystorePassphrase }}'
 ResourcesSource: '{{ .ResourcesSource }}'
-PostgresqlPvcSize: '{{ .PostgresqlPvcSize }}'
-RabbitmqPvcSize: '{{ .RabbitmqPvcSize }}'
   {{- if eq .ServerType "dai-release" }}
 PvcSizeRelease: '{{ .PvcSizeRelease }}'
 AccessModeRelease: '{{ .AccessModeRelease }}'
