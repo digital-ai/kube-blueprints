@@ -54,15 +54,9 @@ IdentityServiceConfRelease: |-
 {{- if eq .ProcessType "install" }}
 IngressTypeGeneric: '{{ .IngressTypeGeneric }}'
 IngressTypeOpenshift: '{{ .IngressTypeOpenshift }}'
-NginxResourcesPreset: '{{ .NginxResourcesPreset }}'
-NginxResourcesEditor: |-
-{{ .NginxResourcesEditor | trim | indent 2 }}
-HAProxyResourcesEditor: |-
-{{ .HAProxyResourcesEditor | trim | indent 2 }}
 ExternalIngressClass: '{{ .ExternalIngressClass }}'
 HttpProtocolIngress: '{{ .HttpProtocolIngress }}'
 IngressKeystoreSourceGeneric: '{{ .IngressKeystoreSourceGeneric }}'
-IngressKeystoreSourceHaproxy: '{{ .IngressKeystoreSourceHaproxy }}'
 IngressKeystoreSourceOpenshift: '{{ .IngressKeystoreSourceOpenshift }}'
 IngressTlsSecretName: '{{ .IngressTlsSecretName }}'
 IngressNginxControllerClean: '{{ .IngressNginxControllerClean }}'
