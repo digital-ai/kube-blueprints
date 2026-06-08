@@ -1,3 +1,5 @@
 K8sSetup: AzureAKS
+PostgresqlStorageClass: 'xld-operator-azuredisk'
+RabbitmqStorageClass: 'xld-operator-azurefile'
 CrName: dai-xlr
 RemoteRunnerReleaseUrl: http://dai-xlr-digitalai-release.digitalai
