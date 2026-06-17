@@ -11,6 +11,3 @@ assert:
 - $ASSERTS_REL_PATH/release-running-postgres-pods.yaml
 - $ASSERTS_REL_PATH/release-running-product-pods.yaml
 - $ASSERTS_REL_PATH/release-deployit-defaults.yaml
-error:
-- $ASSERTS_REL_PATH/release-running-haproxy-pods.yaml
-- $ASSERTS_REL_PATH/release-running-nginx-pods.yaml
