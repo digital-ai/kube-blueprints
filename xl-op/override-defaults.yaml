@@ -1,11 +1,11 @@
 RepositoryNameDeploy: xebialabsunsupported
-OperatorImageTagDeploy: 26.3.0-beta.616
-ImageTagDeploy: 26.3.0-beta.616
+OperatorImageTagDeploy: 26.3.0-beta.617
+ImageTagDeploy: 26.3.0-beta.617
 RepositoryNameRelease: 'xebialabsunsupported'
-OperatorImageTagRelease: 26.3.0-beta.616
-ImageTagRelease: 26.3.0-beta.616
+OperatorImageTagRelease: 26.3.0-beta.617
+ImageTagRelease: 26.3.0-beta.617
 RepositoryNameReleaseRunner: xebialabsunsupported
-ImageTagReleaseRunner: 26.3.0-beta.616
+ImageTagReleaseRunner: 26.3.0-beta.617
 PostgresqlOperatorImageTag: 1.28.0
 PostgresqlClusterImageTag: 18.1-minimal-trixie
 RabbitmqOperatorImageTag: 2.19.0
