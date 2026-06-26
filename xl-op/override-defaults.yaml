@@ -7,6 +7,6 @@ ImageTagRelease: 25.3.8-614.1600
 RepositoryNameReleaseRunner: xebialabsunsupported
 ImageTagReleaseRunner: 25.3.8-614.1600
 PostgresqlOperatorImageTag: 1.27.0
-PostgresqlClusterImageTag: 17.5-minimal-bookworm
+PostgresqlClusterImageTag: 17.10-minimal-trixie
 RabbitmqOperatorImageTag: 2.16.0
 RabbitmqClusterImageTag: 4.2.3-management
