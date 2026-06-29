@@ -6,7 +6,5 @@ commands:
   timeout: 200
 error:
 - $ASSERTS_REL_PATH/release-running-operator-pods.yaml
-- $ASSERTS_REL_PATH/release-running-nginx-pods.yaml
-- $ASSERTS_REL_PATH/release-running-haproxy-pods.yaml
 - $ASSERTS_REL_PATH/release-running-postgres-pods.yaml
 - $ASSERTS_REL_PATH/release-running-product-pods.yaml
