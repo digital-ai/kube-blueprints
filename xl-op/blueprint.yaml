@@ -597,7 +597,7 @@ spec:
           value: external
         - label: None - Ingress will not be set up during installation
           value: none
-      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ( ProcessType == 'install' || ProcessType == 'upgrade')"
+      promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
       default: external
       description: |
