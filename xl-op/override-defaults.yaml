@@ -2,8 +2,8 @@ RepositoryNameDeploy: xebialabsunsupported
 OperatorImageTagDeploy: 26.3.0-beta.730
 ImageTagDeploy: 26.3.0-beta.730
 RepositoryNameRelease: 'xebialabsunsupported'
-OperatorImageTagRelease: 26.3.0-beta.729
-ImageTagRelease: 26.3.0-beta.729
+OperatorImageTagRelease: 26.3.0-beta.730
+ImageTagRelease: 26.3.0-beta.730
 RepositoryNameReleaseRunner: xebialabsunsupported
 ImageTagReleaseRunner: 26.3.0-beta.729
 PostgresqlOperatorImageTag: 1.28.3
