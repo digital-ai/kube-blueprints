@@ -7,27 +7,6 @@ metadata:
   name: xld-operator-manager
   {{- end }}
 rules:
-{{- if or (eq .IngressType "nginx") (eq .IngressType "haproxy") }}
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-- apiGroups:
-  - "networking.k8s.io"
-  resources:
-  - "ingressclasses"
-  verbs:
-  - "*"
-- apiGroups:
-  - "rbac.authorization.k8s.io"
-  resources:
-  - "clusterrolebindings"
-  - "clusterroles"
-  verbs:
-  - "*"
-{{- end }}
 {{- if eq .K8sSetup "Openshift" }}
 - apiGroups:
     - policy
