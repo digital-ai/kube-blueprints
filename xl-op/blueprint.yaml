@@ -599,7 +599,7 @@ spec:
           value: none
       promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install'"
       saveInXlvals: true
-      default: external
+      default: none
       description: |
         Select between supported ingress types. If None is selected, the application will not be exposed
         and therefore will not be accessible from the browser.
