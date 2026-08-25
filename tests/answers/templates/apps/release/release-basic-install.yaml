@@ -1,6 +1,6 @@
 
 ImageTagRelease: 26.1
-OperatorImageTagRelease: 26.1.0-master
+OperatorImageTagRelease: 26.3.0-master
 XlrReplicaCount: 1
 IngressTypeGeneric: 'none'
 IngressTypeOpenshift: 'route'
@@ -61,5 +61,5 @@ ApplicationKeystoreType: 'pkcs12'
 ApplicationKeystorePassword: '8BBCBhig3gNvrFcR'
 CrdName: ''
 CrName: ''
-ImageTagReleaseRunner: 26.1.0-beta.1226
+ImageTagReleaseRunner: 26.3.0-beta.1226
 RemoteRunnerInstallType: 'no-install'
