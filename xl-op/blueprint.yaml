@@ -24,7 +24,7 @@ spec:
       default: default
       description: |
         Select the type of the Image Registry to use for pulling all images required for the installation.
-        When selecting a custom image registry, all prerequisite images need to be available in the image registry. 
+        When selecting a custom image registry, all prerequisite images need to be available in the image registry.
     - name: IsCustomImageRegistry
       type: Confirm
       saveInXlvals: true
@@ -95,7 +95,7 @@ spec:
       description: |
         Enter the Release application server image tag to use. The default value is the latest version.
         The available versions can be seen from docker hub repository tags for the image. Such as
-        https://hub.docker.com/r/xebialabs/xl-release/tags      
+        https://hub.docker.com/r/xebialabs/xl-release/tags
     - name: ImageTagDeploy
       type: Input
       saveInXlvals: true
@@ -104,7 +104,7 @@ spec:
       promptIf: !expr "ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
       prompt: "Enter the Deploy application image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
       description: |
-        Enter the Deploy application server image tag to use. The default value is the latest version. 
+        Enter the Deploy application server image tag to use. The default value is the latest version.
         The available versions can be seen from docker hub repository tags for the image. Such as
         https://hub.docker.com/r/xebialabs/xl-deploy/tags
         https://hub.docker.com/r/xebialabs/deploy-task-engine/tags
@@ -202,7 +202,7 @@ spec:
       saveInXlvals: true
       default: ReadWriteOnce
       description: |
-        Select between supported Access Modes to define if the volume can be mounted as 
+        Select between supported Access Modes to define if the volume can be mounted as
         read-write by a single node (ReadWriteOnce) or by many nodes (ReadWriteMany).
         For all Deploy pods ReadWriteOnce access mode is enough, the pods are not sharing the volumes.
         Note, the same access mode will apply to Deploy task engine and Central configuration also.
@@ -305,10 +305,10 @@ spec:
         predefined set of values or specify in editor the custom resource values for requests and limits.
         If none is selected, resources will not be specified and will need to be done manually.
         For example, if you select preset, the following prompts for specifying resource values
-        will use the preset configurations. Similarly, if you select custom resource values, the 
+        will use the preset configurations. Similarly, if you select custom resource values, the
         following prompts will use editor for specifying the custom resource values. If you choose
         none, there will no prompts for specifying resources.
-        Note: In production, its recommended to have resource values specified through any of the options. 
+        Note: In production, its recommended to have resource values specified through any of the options.
       default: none
     - name: ResourcesPresetDeploy
       type: Select
@@ -326,7 +326,7 @@ spec:
         - label: Request - 21.0 cpu, 42Gi memory. Limit - 32.0 cpu, 64Gi memory
           value: xlarge
         - label: Request - 42.0 cpu, 85Gi memory. Limit - 64.0 cpu, 128Gi memory
-          value: 2xlarge                                                                     
+          value: 2xlarge
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -345,8 +345,8 @@ spec:
             memory:
           limits:
             cpu:
-            memory:      
-      description: Default values for resources editor      
+            memory:
+      description: Default values for resources editor
     - name: ResourcesEditorDeploy
       type: Editor
       saveInXlvals: true
@@ -405,14 +405,14 @@ spec:
         - label: Request - 21.0 cpu, 42Gi memory. Limit - 32.0 cpu, 64Gi memory
           value: xlarge
         - label: Request - 42.0 cpu, 85Gi memory. Limit - 64.0 cpu, 128Gi memory
-          value: 2xlarge                                                                     
+          value: 2xlarge
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select one of the predefined resource values for Deploy worker:"
       promptIf: !expr ServerType == 'dai-deploy' && ProcessType == "install" && ResourcesSource == "preset"
       description: "Select one of the predefined resource values for Deploy worker"
-      default: nano         
+      default: nano
     - name: ResourcesEditorDeployTaskEngine
       type: Editor
       saveInXlvals: true
@@ -472,7 +472,7 @@ spec:
       overrideDefault: true
       description: |
         Select the application backend protocol. Ingress will connect using this backend protocol.
-        When selecting https or http2, ssl is enabled for the application server. 
+        When selecting https or http2, ssl is enabled for the application server.
         And you will need to provide the ssl keystore with key, either through file, editor,
         kubernetes secret in the same namespace. Or you will need to use an autogenerated self-signed key.
         Note: This is only for the application server. The protocol for ingress will be selected later.
@@ -512,11 +512,11 @@ spec:
       prompt: "Select source of the HTTPS keystore for the server:"
       promptIf: !expr ServerType != 'dai-release-runner' && ProcessType == "install" && (HttpProtocolRelease != "http" || HttpProtocolDeploy != "http")
       description: |
-        Provide source of the HTTPS keystore in PKCS12 or JKS format. The keystore should contain the server certificate and private key. 
+        Provide source of the HTTPS keystore in PKCS12 or JKS format. The keystore should contain the server certificate and private key.
         When selecting 'generate', a self-signed key will be generated for the server.
         If you want to use your own keystore, select 'file' or 'editor' or 'secret'. Use openssl or keytool to create the keystore.
         When selecting 'file', provide the path to the keystore file.
-        When selecting 'editor', provide the keystore content in base64 encoded format. 
+        When selecting 'editor', provide the keystore content in base64 encoded format.
         When selecting 'secret', provide the generic secret name with the HTTPS keystore for the application server.
         eg. `kubectl create secret generic app-tls-secret --from-file=ssl-keystore.p12=ssl-keystore.p12 -n digitalai`
         And make sure the secret is already created in the same namespace.
@@ -654,7 +654,7 @@ spec:
       overrideDefault: true
       description: |
         Select the ingress protocol, for https you will need to provide the ssl keystore with key,
-        or you will need to use autogenerated self-signed key. 
+        or you will need to use autogenerated self-signed key.
         Refer documentation on 'Configure SSL/TLS in kubernetes environment' for more details.
     - name: IngressKeystoreSourceGeneric
       type: Select
@@ -671,7 +671,7 @@ spec:
       prompt: "Select source of the secure ingress keystore:"
       promptIf: !expr "!(regex('^Openshift.*', K8sSetup)) && ServerType != 'dai-release-runner' && ProcessType == 'install' && IngressType != 'none' && HttpProtocolIngress != 'http' && ((ServerType=='dai-release' && HttpProtocolRelease != 'http') || (ServerType=='dai-deploy' && HttpProtocolDeploy != 'http'))"
       description: |
-        Provide source of the ingress keystore. 
+        Provide source of the ingress keystore.
         If you select secret, provide the tls secret.
         Like `kubectl create secret tls ingress-tls-secret --key=server.key --cert=server.crt`
         If you select passthrough, the traffic will be passed onto the backend for ssl decryption.
@@ -946,7 +946,7 @@ spec:
       overrideDefault: true
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: | 
+      description: |
         Enter the Release operator image tag to use. The default is the latest tag.
         The available versions can be seen from docker hub repository tags for the image. Such as
         https://hub.docker.com/r/xebialabs/release-operator/tags
@@ -957,8 +957,8 @@ spec:
       overrideDefault: true
       promptIf: !expr "K8sSetup != 'OpenshiftCertified' && ServerType == 'dai-deploy' && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Deploy operator image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
-      description: | 
-        Enter the Deploy operator image tag to use. The default is the latest tag. 
+      description: |
+        Enter the Deploy operator image tag to use. The default is the latest tag.
         The available versions can be seen from docker hub repository tags for the image. Such as
         https://hub.docker.com/r/xebialabs/deploy-operator/tags
     - name: RepositoryKeystoreSource
@@ -971,7 +971,7 @@ spec:
         - label: Copy/Paste the repository keystore to editor (the content needs to be base64 encoded)
           value: editor
         - label: Default repository keystore
-          value: default        
+          value: default
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -1032,7 +1032,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Select one of the options to install or upgrade Postgresql on the cluster:"
-      promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')" 
+      promptIf: !expr "ServerType != 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')"
     - name: PostgresqlStorageClass
       type: Select
       options:
@@ -1071,7 +1071,7 @@ spec:
         - label: Request - 1.5 cpu, 4096Mi memory. Limit - 3.0 cpu, 6144Mi memory
           value: xlarge
         - label: Request - 1.5 cpu, 4096Mi memory. Limit - 6.0 cpu, 12288Mi memory
-          value: 2xlarge                                                                    
+          value: 2xlarge
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -1213,7 +1213,7 @@ spec:
         - label: Request - 1.5 cpu, 4096Mi memory. Limit - 3.0 cpu, 6144Mi memory
           value: xlarge
         - label: Request - 1.5 cpu, 4096Mi memory. Limit - 6.0 cpu, 12288Mi memory
-          value: 2xlarge                                                                    
+          value: 2xlarge
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -1307,25 +1307,25 @@ spec:
         of earlier installed version.
         These values will be migrated by moving values to new or same CR keys by matching old CR keys
         in the format given below.
-        
+
         In the example snippet:
         ```
         .metadata.name: .         # 1 Represents the same path in the upgraded new version CR
         ```
-        1. The value . for a key represents the same path. This mapping defines that value from old 
+        1. The value . for a key represents the same path. This mapping defines that value from old
         version CR value under that path will be copied to the new version CR under the same path.
-        
+
         In the example snippet:
         ```
         .spec.auth.adminPassword:   # Represents the path in the upgraded new version CR
           0.0: .spec.AdminPassword  # 2 Matching path in the cluster CR (for version earlier than 23.3)
           23.3: .                   # 3 Matching path in the cluster CR (for version from 23.3 onwards)
         ```
-        2. The value for 0.0 represents the path in cluster CR before upgrade. This mapping defines that 
+        2. The value for 0.0 represents the path in cluster CR before upgrade. This mapping defines that
         value from old version CR from cluster will be copied to the new version CR in the parent path of 0.0.
         3. The value for 23.3 represents the path in cluster CR before upgrade. This mapping defines that
         value from old version CR from cluster will be copied to the new version CR in the parent path of 23.3.
-        
+
         Refer section 'Custom resource keys migration during upgrade' in the documentation for more details.
       default: |-
         .metadata.name: .
@@ -1505,8 +1505,8 @@ spec:
           0.0:
           23.3: .
         .spec.ssl: .
-        .spec.hooks.genSelfSigned: .
-        .spec.hooks.getLicense: .
+        .spec.hooks.genSelfSigned.enabled: .
+        .spec.hooks.getLicense.enabled: .
         .spec.centralConfiguration.configuration: .
         .spec.centralConfiguration.extraConfiguration: .
         .spec.centralConfiguration.diagnosticMode: .
@@ -1537,19 +1537,19 @@ spec:
         .spec.rabbitmq.diagnosticMode: .
         .spec.centralConfiguration.podSecurityContext: .
         .spec.centralConfiguration.containerSecurityContext: .
-        .spec.centralConfiguration.volumePermissions: .
+        .spec.centralConfiguration.volumePermissions.enabled: .
         .spec.master.podSecurityContext: .
         .spec.master.containerSecurityContext: .
-        .spec.master.volumePermissions: .
+        .spec.master.volumePermissions.enabled: .
         .spec.worker.podSecurityContext: .
         .spec.worker.containerSecurityContext: .
-        .spec.worker.volumePermissions: .
+        .spec.worker.volumePermissions.enabled: .
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
-        .spec.postgresql.volumePermissions: .
+        .spec.postgresql.volumePermissions.enabled: .
         .spec.rabbitmq.containerSecurityContext: .
         .spec.rabbitmq.podSecurityContext: .
-        .spec.rabbitmq.volumePermissions: .
+        .spec.rabbitmq.volumePermissions.enabled: .
     - name: PreserveCrValuesRelease
       type: Editor
       prompt: "Edit list of custom resource keys that will migrate to the new Release CR:"
@@ -1562,25 +1562,25 @@ spec:
         of earlier installed version.
         These values will be migrated by moving values to new or same CR keys by matching old CR keys
         in the format given below.
-        
+
         In the example snippet:
         ```
         .metadata.name: .         # 1 Represents the same path in the upgraded new version CR
         ```
-        1. The value . for a key represents the same path. This mapping defines that value from old 
+        1. The value . for a key represents the same path. This mapping defines that value from old
         version CR value under that path will be copied to the new version CR under the same path.
-        
+
         In the example snippet:
         ```
         .spec.auth.adminPassword:   # Represents the path in the upgraded new version CR
           0.0: .spec.AdminPassword  # 2 Matching path in the cluster CR (for version earlier than 23.3)
           23.3: .                   # 3 Matching path in the cluster CR (for version from 23.3 onwards)
         ```
-        2. The value for 0.0 represents the path in cluster CR before upgrade. This mapping defines that 
+        2. The value for 0.0 represents the path in cluster CR before upgrade. This mapping defines that
         value from old version CR from cluster will be copied to the new version CR in the parent path of 0.0.
         3. The value for 23.3 represents the path in cluster CR before upgrade. This mapping defines that
         value from old version CR from cluster will be copied to the new version CR in the parent path of 23.3.
-        
+
         Refer section 'Custom resource keys migration during upgrade' in the documentation for more details.
       default: |-
         .metadata.name: .
@@ -1709,8 +1709,8 @@ spec:
           23.3: .
         .spec.http2.enabled: .
         .spec.ssl: .
-        .spec.hooks.genSelfSigned: .
-        .spec.hooks.getLicense: .
+        .spec.hooks.genSelfSigned.enabled: .
+        .spec.hooks.getLicense.enabled: .
         .spec.configuration: .
         .spec.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
@@ -1724,10 +1724,10 @@ spec:
         .spec.rabbitmq.diagnosticMode: .
         .spec.podSecurityContext: .
         .spec.containerSecurityContext: .
-        .spec.volumePermissions: .
+        .spec.volumePermissions.enabled: .
         .spec.postgresql.primary.containerSecurityContext: .
         .spec.postgresql.primary.podSecurityContext: .
-        .spec.postgresql.volumePermissions: .
+        .spec.postgresql.volumePermissions.enabled: .
     - name: PreservePvc
       type: Confirm
       saveInXlvals: true
@@ -1782,7 +1782,7 @@ spec:
       promptIf: !expr ServerType == 'dai-release' && ProcessType == 'install'
       prompt: "Install Digital.ai Release Runner:"
       description: |
-        Selecting no-install will skip the Release Runner installation. 
+        Selecting no-install will skip the Release Runner installation.
         Selecting local-install will install Release Runner from the local.
         Selecting cluster-install will install Release Runner from the cluster.
         The installation will start after Release is ready on the cluster.
@@ -1819,7 +1819,7 @@ spec:
       promptIf: !expr "RemoteRunnerInstall && (ProcessType == 'install' || ProcessType == 'upgrade')"
       prompt: "Enter the Release Runner image tag (eg: <tagName> from <repositoryName>/<imageName>:<tagName>):"
       description: |
-        Enter the Release Runner image tag to use. The default value is the latest version. 
+        Enter the Release Runner image tag to use. The default value is the latest version.
         The available versions can be seen from docker hub repository tags for the image. Such as
         https://hub.docker.com/r/xebialabs/release-runner/tags
     - name: RemoteRunnerReleaseName
@@ -1924,7 +1924,7 @@ spec:
       promptIf: !expr RemoteRunnerInstall && ServerType == 'dai-release-runner' && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enable truststore for Release Runner:"
       description: |
-        Type yes to setup truststore for Release Runner. Will be required when Release Runner connects 
+        Type yes to setup truststore for Release Runner. Will be required when Release Runner connects
         with Release over ssl connection. The certificates will be used to establish a secure connection
         to the Release.
     - name: RemoteRunnerRestClientCa
