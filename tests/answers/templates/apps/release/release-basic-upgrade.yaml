@@ -1,5 +1,5 @@
-ImageTagRelease: 26.1
-OperatorImageTagRelease: 26.3.0-master
+ImageTagRelease: 27.1
+OperatorImageTagRelease: 27.1.0-master
 XlrReplicaCount: 1
 PreserveCrValuesRelease: |-
         .metadata.name: .
@@ -173,4 +173,4 @@ UpgradeType: operatorToOperator
 ReleaseName: 'dai-xlr'
 CrdName: 'digitalaireleases.xlr.digital.ai'
 PreservePvc: true
-ImageTagReleaseRunner: 26.3.0-beta.1226
+ImageTagReleaseRunner: 27.1.0-beta.1226

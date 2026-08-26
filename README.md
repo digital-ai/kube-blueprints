@@ -34,7 +34,7 @@ graph TD
         P2[CloudNativePG Operator\nnon-production]
         N2[Ingress Nginx Controller\nnon-production]
     end
-    subgraph "xl-cli installer 26.1"
+    subgraph "xl-cli installer 27.1"
         direction LR
         
         O3["Release Helm Operator"]
@@ -76,7 +76,7 @@ graph TD
         R2[RabbitMQ Cluster Operator\nnon-production]
         N2[Ingress Nginx Controller\nnon-production]
     end
-    subgraph "xl-cli installer 26.1"
+    subgraph "xl-cli installer 27.1"
         direction LR
         
         O3["Deploy Helm Operator"]

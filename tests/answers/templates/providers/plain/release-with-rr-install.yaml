@@ -154,7 +154,7 @@ CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameReleaseRunner: 'release-runner'
-ImageTagReleaseRunner: '26.3.0'
+ImageTagReleaseRunner: '27.1.0'
 RemoteRunnerInstallType: 'cluster-install'
 RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
