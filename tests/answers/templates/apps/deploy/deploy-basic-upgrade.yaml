@@ -1,5 +1,5 @@
-ImageTagDeploy: 26.1
-OperatorImageTagDeploy: 26.1.0-master
+ImageTagDeploy: 26.3
+OperatorImageTagDeploy: 26.3.0-master
 XldMasterCount: 2
 XldWorkerCount: 2
 PreserveCrValuesDeploy: |-
@@ -266,4 +266,4 @@ RabbitmqResourcesEditor: |-
       memory:
 RabbitmqOperatorImageTag: ''
 RabbitmqClusterImageTag: ''
-ImageTagReleaseRunner: 26.1.0-beta.1226
+ImageTagReleaseRunner: 26.3.0-beta.1226
