@@ -1846,6 +1846,101 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       description: Release Runner Helm Chart local filesystem path or URL to the Release Runner Helm Chart package.
+    - name: ReleaseAssistantInstall
+      type: Confirm
+      default: false
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Install Digital.ai Release Assistant from Helm Chart:"
+      description: |
+        Type yes to install Digital.ai Release Assistant in the same namespace using Helm Chart.
+        Type no to skip the Release Assistant installation.
+    - name: ReleaseAssistantReleaseName
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Enter the Release Assistant Helm Chart release name:"
+      description: Release Assistant Helm Chart release name that will be used with helm command during installation.
+      default: dai-assistant
+    - name: ReleaseAssistantUseDefaultLocation
+      type: Confirm
+      default: true
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Use default version of the Release Assistant Helm Chart:"
+      description: "Type yes to use default internal version of the Release Assistant Helm Chart, else provide path to the chart package."
+    - name: ReleaseAssistantHelmChartUrl
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && !ReleaseAssistantUseDefaultLocation && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Enter the Release Assistant Helm Chart path (URL or local path):"
+      description: Release Assistant Helm Chart local filesystem path or URL to the Release Assistant Helm Chart package.
+    - name: ReleaseAssistantIngressEnabled
+      type: Confirm
+      default: false
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Enable ingress for Release Assistant:"
+      description: Type yes to expose Release Assistant through ingress.
+    - name: ReleaseAssistantIngressHostname
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Provide ingress hostname for Release Assistant:"
+      description: DNS hostname to use for Release Assistant ingress.
+      default: release-assistant.local
+      validate: !expr "regex('^[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}$', ReleaseAssistantIngressHostname)"
+    - name: ReleaseAssistantIngressTlsEnabled
+      type: Confirm
+      default: false
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Enable TLS for Release Assistant ingress:"
+      description: Type yes to configure TLS on Release Assistant ingress.
+    - name: ReleaseAssistantIngressClassName
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Provide ingress class name for Release Assistant (optional):"
+      description: Optional ingress class name for Release Assistant ingress resource.
+      default: ""
+      allowEmpty: true
+    - name: ReleaseAssistantReleaseBaseUrl
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Enter Digital.ai Release base URL for Release Assistant:"
+      default: !expr "'http://dai-xlr-digitalai-release.' + Namespace"
+      description: Digital.ai Release server base URL used by Release Assistant.
+      validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantReleaseBaseUrl)"
+    - name: ReleaseAssistantReleaseMcpBaseUrl
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Enter Release MCP base URL for Release Assistant:"
+      default: !expr "'http://dai-xlr-digitalai-release.' + Namespace"
+      description: Release MCP base URL used by Release Assistant configuration.
+      validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantReleaseMcpBaseUrl)"
     - name: RemoteRunnerGeneration
       type: Confirm
       saveInXlvals: true

@@ -63,3 +63,13 @@ CrdName: ''
 CrName: ''
 ImageTagReleaseRunner: 26.1.0-beta.1226
 RemoteRunnerInstallType: 'no-install'
+ReleaseAssistantInstall: false
+ReleaseAssistantReleaseName: 'dai-assistant'
+ReleaseAssistantUseDefaultLocation: true
+ReleaseAssistantHelmChartUrl: ''
+ReleaseAssistantIngressEnabled: false
+ReleaseAssistantIngressHostname: 'release-assistant.local'
+ReleaseAssistantIngressTlsEnabled: false
+ReleaseAssistantIngressClassName: ''
+ReleaseAssistantReleaseBaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+ReleaseAssistantReleaseMcpBaseUrl: 'http://dai-xlr-digitalai-release.digitalai'

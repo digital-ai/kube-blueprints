@@ -330,3 +330,29 @@ spec:
         {{- /* registry name defined in global section */}}
         repository: {{ .RepositoryNameRelease }}/os-shell
     {{- end }}
+  release-assistant-helm-chart:
+    {{- if eq .ReleaseAssistantInstall true }}
+    install: true
+    releaseName: {{ .ReleaseAssistantReleaseName }}
+    {{- if eq .ReleaseAssistantUseDefaultLocation false }}
+    chart:
+      url: "{{ .ReleaseAssistantHelmChartUrl }}"
+    {{- end }}
+    config:
+      release:
+        baseUrl: "{{ .ReleaseAssistantReleaseBaseUrl }}"
+      releaseMcp:
+        baseUrl: "{{ .ReleaseAssistantReleaseMcpBaseUrl }}"
+    ingress:
+      {{- if eq .ReleaseAssistantIngressEnabled true }}
+      enabled: true
+      hostname: "{{ .ReleaseAssistantIngressHostname }}"
+      ingressClassName: "{{ .ReleaseAssistantIngressClassName }}"
+      tls:
+        enabled: {{ .ReleaseAssistantIngressTlsEnabled }}
+      {{- else }}
+      enabled: false
+      {{- end }}
+    {{- else }}
+    install: false
+    {{- end }}
