@@ -101,7 +101,7 @@ spec:
   {{- end }}
   hooks:
     genSelfSigned:
-      {{- if and (eq .ApplicationKeystoreSource "generate") (eq .HttpProtocolDeploy "https") }}  
+      {{- if and (eq .ApplicationKeystoreSource "generate") (eq .HttpProtocolDeploy "https") }}
       enabled: true
       {{- else }}
       enabled: false
@@ -301,14 +301,16 @@ spec:
   ingress:
     {{- if or (eq .IngressType "nginx") (eq .IngressType "ingress-nginx-controller") }}
     enabled: true
+    {{- if eq .UseCustomNamespace true }}
+    ingressClassName: nginx-dai
+    {{- else }}
+    {{- if eq .UseCustomNamespace true }}
+    ingressClassName: nginx-dai-xld-{{ .Namespace }}
+    {{- else }}
+    ingressClassName: nginx-dai-xld
+    {{- end }}
+    {{- end }}
     annotations:
-      {{- if eq .IngressType "ingress-nginx-controller" }}
-      kubernetes.io/ingress.class: nginx-dai
-      {{- else if eq .UseCustomNamespace true }}
-      kubernetes.io/ingress.class: nginx-dai-xld-{{ .Namespace }}
-      {{- else }}
-      kubernetes.io/ingress.class: nginx-dai-xld
-      {{- end }}
       nginx.ingress.kubernetes.io/affinity: cookie
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
@@ -330,12 +332,12 @@ spec:
     {{- end }}
     {{- if eq .IngressType "haproxy" }}
     enabled: true
+    {{- if eq .UseCustomNamespace true }}
+    ingressClassName: haproxy-dai-xld-{{ .Namespace }}
+    {{- else }}
+    ingressClassName: haproxy-dai-xld
+    {{- end }}
     annotations:
-      {{- if eq .UseCustomNamespace true }}
-      kubernetes.io/ingress.class: haproxy-dai-xld-{{ .Namespace }}
-      {{- else }}
-      kubernetes.io/ingress.class: haproxy-dai-xld
-      {{- end }}
       haproxy-ingress.github.io/rewrite-target: /
       haproxy-ingress.github.io/affinity: cookie
       haproxy-ingress.github.io/session-cookie-name: SESSION_XLD
@@ -364,8 +366,8 @@ spec:
     {{- end }}
     {{- if eq .IngressType "external" }}
     enabled: true
+    ingressClassName: {{ .ExternalIngressClass }}
     annotations:
-      kubernetes.io/ingress.class: {{ .ExternalIngressClass }}
       ingress.kubernetes.io/rewrite-target: /
       ingress.kubernetes.io/affinity: cookie
       ingress.kubernetes.io/session-cookie-name: SESSION_XLD
