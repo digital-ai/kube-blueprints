@@ -96,7 +96,7 @@ spec:
   {{- end }}
   hooks:
     genSelfSigned:
-      {{- if and (eq .ApplicationKeystoreSource "generate") (or (eq .HttpProtocolRelease "https") (eq .HttpProtocolRelease "http2")) }}  
+      {{- if and (eq .ApplicationKeystoreSource "generate") (or (eq .HttpProtocolRelease "https") (eq .HttpProtocolRelease "http2")) }}
       enabled: true
       {{- else }}
       enabled: false
@@ -205,7 +205,6 @@ spec:
     {{- if eq .IngressType "external" }}
     enabled: true
     annotations:
-      kubernetes.io/ingress.class: {{ .ExternalIngressClass }}
       ingress.kubernetes.io/rewrite-target: /
       ingress.kubernetes.io/affinity: cookie
       ingress.kubernetes.io/session-cookie-name: JSESSIONID
@@ -227,6 +226,7 @@ spec:
     {{- if eq .IngressType "none" }}
     enabled: false
     {{- end }}
+    ingressClassName: {{ .ExternalIngressClass }}
     hostname: "{{ .IngressHost }}"
     path: /
     {{- if (eq .HttpProtocolIngress "https") }}
