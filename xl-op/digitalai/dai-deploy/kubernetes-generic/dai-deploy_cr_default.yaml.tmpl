@@ -101,7 +101,7 @@ spec:
   {{- end }}
   hooks:
     genSelfSigned:
-      {{- if and (eq .ApplicationKeystoreSource "generate") (eq .HttpProtocolDeploy "https") }}  
+      {{- if and (eq .ApplicationKeystoreSource "generate") (eq .HttpProtocolDeploy "https") }}
       enabled: true
       {{- else }}
       enabled: false
@@ -302,7 +302,6 @@ spec:
     {{- if eq .IngressType "external" }}
     enabled: true
     annotations:
-      kubernetes.io/ingress.class: {{ .ExternalIngressClass }}
       ingress.kubernetes.io/rewrite-target: /
       ingress.kubernetes.io/affinity: cookie
       ingress.kubernetes.io/session-cookie-name: SESSION_XLD
@@ -324,6 +323,7 @@ spec:
     {{- if eq .IngressType "none" }}
     enabled: false
     {{- end }}
+    ingressClassName: {{ .ExternalIngressClass }}
     hostname: "{{ .IngressHost }}"
     path: /
     {{- if (eq .HttpProtocolIngress "https") }}
