@@ -5,6 +5,10 @@ metadata:
 spec:
   image: docker.io/library/rabbitmq:{{ .RabbitmqClusterImageTag }}
 
+  secretBackend:
+    externalSecret:
+      name: dai-xld-rabbitmq-secret
+
   tls:
     disableNonTLSListeners: false
   replicas: {{ .RabbitmqReplicaCount }}
