@@ -47,6 +47,8 @@ spec:
   tls:
     disableNonTLSListeners: false
   replicas: {{ .RabbitmqReplicaCount }}
+  # Overrides operator default (604800 = 7 days) to allow timely pod and PVC cleanup
+  terminationGracePeriodSeconds: 60
   persistence:
     storageClassName: {{ .RabbitmqStorageClass }}
     storage: {{ .RabbitmqPvcSize }}Gi
