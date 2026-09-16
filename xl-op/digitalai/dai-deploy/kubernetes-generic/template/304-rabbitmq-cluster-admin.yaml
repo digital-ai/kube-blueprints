@@ -4,7 +4,8 @@ metadata:
   name: dai-xld-admin
 spec:
   rabbitmqClusterReference:
-    name: dai-xld-rabbitmq
+    connectionSecret:
+      name: dai-xld-rabbitmq-secret
   tags:
     - administrator
   # Store password in a Secret; reference it here
