@@ -40,6 +40,9 @@ PreserveCrValuesRelease: |-
   {{- end }}
 PostgresqlExternalConfigRelease: |-
 {{ .PostgresqlExternalConfigRelease | indent 2  }}
+PostgresqlExternalConfigReleaseAssistantUrl: '{{ .PostgresqlExternalConfigReleaseAssistantUrl }}'
+PostgresqlExternalConfigReleaseAssistantUsername: '{{ .PostgresqlExternalConfigReleaseAssistantUsername }}'
+PostgresqlExternalConfigReleaseAssistantPassword: '{{ .PostgresqlExternalConfigReleaseAssistantPassword }}'
 {{- end }}
 OidcConfigTypeInstall: '{{ .OidcConfigTypeInstall }}'
 OidcConfigTypeUpgrade: '{{ .OidcConfigTypeUpgrade }}'
@@ -118,7 +121,7 @@ PvcSizeDeploy: '{{ .PvcSizeDeploy }}'
 PvcSizeDeployTaskEngine: '{{ .PvcSizeDeployTaskEngine }}'
 AccessModeDeploy: '{{ .AccessModeDeploy }}'
 ResourcesPresetDeploy: '{{ .ResourcesPresetDeploy }}'
-ResourcesEditorDeploy: |- 
+ResourcesEditorDeploy: |-
 {{ .ResourcesEditorDeploy | trim | indent 2 }}
 ResourcesPresetDeployCc: '{{ .ResourcesPresetDeployCc }}'
 ResourcesEditorDeployCc: |-
@@ -147,6 +150,23 @@ RepositoryNameReleaseRunner: '{{ .RepositoryNameReleaseRunner }}'
 RemoteRunnerReleaseName: '{{ .RemoteRunnerReleaseName }}'
 RemoteRunnerUseDefaultLocation: {{ .RemoteRunnerUseDefaultLocation }}
 RemoteRunnerHelmChartUrl: '{{ .RemoteRunnerHelmChartUrl }}'
+ReleaseAssistantInstall: {{ .ReleaseAssistantInstall }}
+RepositoryNameReleaseAssistant: '{{ .RepositoryNameReleaseAssistant }}'
+ImageTagReleaseAssistant: '{{ .ImageTagReleaseAssistant }}'
+ReleaseAssistantIngressEnabled: {{ .ReleaseAssistantIngressEnabled }}
+ReleaseAssistantIngressHostname: '{{ .ReleaseAssistantIngressHostname }}'
+ReleaseAssistantIngressTlsEnabled: {{ .ReleaseAssistantIngressTlsEnabled }}
+ReleaseAssistantIngressClassName: '{{ .ReleaseAssistantIngressClassName }}'
+ReleaseAssistantReleaseBaseUrl: '{{ .ReleaseAssistantReleaseBaseUrl }}'
+ReleaseAssistantReleaseMcpBaseUrl: '{{ .ReleaseAssistantReleaseMcpBaseUrl }}'
+ReleaseAssistantUrl: '{{ .ReleaseAssistantUrl }}'
+ReleaseAssistantOauth2TokenClientId: '{{ .ReleaseAssistantOauth2TokenClientId }}'
+ReleaseAssistantOauth2TokenClientSecret: '{{ .ReleaseAssistantOauth2TokenClientSecret }}'
+ReleaseAssistantAccountId: '{{ .ReleaseAssistantAccountId }}'
+ReleaseAssistantAiLlmChatModel: '{{ .ReleaseAssistantAiLlmChatModel }}'
+ReleaseAssistantAiLlmBaseUrl: '{{ .ReleaseAssistantAiLlmBaseUrl }}'
+ReleaseAssistantOidcIssuerUri: '{{ .ReleaseAssistantOidcIssuerUri }}'
+ReleaseAssistantOidcJwkSetUri: '{{ .ReleaseAssistantOidcJwkSetUri }}'
 RemoteRunnerReleaseUrl: '{{ .RemoteRunnerReleaseUrl }}'
 RemoteRunnerToken: '{{ .RemoteRunnerToken }}'
 RemoteRunnerUserEmail: '{{ .RemoteRunnerUserEmail }}'

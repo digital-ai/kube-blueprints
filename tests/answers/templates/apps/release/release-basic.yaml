@@ -84,6 +84,16 @@ RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
 RemoteRunnerHelmChartUrl: ''
+ReleaseAssistantInstall: false
+ReleaseAssistantReleaseName: 'dai-assistant'
+ReleaseAssistantUseDefaultLocation: true
+ReleaseAssistantHelmChartUrl: ''
+ReleaseAssistantIngressEnabled: false
+ReleaseAssistantIngressHostname: 'release-assistant.local'
+ReleaseAssistantIngressTlsEnabled: false
+ReleaseAssistantIngressClassName: ''
+ReleaseAssistantReleaseBaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+ReleaseAssistantReleaseMcpBaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
 RemoteRunnerReleaseUrl: ''
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'

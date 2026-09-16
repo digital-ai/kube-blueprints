@@ -1,19 +1,21 @@
+{{- $releaseName := "dai-xlr" -}}
+{{- if hasPrefix "Openshift" .K8sSetup -}}
+  {{- if eq .UseCustomNamespace true -}}
+    {{- $releaseName = printf "dai-ocp-xlr-%s" .Namespace -}}
+  {{- else -}}
+    {{- $releaseName = "dai-ocp-xlr" -}}
+  {{- end -}}
+{{- else -}}
+  {{- if eq .UseCustomNamespace true -}}
+    {{- $releaseName = printf "dai-xlr-%s" .Namespace -}}
+  {{- else -}}
+    {{- $releaseName = "dai-xlr" -}}
+  {{- end -}}
+{{- end -}}
 apiVersion: xlr.digital.ai/v1alpha1
 kind: DigitalaiRelease
 metadata:
-  {{- if hasPrefix "Openshift" .K8sSetup }}
-  {{- if eq .UseCustomNamespace true }}
-  name: dai-ocp-xlr-{{ .Namespace }}
-  {{- else }}
-  name: dai-ocp-xlr
-  {{- end }}
-  {{- else }}
-  {{- if eq .UseCustomNamespace true }}
-  name: dai-xlr-{{ .Namespace }}
-  {{- else }}
-  name: dai-xlr
-  {{- end }}
-  {{- end }}
+  name: {{ $releaseName }}
 spec:
   global:
     security:
@@ -75,6 +77,14 @@ spec:
   oidc:
     enabled: {{ not (eq .OidcConfigType "no-oidc") }}
 {{ .ExternalOidcConf | indent 4 }}
+  ai:
+    {{- if or .ReleaseAssistantInstall .ReleaseAssistantUrl }}
+    enabled: true
+    assistantUrl: "{{ .ReleaseAssistantUrl }}"
+    {{- else }}
+    enabled: false
+    assistantUrl: ""
+    {{- end }}
   {{- if or (eq .HttpProtocolRelease "https") (eq .HttpProtocolRelease "http2") }}
   ssl:
     enabled: true
@@ -329,4 +339,53 @@ spec:
       image:
         {{- /* registry name defined in global section */}}
         repository: {{ .RepositoryNameRelease }}/os-shell
+    {{- end }}
+  release-assistant-helm-chart:
+    {{- if eq .ReleaseAssistantInstall true }}
+    install: true
+    image:
+      repository: "{{ .RepositoryNameReleaseAssistant }}/dai-release-assistant"
+      tag: "{{ .ImageTagReleaseAssistant }}"
+    config:
+      db:
+        {{- if eq .PostgresqlType "operator" }}
+        urlSuffix: "postgresql://dai-xlr-postgres-rw:5432/dai-assistant-db"
+        username: "dai-assistant"
+        password: "dai-assistant"
+        {{- else if eq .PostgresqlType "chart" }}
+        urlSuffix: "postgresql://{{ $releaseName }}-postgresql:5432/dai-assistant-db"
+        username: "dai-assistant"
+        password: "dai-assistant"
+        {{- else if eq .PostgresqlType "external" }}
+        urlSuffix: "{{ regexReplaceAll "^jdbc:" .PostgresqlExternalConfigReleaseAssistantUrl "" }}"
+        username: "{{ .PostgresqlExternalConfigReleaseAssistantUsername }}"
+        password: "{{ .PostgresqlExternalConfigReleaseAssistantPassword }}"
+        {{- end }}
+      release:
+        baseUrl: "{{ .ReleaseAssistantReleaseBaseUrl }}"
+      releaseMcp:
+        baseUrl: "{{ .ReleaseAssistantReleaseMcpBaseUrl }}"
+      oidc:
+        issuerUri: "{{ .ReleaseAssistantOidcIssuerUri }}"
+        jwkSetUri: "{{ .ReleaseAssistantOidcJwkSetUri }}"
+        clientId: "{{ .ReleaseAssistantOauth2TokenClientId }}"
+        clientSecret: "{{ .ReleaseAssistantOauth2TokenClientSecret }}"
+      accountId: "{{ .ReleaseAssistantAccountId }}"
+      aiLlm:
+        baseUrl: "{{ .ReleaseAssistantAiLlmBaseUrl }}"
+        chatModel: "{{ .ReleaseAssistantAiLlmChatModel }}"
+        customHeaders:
+          X-Digitalai-AppName: "devops/release-ai-assistant/{{ .ReleaseAssistantAccountId }}"
+    ingress:
+      {{- if eq .ReleaseAssistantIngressEnabled true }}
+      enabled: true
+      hostname: "{{ .ReleaseAssistantIngressHostname }}"
+      ingressClassName: "{{ .ReleaseAssistantIngressClassName }}"
+      tls:
+        enabled: {{ .ReleaseAssistantIngressTlsEnabled }}
+      {{- else }}
+      enabled: false
+      {{- end }}
+    {{- else }}
+    install: false
     {{- end }}
