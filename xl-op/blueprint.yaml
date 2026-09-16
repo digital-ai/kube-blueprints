@@ -1117,7 +1117,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide Ask Release assistant external DB JDBC URL:"
-      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && (PostgresqlType == 'external')"
+promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && ReleaseAssistantInstall && (PostgresqlType == 'external')"
       description: JDBC URL for Ask Release assistant database. Use JDBC format (for example jdbc:postgresql://db-host:5432/dai-assistant-db).
       default: jdbc:postgresql://<assistant-db-host>:5432/<assistant-database-name>
     - name: PostgresqlExternalConfigReleaseAssistantUsername
