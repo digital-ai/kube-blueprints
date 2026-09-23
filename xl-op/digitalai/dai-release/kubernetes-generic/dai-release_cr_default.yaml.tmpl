@@ -372,10 +372,14 @@ spec:
         clientSecret: "{{ .ReleaseAssistantOauth2TokenClientSecret }}"
       accountId: "{{ .ReleaseAssistantAccountId }}"
       aiLlm:
+        {{- if eq .ReleaseAssistantLlmServiceInstall true }}
+        baseUrl: "http://{{ $releaseName }}-llm-service:9000/llm"
+        {{- else }}
         baseUrl: "{{ .ReleaseAssistantAiLlmBaseUrl }}"
+        {{- end }}
         chatModel: "{{ .ReleaseAssistantAiLlmChatModel }}"
         customHeaders:
-          X-Digitalai-AppName: "devops/release-ai-assistant/{{ .ReleaseAssistantAccountId }}"
+          X-Digitalai-AppName: "devops/release-ai-assistant"
     ingress:
       {{- if eq .ReleaseAssistantIngressEnabled true }}
       enabled: true
@@ -385,6 +389,44 @@ spec:
         enabled: {{ .ReleaseAssistantIngressTlsEnabled }}
       {{- else }}
       enabled: false
+      {{- end }}
+    llm-service-helm-chart:
+      {{- if eq .ReleaseAssistantLlmServiceInstall true }}
+      install: true
+      dbInit:
+        hook:
+          enabled: false
+      config:
+        database:
+          {{- if eq .PostgresqlType "operator" }}
+          server: "dai-xlr-postgres-rw"
+          port: 5432
+          database: "dai-llm-db"
+          username: "dai_llm"
+          password: "dai_llm"
+          {{- else if eq .PostgresqlType "chart" }}
+          server: "{{ $releaseName }}-postgresql"
+          port: 5432
+          database: "dai-llm-db"
+          username: "dai_llm"
+          password: "dai_llm"
+          {{- else if eq .PostgresqlType "external" }}
+          server: "{{ regexReplaceAll "^jdbc:postgresql://([^/:]+).*" .PostgresqlExternalConfigLlmServiceUrl "${1}" }}"
+          port: {{ regexReplaceAll "^jdbc:postgresql://[^/:]+:([0-9]+).*$" .PostgresqlExternalConfigLlmServiceUrl "${1}" }}
+          database: "{{ regexReplaceAll "^jdbc:postgresql://[^/]+/([^?]+).*$" .PostgresqlExternalConfigLlmServiceUrl "${1}" }}"
+          username: "{{ .PostgresqlExternalConfigLlmServiceUsername }}"
+          password: "{{ .PostgresqlExternalConfigLlmServicePassword }}"
+          {{- end }}
+        auth:
+          accountId: "{{ .ReleaseAssistantLlmServiceAccountId }}"
+          issuerPattern: "{{ .ReleaseAssistantLlmServiceIssuerPattern }}"
+        provider:
+          config: |-
+{{ .ReleaseAssistantLlmServiceProviderConfig | trim | indent 12 }}
+          systemModelAliasMappings: |-
+{{ .ReleaseAssistantLlmServiceSystemModelAliasMappings | trim | indent 12 }}
+      {{- else }}
+      install: false
       {{- end }}
     {{- else }}
     install: false

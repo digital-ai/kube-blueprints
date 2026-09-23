@@ -1117,7 +1117,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide Ask Release assistant external DB JDBC URL:"
-promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && ReleaseAssistantInstall && (PostgresqlType == 'external')"
+      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && ReleaseAssistantInstall && (PostgresqlType == 'external')"
       description: JDBC URL for Ask Release assistant database. Use JDBC format (for example jdbc:postgresql://db-host:5432/dai-assistant-db).
       default: jdbc:postgresql://<assistant-db-host>:5432/<assistant-database-name>
     - name: PostgresqlExternalConfigReleaseAssistantUsername
@@ -1138,6 +1138,33 @@ promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && Rele
       promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && (PostgresqlType == 'external')"
       description: Password for Ask Release assistant database connection.
       default: <assistant-password>
+    - name: PostgresqlExternalConfigLlmServiceUrl
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      prompt: "Provide LLM Service external DB JDBC URL:"
+      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && (PostgresqlType == 'external')"
+      description: JDBC URL for LLM Service database. Use JDBC format (for example jdbc:postgresql://db-host:5432/dai-llm-db).
+      default: jdbc:postgresql://<llm-db-host>:5432/<llm-database-name>
+    - name: PostgresqlExternalConfigLlmServiceUsername
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      prompt: "Provide LLM Service external DB username:"
+      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && (PostgresqlType == 'external')"
+      description: Username for LLM Service database connection.
+      default: <llm-username>
+    - name: PostgresqlExternalConfigLlmServicePassword
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      prompt: "Provide LLM Service external DB password:"
+      promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && (PostgresqlType == 'external')"
+      description: Password for LLM Service database connection.
+      default: <llm-password>
     - name: PostgresqlExternalConfigDeploy
       type: Editor
       saveInXlvals: true
@@ -1998,16 +2025,70 @@ promptIf: !expr "ServerType == 'dai-release' && ProcessType == 'install' && Rele
       description: Account ID used by Ask Release as DAI_ACCOUNT_ID.
       allowEmpty: false
       default: ""
+    - name: ReleaseAssistantLlmServiceInstall
+      type: Confirm
+      default: false
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Install LLM Service subchart for Release Assistant:"
+      description: Type yes to install LLM Service as an optional subchart. By default it is disabled.
+    - name: ReleaseAssistantLlmServiceProviderConfig
+      type: Editor
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Provide LLM Service provider JSON config:"
+      description: JSON configuration used to seed the default LLM provider.
+      default: |-
+        {
+          "type": "openai",
+          "config": {
+            "api_key": "REPLACE-ME"
+          }
+        }
+    - name: ReleaseAssistantLlmServiceSystemModelAliasMappings
+      type: Editor
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Provide LLM Service system model alias mappings JSON (optional):"
+      description: JSON object mapping system aliases to provider-specific model names.
+      default: |-
+        {}
+    - name: ReleaseAssistantLlmServiceAccountId
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr false
+      prompt: "Account ID for LLM Service (auto-derived):"
+      description: Auto-derived from ReleaseAssistantAccountId.
+      allowEmpty: false
+      default: !expr ReleaseAssistantAccountId
+    - name: ReleaseAssistantLlmServiceIssuerPattern
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr false
+      prompt: "Issuer URL pattern for LLM Service (auto-derived):"
+      description: Auto-derived from ReleaseAssistantOidcIssuerUri.
+      allowEmpty: false
+      default: !expr ReleaseAssistantOidcIssuerUri
     - name: ReleaseAssistantAiLlmBaseUrl
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install' && !ReleaseAssistantLlmServiceInstall
       prompt: "Enter LLM API base URL:"
-      description: Base URL used by Ask Release for AI LLM API.
+      description: Base URL used by Ask Release for AI LLM API. When embedded LLM Service is enabled, this value is auto-set to the in-cluster LLM Service URL.
       allowEmpty: false
-      default: ""
+      default: !expr "ReleaseAssistantLlmServiceInstall ? ('http://' + ReleaseName + '-llm-service:9000/llm') : ''"
     - name: ReleaseAssistantAiLlmChatModel
       type: Input
       saveInXlvals: true

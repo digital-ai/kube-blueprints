@@ -43,6 +43,9 @@ PostgresqlExternalConfigRelease: |-
 PostgresqlExternalConfigReleaseAssistantUrl: '{{ .PostgresqlExternalConfigReleaseAssistantUrl }}'
 PostgresqlExternalConfigReleaseAssistantUsername: '{{ .PostgresqlExternalConfigReleaseAssistantUsername }}'
 PostgresqlExternalConfigReleaseAssistantPassword: '{{ .PostgresqlExternalConfigReleaseAssistantPassword }}'
+PostgresqlExternalConfigLlmServiceUrl: '{{ .PostgresqlExternalConfigLlmServiceUrl }}'
+PostgresqlExternalConfigLlmServiceUsername: '{{ .PostgresqlExternalConfigLlmServiceUsername }}'
+PostgresqlExternalConfigLlmServicePassword: '{{ .PostgresqlExternalConfigLlmServicePassword }}'
 {{- end }}
 OidcConfigTypeInstall: '{{ .OidcConfigTypeInstall }}'
 OidcConfigTypeUpgrade: '{{ .OidcConfigTypeUpgrade }}'
@@ -163,6 +166,13 @@ ReleaseAssistantUrl: '{{ .ReleaseAssistantUrl }}'
 ReleaseAssistantOauth2TokenClientId: '{{ .ReleaseAssistantOauth2TokenClientId }}'
 ReleaseAssistantOauth2TokenClientSecret: '{{ .ReleaseAssistantOauth2TokenClientSecret }}'
 ReleaseAssistantAccountId: '{{ .ReleaseAssistantAccountId }}'
+ReleaseAssistantLlmServiceInstall: {{ .ReleaseAssistantLlmServiceInstall }}
+ReleaseAssistantLlmServiceProviderConfig: |-
+{{ .ReleaseAssistantLlmServiceProviderConfig | trim | indent 2}}
+ReleaseAssistantLlmServiceSystemModelAliasMappings: |-
+{{ .ReleaseAssistantLlmServiceSystemModelAliasMappings | trim | indent 2}}
+ReleaseAssistantLlmServiceAccountId: '{{ .ReleaseAssistantLlmServiceAccountId }}'
+ReleaseAssistantLlmServiceIssuerPattern: '{{ .ReleaseAssistantLlmServiceIssuerPattern }}'
 ReleaseAssistantAiLlmChatModel: '{{ .ReleaseAssistantAiLlmChatModel }}'
 ReleaseAssistantAiLlmBaseUrl: '{{ .ReleaseAssistantAiLlmBaseUrl }}'
 ReleaseAssistantOidcIssuerUri: '{{ .ReleaseAssistantOidcIssuerUri }}'
