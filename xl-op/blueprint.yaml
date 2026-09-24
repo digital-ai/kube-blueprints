@@ -1711,6 +1711,7 @@ spec:
         .spec.ssl: .
         .spec.hooks.genSelfSigned.enabled: .
         .spec.hooks.getLicense.enabled: .
+        .spec.xlReleaseConfExtra: .
         .spec.configuration: .
         .spec.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
