@@ -4,7 +4,7 @@ ImageTagDeploy: 26.3.0-830.800
 RepositoryNameRelease: 'xebialabs'
 OperatorImageTagRelease: 26.3.0-911.1035
 ImageTagRelease: 26.3.0-911.1035
-RepositoryNameReleaseRunner: xebialabsunsupported
+RepositoryNameReleaseRunner: xebialabs
 ImageTagReleaseRunner: 26.3.0-911.1035
 PostgresqlOperatorImageTag: 1.28.3
 PostgresqlClusterImageTag: 18.4-minimal-trixie
