@@ -10,5 +10,4 @@ spec:
     configure: ".*"
     write: ".*"
   rabbitmqClusterReference:
-    connectionSecret:
-      name: dai-xld-rabbitmq-secret
+    name: dai-xld-rabbitmq
