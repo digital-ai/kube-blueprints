@@ -78,7 +78,7 @@ spec:
     enabled: {{ not (eq .OidcConfigType "no-oidc") }}
 {{ .ExternalOidcConf | indent 4 }}
   ai:
-    {{- if or .ReleaseAssistantInstall .ReleaseAssistantUrl }}
+    {{- if and .ReleaseAssistantInstall .ReleaseAssistantUrl }}
     enabled: true
     assistantUrl: "{{ .ReleaseAssistantUrl }}"
     {{- else }}
