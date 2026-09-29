@@ -167,6 +167,8 @@ ReleaseAssistantOauth2TokenClientId: '{{ .ReleaseAssistantOauth2TokenClientId }}
 ReleaseAssistantOauth2TokenClientSecret: '{{ .ReleaseAssistantOauth2TokenClientSecret }}'
 ReleaseAssistantAccountId: '{{ .ReleaseAssistantAccountId }}'
 ReleaseAssistantLlmServiceInstall: {{ .ReleaseAssistantLlmServiceInstall }}
+RepositoryNameLlmService: '{{ .RepositoryNameLlmService }}'
+ImageTagLlmService: '{{ .ImageTagLlmService }}'
 ReleaseAssistantLlmServiceProviderConfig: |-
 {{ .ReleaseAssistantLlmServiceProviderConfig | trim | indent 2}}
 ReleaseAssistantLlmServiceSystemModelAliasMappings: |-

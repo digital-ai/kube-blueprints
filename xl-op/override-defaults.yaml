@@ -6,6 +6,10 @@ OperatorImageTagRelease: 27.1.0-beta.918
 ImageTagRelease: 27.1.0-beta.918
 RepositoryNameReleaseRunner: xebialabsunsupported
 ImageTagReleaseRunner: 27.1.0-beta.918
+RepositoryNameReleaseAssistant: xebialabsunsupported
+ImageTagReleaseAssistant: 26.3.0
+RepositoryNameLlmService: xebialabsunsupported
+ImageTagLlmService: 0.0.1.284
 PostgresqlOperatorImageTag: 1.28.3
 PostgresqlClusterImageTag: 18.4-minimal-trixie
 RabbitmqOperatorImageTag: 2.19.0

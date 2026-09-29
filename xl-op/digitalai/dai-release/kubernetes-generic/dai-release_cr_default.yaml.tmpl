@@ -393,23 +393,29 @@ spec:
     llm-service-helm-chart:
       {{- if eq .ReleaseAssistantLlmServiceInstall true }}
       install: true
+      image:
+        repository: "{{ .RepositoryNameLlmService }}/llm-service-api"
+        tag: "{{ .ImageTagLlmService }}"
       dbInit:
         hook:
           enabled: false
+        image:
+          repository: "{{ .RepositoryNameLlmService }}/llm-service-dbinit"
+          tag: "{{ .ImageTagLlmService }}"
       config:
-        database:
+        db:
           {{- if eq .PostgresqlType "operator" }}
           server: "dai-xlr-postgres-rw"
           port: 5432
           database: "dai-llm-db"
-          username: "dai_llm"
-          password: "dai_llm"
+          username: "dai-llm"
+          password: "dai-llm"
           {{- else if eq .PostgresqlType "chart" }}
           server: "{{ $releaseName }}-postgresql"
           port: 5432
           database: "dai-llm-db"
-          username: "dai_llm"
-          password: "dai_llm"
+          username: "dai-llm"
+          password: "dai-llm"
           {{- else if eq .PostgresqlType "external" }}
           server: "{{ regexReplaceAll "^jdbc:postgresql://([^/:]+).*" .PostgresqlExternalConfigLlmServiceUrl "${1}" }}"
           port: {{ regexReplaceAll "^jdbc:postgresql://[^/:]+:([0-9]+).*$" .PostgresqlExternalConfigLlmServiceUrl "${1}" }}
