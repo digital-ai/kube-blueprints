@@ -1712,6 +1712,8 @@ spec:
         .spec.hooks.genSelfSigned.enabled: .
         .spec.hooks.getLicense.enabled: .
         .spec.xlReleaseConfExtra: .
+        .spec.jvm.securityScripting.allowedJavaClasses: .
+        .spec.jvm.securityScripting.deniedJavaClasses: .
         .spec.configuration: .
         .spec.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
