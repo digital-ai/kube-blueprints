@@ -115,7 +115,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
-      prompt: "Enter the Deploy task engine image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
+      prompt: "Enter the Deploy task engine image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: deploy-task-engine
       description: Enter the Deploy task engine image name to use. Choose the default value, unless using a custom image with different name.
     - name: ImageNameCc
@@ -124,7 +124,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
-      prompt: "Enter the Central Configuration image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
+      prompt: "Enter the Central Configuration image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: central-configuration
       description: Enter the Central Configuration image name to use. Choose the default value, unless using a custom image with different name.
     - name: LicenseSource
