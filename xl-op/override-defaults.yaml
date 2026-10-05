@@ -5,7 +5,7 @@ RepositoryNameRelease: 'xebialabsunsupported'
 OperatorImageTagRelease: 27.1.0-beta.1005
 ImageTagRelease: 27.1.0-beta.1005
 RepositoryNameReleaseRunner: xebialabsunsupported
-ImageTagReleaseRunner: 27.1.0-beta.1001
+ImageTagReleaseRunner: 27.1.0-beta.1005
 RepositoryNameReleaseAssistant: xebialabsunsupported
 ImageTagReleaseAssistant: 26.3.0
 RepositoryNameLlmService: xebialabsunsupported
