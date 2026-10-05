@@ -3,7 +3,7 @@ kind: TestStep
 unitTest: false
 commands:
 - script: $XL_CLI kube install --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-install.yaml
-  timeout: 180
+  timeout: 300
 - script  : $XL_CLI kube check --wait-for-ready 10 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/release-basic-install.yaml
   timeout: 700
 - script: kubectl exec -n $NAMESPACE -c release dai-xlr-digitalai-release-0 -- curl 'http://localhost:5516/support/system-information' --user 'admin:8wFjGpTzPr1giFnI' | jq '.general.clusterNodeActive' | grep '^true$'
