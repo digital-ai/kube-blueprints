@@ -5,10 +5,6 @@ metadata:
 spec:
   image: docker.io/library/rabbitmq:{{ .RabbitmqClusterImageTag }}
 
-  secretBackend:
-    externalSecret:
-      name: dai-xld-rabbitmq-secret
-
   tls:
     disableNonTLSListeners: false
   replicas: {{ .RabbitmqReplicaCount }}
@@ -29,6 +25,12 @@ spec:
     # Bitnami: extraConfiguration (rabbitmq.conf lines) + loadDefinition
     # Adds your config and instructs the broker to load definitions from a mounted Secret file.
     additionalConfig: |
+      # Allow the guest user to authenticate over non-loopback (remote) AMQP/HTTP connections.
+      loopback_users.guest = false
+      # Reconcile guest user/vhost/permissions from the mounted definitions on every boot
+      # (survives PVC-preserved upgrades where the persisted default user is stale).
+      definitions.import_backend = local_filesystem
+      definitions.local.path = /etc/rabbitmq/import/definitions.json
       raft.wal_max_size_bytes = 1048576
       quorum_queue.continuous_membership_reconciliation.enabled = true
       quorum_queue.continuous_membership_reconciliation.target_group_size = {{ .RabbitmqReplicaCount }}
@@ -48,6 +50,10 @@ spec:
                       secretKeyRef:
                         name: dai-xld-rabbitmq-secret
                         key: rabbitmq-erlang-cookie
+                volumeMounts:
+                  - name: definitions
+                    mountPath: /etc/rabbitmq/import
+                    readOnly: true
                 {{- if hasPrefix "Openshift" .K8sSetup }}
                 # Empty securityContext removes operator defaults (runAsUser: 999)
                 # Lets OpenShift assign UID/GID from allowed range
@@ -85,3 +91,10 @@ spec:
               seccompProfile:
                 type: RuntimeDefault
             {{- end }}
+            volumes:
+              - name: definitions
+                secret:
+                  secretName: dai-xld-rabbitmq-secret
+                  items:
+                    - key: definitions.json
+                      path: definitions.json

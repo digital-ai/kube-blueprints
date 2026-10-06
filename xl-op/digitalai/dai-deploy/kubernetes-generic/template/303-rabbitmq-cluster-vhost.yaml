@@ -5,5 +5,4 @@ metadata:
 spec:
   name: "/"
   rabbitmqClusterReference:
-    connectionSecret:
-      name: dai-xld-rabbitmq-secret
+    name: dai-xld-rabbitmq
