@@ -286,9 +286,9 @@ if [ "$APP_TARGET" = "openshift" ]; then
 
     grep -rlZ "dai-$APP_SHORT_TYPE" "$OUTPUT_HOST_DIR"/tests/e2e/apply | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
     grep -rlZ "dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-" "$OUTPUT_HOST_DIR"/tests/e2e/asserts | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-/dai-ocp-$APP_SHORT_TYPE-digitalai-$APP_TYPE-ocp-/g"
-    grep -rlZ "dai-$APP_SHORT_TYPE" "$OUTPUT_HOST_DIR"/tests/e2e/asserts | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
+    grep -rlZ "dai-$APP_SHORT_TYPE" "$OUTPUT_HOST_DIR"/tests/e2e/asserts | xargs -0 sed -E -i "/postgres|rabbitmq/! s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
     grep -rlZ "dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-" "$OUTPUT_HOST_DIR"/tests/e2e/*/$APP_TYPE/steps | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE-digitalai-$APP_TYPE-/dai-ocp-$APP_SHORT_TYPE-digitalai-$APP_TYPE-ocp-/g"
-    grep -rlZ "dai-$APP_SHORT_TYPE" "$OUTPUT_HOST_DIR"/tests/e2e/*/$APP_TYPE/steps | xargs -0 sed -i "s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
+    grep -rlZ "dai-$APP_SHORT_TYPE" "$OUTPUT_HOST_DIR"/tests/e2e/*/$APP_TYPE/steps | xargs -0 sed -E -i "/postgres|rabbitmq/! s/dai-$APP_SHORT_TYPE/dai-ocp-$APP_SHORT_TYPE/g"
 fi
 
 echo "Starting tests for: ${APP_OPERATOR} ON ${APP_TARGET}"
