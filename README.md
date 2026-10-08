@@ -103,6 +103,29 @@ Flow:
   The `dai-assistant-db` and `dai-llm-db` databases are created automatically
   during the upgrade.
 
+### Release Runner Setup
+
+The `dai-release-runner` sub-blueprint configures remote execution runners for
+Digital.ai Release and is wired into `xl-op` (`XLOp --> Runner` in the
+architecture diagram).
+
+Runner setup includes:
+
+- Creating a `runner` user, `Runner` role, and global runner permissions via
+  `xl-op/digitalai/dai-release-runner/create-release-runner-user.yaml.tmpl`.
+- Generating runner Helm values in
+  `xl-op/digitalai/dai-release-runner/values-cli.yaml.tmpl`, including:
+  - `replicaCount` from `RemoteRunnerCount`
+  - Release endpoint + registration token (`RemoteRunnerReleaseUrl`,
+    `RemoteRunnerToken`)
+  - Runner image source (`RepositoryNameReleaseRunner`, `ImageNameReleaseRunner`,
+    `ImageTagReleaseRunner`) with optional custom/private registry support
+  - Optional REST client truststore (`IsRemoteRunnerTruststoreEnabled`,
+    `RemoteRunnerRestClientCa`)
+- Optional OpenShift SCC creation from
+  `xl-op/digitalai/dai-release-runner/openshift-scc-release-runner.yaml.tmpl`
+  when `K8sSetup` is OpenShift and `EnableSCC = true`.
+
 ---
 
 ## Repository Layout
