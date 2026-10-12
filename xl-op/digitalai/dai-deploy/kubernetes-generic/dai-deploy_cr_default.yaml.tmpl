@@ -1,19 +1,7 @@
 apiVersion: xld.digital.ai/v1alpha1
 kind: DigitalaiDeploy
 metadata:
-  {{- if hasPrefix "Openshift" .K8sSetup }}
-  {{- if eq .UseCustomNamespace true }}
-  name: dai-ocp-xld-{{ .Namespace }}
-  {{- else }}
-  name: dai-ocp-xld
-  {{- end }}
-  {{- else }}
-  {{- if eq .UseCustomNamespace true }}
-  name: dai-xld-{{ .Namespace }}
-  {{- else }}
-  name: dai-xld
-  {{- end }}
-  {{- end }}
+  name: {{ .CrName }}
 spec:
   global:
     security:

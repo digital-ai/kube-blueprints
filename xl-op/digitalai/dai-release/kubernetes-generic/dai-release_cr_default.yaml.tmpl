@@ -1,17 +1,4 @@
-{{- $releaseName := "dai-xlr" -}}
-{{- if hasPrefix "Openshift" .K8sSetup -}}
-  {{- if eq .UseCustomNamespace true -}}
-    {{- $releaseName = printf "dai-ocp-xlr-%s" .Namespace -}}
-  {{- else -}}
-    {{- $releaseName = "dai-ocp-xlr" -}}
-  {{- end -}}
-{{- else -}}
-  {{- if eq .UseCustomNamespace true -}}
-    {{- $releaseName = printf "dai-xlr-%s" .Namespace -}}
-  {{- else -}}
-    {{- $releaseName = "dai-xlr" -}}
-  {{- end -}}
-{{- end -}}
+{{- $releaseName := .CrName -}}
 apiVersion: xlr.digital.ai/v1alpha1
 kind: DigitalaiRelease
 metadata:

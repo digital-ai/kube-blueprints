@@ -1348,7 +1348,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       description: The name of your custom resource
-      default: !expr "(ServerType != 'dai-release-runner' && CrdName != '' && (CleanBefore || ProcessType == 'clean')) || (ProcessType == 'upgrade' && UpgradeType == 'operatorToOperator') ? k8sResource(Namespace, CrdName, ShortServerName) : ''"
+      default: !expr "(ServerType != 'dai-release-runner' && CrdName != '' && (CleanBefore || ProcessType == 'clean')) || (ProcessType == 'upgrade' && UpgradeType == 'operatorToOperator') ? k8sResource(Namespace, CrdName, ShortServerName) : (regex('^Openshift.*', K8sSetup) ? (UseCustomNamespace ? ('dai-ocp-' + ShortServerName + '-' + Namespace) : ('dai-ocp-' + ShortServerName)) : (UseCustomNamespace ? ('dai-' + ShortServerName + '-' + Namespace) : ('dai-' + ShortServerName)))"
     - name: PreserveCrValuesDeploy
       type: Editor
       prompt: "Edit list of custom resource keys that will migrate to the new Deploy CR:"
@@ -1979,6 +1979,7 @@ spec:
       description: Assistant URL set in Release CR (.spec.ai.assistantUrl). If empty and Release Assistant is installed, chart defaults to in-cluster service URL.
       default: ""
       allowEmpty: true
+      validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantUrl)"
     - name: ReleaseAssistantReleaseBaseUrl
       type: Input
       saveInXlvals: true
@@ -2039,6 +2040,7 @@ spec:
       description: OIDC issuer URI used by Release Assistant JWT and OAuth2 client configuration.
       allowEmpty: false
       default: ""
+      validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantOidcIssuerUri)"
     - name: ReleaseAssistantOidcJwkSetUri
       type: Input
       saveInXlvals: true
@@ -2049,6 +2051,7 @@ spec:
       description: OIDC JWK set URI used by Release Assistant JWT validation.
       allowEmpty: false
       default: !expr "ReleaseAssistantOidcIssuerUri + '/protocol/openid-connect/certs'"
+      validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantOidcJwkSetUri)"
     - name: ReleaseAssistantLlmServiceInstall
       type: Confirm
       default: false
@@ -2154,7 +2157,7 @@ spec:
       promptIf: !expr RemoteRunnerInstall && RemoteRunnerInstallType != 'cluster-install' && (ServerType == 'dai-release-runner' || RemoteRunnerGeneration) && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enter the Release URL that will be used by Release Runner:"
       overrideDefault: true
-      default: !expr "'http://dai-xlr-digitalai-release.' + Namespace"
+      default: !expr "'http://' + CrName + '-digitalai-release.' + Namespace"
       description: The Release URL that will be used by Release Runner, it needs to be accessible from the Release Runner pod.
       validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', RemoteRunnerReleaseUrl)"
     - name: RemoteRunnerUserEmail
