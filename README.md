@@ -34,12 +34,12 @@ The build pipeline packages everything into a single
   memory requests and limits.
 - License source: auto-generated evaluation, file, editor, or default internal
   repository keystore.
-- **Release AI Assitant** and embedded **LLM Service** as optional
+- **Release AI Assistant** and embedded **LLM Service** as optional
   subcharts of the Release operator — see the dedicated section below.
 
 ---
 
-## Release AI Assitant & LLM Service
+## Release AI Assistant & LLM Service
 
 The blueprint optionally deploys the AI stack alongside Digital.ai Release. Two
 Helm subcharts are wired into the `dai-release` CR template
@@ -47,7 +47,7 @@ Helm subcharts are wired into the `dai-release` CR template
 
 | Subchart                  | Image (default in `xl-op/override-defaults.yaml`)   | Purpose                                                                 |
 | ------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------- |
-| `release-assistant-helm-chart` | `xebialabsunsupported/dai-release-assistant:26.3.0` | Release AI Assitant                                                      |
+| `release-assistant-helm-chart` | `xebialabsunsupported/dai-release-assistant:26.3.0` | Release AI Assistant                                                      |
 | `llm-service-helm-chart`  | `xebialabsunsupported/llm-service-api:0.0.1.284` (+ `llm-service-dbinit`) | Embedded LLM provider (OpenAI / Anthropic / …) with configurable JSON   |
 
 When the Assistant or LLM Service is installed, the blueprint automatically
@@ -372,7 +372,7 @@ failure.
 
 - The base version lives in `gradle.properties` (`version=27.1.0`).
 - Image / chart tag pins live in `xl-op/override-defaults.yaml` (Deploy,
-  Release, Release AI Assitant, LLM Service, CloudNativePG, RabbitMQ).
+  Release, Release AI Assistant, LLM Service, CloudNativePG, RabbitMQ).
 - CI uses the version reported by `Jenkinsfile#getCurrentVersion()` (currently
   `27.1.0`) and suffixes it with the branch name to produce a per-branch
   release identifier.
