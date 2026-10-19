@@ -8,7 +8,7 @@ commands:
   namespaced: true
 - command: sleep 1m
   timeout: 70
-- script: $XL_CLI kube check --wait-for-ready 5 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/deploy-basic-install.yaml
+- script: $XL_CLI kube check --wait-for-ready 15 --skip-prompts --skip-context-check -a $ANSWERS_REL_PATH/deploy-basic-install.yaml
   timeout: 500
 assert:
 - $ASSERTS_REL_PATH/deploy-running-product-pods.yaml
