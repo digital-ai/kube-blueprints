@@ -384,8 +384,6 @@ spec:
         repository: "{{ .RepositoryNameLlmService }}/{{ .ImageNameLlmService }}"
         tag: "{{ .ImageTagLlmService }}"
       dbInit:
-        hook:
-          enabled: false
         image:
           repository: "{{ .RepositoryNameLlmService }}/llm-service-dbinit"
           tag: "{{ .ImageTagLlmService }}"
