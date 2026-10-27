@@ -153,8 +153,10 @@ RepositoryNameReleaseRunner: '{{ .RepositoryNameReleaseRunner }}'
 RemoteRunnerReleaseName: '{{ .RemoteRunnerReleaseName }}'
 RemoteRunnerUseDefaultLocation: {{ .RemoteRunnerUseDefaultLocation }}
 RemoteRunnerHelmChartUrl: '{{ .RemoteRunnerHelmChartUrl }}'
+ReleaseAssistantUpgrade: {{ .ReleaseAssistantUpgrade }}
 ReleaseAssistantInstall: {{ .ReleaseAssistantInstall }}
 RepositoryNameReleaseAssistant: '{{ .RepositoryNameReleaseAssistant }}'
+ImageNameReleaseAssistant: '{{ .ImageNameReleaseAssistant }}'
 ImageTagReleaseAssistant: '{{ .ImageTagReleaseAssistant }}'
 ReleaseAssistantIngressEnabled: {{ .ReleaseAssistantIngressEnabled }}
 ReleaseAssistantIngressHostname: '{{ .ReleaseAssistantIngressHostname }}'
@@ -166,8 +168,10 @@ ReleaseAssistantUrl: '{{ .ReleaseAssistantUrl }}'
 ReleaseAssistantOauth2TokenClientId: '{{ .ReleaseAssistantOauth2TokenClientId }}'
 ReleaseAssistantOauth2TokenClientSecret: '{{ .ReleaseAssistantOauth2TokenClientSecret }}'
 ReleaseAssistantAccountId: '{{ .ReleaseAssistantAccountId }}'
+ReleaseAssistantLlmServiceUpgrade: {{ .ReleaseAssistantLlmServiceUpgrade }}
 ReleaseAssistantLlmServiceInstall: {{ .ReleaseAssistantLlmServiceInstall }}
 RepositoryNameLlmService: '{{ .RepositoryNameLlmService }}'
+ImageNameLlmService: '{{ .ImageNameLlmService }}'
 ImageTagLlmService: '{{ .ImageTagLlmService }}'
 ReleaseAssistantLlmServiceProviderConfig: |-
 {{ .ReleaseAssistantLlmServiceProviderConfig | trim | indent 2}}

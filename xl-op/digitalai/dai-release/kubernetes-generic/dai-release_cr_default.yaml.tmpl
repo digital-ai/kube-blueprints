@@ -331,7 +331,7 @@ spec:
     {{- if eq .ReleaseAssistantInstall true }}
     install: true
     image:
-      repository: "{{ .RepositoryNameReleaseAssistant }}/dai-release-assistant"
+      repository: "{{ .RepositoryNameReleaseAssistant }}/{{ .ImageNameReleaseAssistant }}"
       tag: "{{ .ImageTagReleaseAssistant }}"
     config:
       db:
@@ -381,11 +381,9 @@ spec:
       {{- if eq .ReleaseAssistantLlmServiceInstall true }}
       install: true
       image:
-        repository: "{{ .RepositoryNameLlmService }}/llm-service-api"
+        repository: "{{ .RepositoryNameLlmService }}/{{ .ImageNameLlmService }}"
         tag: "{{ .ImageTagLlmService }}"
       dbInit:
-        hook:
-          enabled: false
         image:
           repository: "{{ .RepositoryNameLlmService }}/llm-service-dbinit"
           tag: "{{ .ImageTagLlmService }}"
