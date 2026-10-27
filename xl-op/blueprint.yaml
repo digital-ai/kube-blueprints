@@ -1957,7 +1957,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Upgrade Release AI Assistant or unistall it:"
+      prompt: "Upgrade Release AI Assistant or uninstall it:"
       promptIf: !expr ServerType == 'dai-release' && ProcessType == "upgrade" && ReleaseAssistantEnabledOnCr
       description: |
         Provide the type of the Release AI Assistant upgrade. Based on the type, you will be providing the Release AI Assistant configuration
@@ -2130,7 +2130,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Upgrade LLM Service or unistall it:"
+      prompt: "Upgrade LLM Service or uninstall it:"
       promptIf: !expr ServerType == 'dai-release' && ProcessType == "upgrade" && ReleaseAssistantInstall && ReleaseAssistantLlmServiceEnabledOnCr
       description: |
         Provide the type of the LLM Service upgrade. Based on the type, you will be providing the LLM Service configuration
