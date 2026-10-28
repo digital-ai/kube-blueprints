@@ -46,9 +46,15 @@ for provider in "${PROVIDERS[@]}"; do
 
       # Merge the three YAML documents.
       # The merge operator (*) in yq applies left-to-right so that keys from later files override earlier ones.
-      yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1) * select(fileIndex == 2)' "$b" "$a" "$p" > "$output_file"
-      
-      echo "Generated $output_file"
+      if yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1) * select(fileIndex == 2)' "$b" "$a" "$p" > "$output_file" 2>/tmp/yq_err; then
+        echo "Generated $output_file"
+      else
+        echo "ERROR: Failed to generate $output_file" >&2
+        echo "  base:     $base_file (exists: $([ -f "$base_file" ] && echo yes || echo no))" >&2
+        echo "  action:   $action_file (exists: $([ -f "$action_file" ] && echo yes || echo no))" >&2
+        echo "  provider: $provider_file (exists: $([ -f "$provider_file" ] && echo yes || echo no))" >&2
+        echo "  yq error: $(cat /tmp/yq_err)" >&2
+      fi
     done
   done
 done

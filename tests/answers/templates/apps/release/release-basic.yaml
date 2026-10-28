@@ -79,7 +79,6 @@ CrdName: ''
 IsCrdReused: false
 CrName: ''
 ImageNameReleaseRunner: 'release-runner'
-RemoteRunnerInstallType: ''
 RepositoryNameReleaseRunner: 'xebialabsunsupported'
 RemoteRunnerReleaseName: 'release-runner'
 RemoteRunnerUseDefaultLocation: true
@@ -92,8 +91,34 @@ ReleaseAssistantIngressEnabled: false
 ReleaseAssistantIngressHostname: 'release-assistant.local'
 ReleaseAssistantIngressTlsEnabled: false
 ReleaseAssistantIngressClassName: ''
+RepositoryNameReleaseAssistant: ''
+ImageNameReleaseAssistant: ''
+ImageTagReleaseAssistant: ''
 ReleaseAssistantReleaseBaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
 ReleaseAssistantReleaseMcpBaseUrl: 'http://dai-xlr-digitalai-release.digitalai'
+ReleaseAssistantUrl: ''
+ReleaseAssistantOauth2TokenClientId: ''
+ReleaseAssistantOauth2TokenClientSecret: ''
+ReleaseAssistantAccountId: ''
+RepositoryNameLlmService: ''
+ImageNameLlmService: ''
+ImageTagLlmService: ''
+ReleaseAssistantLlmServiceProviderConfig: |-
+
+ReleaseAssistantLlmServiceSystemModelAliasMappings: |-
+
+ReleaseAssistantLlmServiceAccountId: ''
+ReleaseAssistantLlmServiceIssuerPattern: ''
+ReleaseAssistantAiLlmChatModel: ''
+ReleaseAssistantAiLlmBaseUrl: ''
+ReleaseAssistantOidcIssuerUri: ''
+ReleaseAssistantOidcJwkSetUri: ''
+PostgresqlExternalConfigReleaseAssistantUrl: ''
+PostgresqlExternalConfigReleaseAssistantUsername: ''
+PostgresqlExternalConfigReleaseAssistantPassword: ''
+PostgresqlExternalConfigLlmServiceUrl: ''
+PostgresqlExternalConfigLlmServiceUsername: ''
+PostgresqlExternalConfigLlmServicePassword: ''
 RemoteRunnerReleaseUrl: ''
 RemoteRunnerToken: ''
 RemoteRunnerUserEmail: 'release-runner@no.reply'
