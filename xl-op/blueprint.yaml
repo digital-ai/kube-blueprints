@@ -115,7 +115,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
-      prompt: "Enter the Deploy task engine image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
+      prompt: "Enter the Deploy task engine image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: deploy-task-engine
       description: Enter the Deploy task engine image name to use. Choose the default value, unless using a custom image with different name.
     - name: ImageNameCc
@@ -124,7 +124,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       promptIf: !expr "ServerType == 'dai-deploy' && !regex('^10.*$', ImageTagDeploy) && (ProcessType == 'install' || ProcessType == 'upgrade') && (K8sSetup == 'OpenshiftCertified' && IsCustomImageRegistry || K8sSetup != 'OpenshiftCertified')"
-      prompt: "Enter the Central Configuration image name for version 22 and above (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
+      prompt: "Enter the Central Configuration image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       default: central-configuration
       description: Enter the Central Configuration image name to use. Choose the default value, unless using a custom image with different name.
     - name: LicenseSource
@@ -1116,27 +1116,27 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Provide Ask Release assistant external DB JDBC URL:"
+      prompt: "Provide Release AI Assistant external DB JDBC URL:"
       promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && ReleaseAssistantInstall && (PostgresqlType == 'external')"
-      description: JDBC URL for Ask Release assistant database. Use JDBC format (for example jdbc:postgresql://db-host:5432/dai-assistant-db).
+      description: JDBC URL for Release AI Assistant database. Use JDBC format (for example jdbc:postgresql://db-host:5432/dai-assistant-db).
       default: jdbc:postgresql://<assistant-db-host>:5432/<assistant-database-name>
     - name: PostgresqlExternalConfigReleaseAssistantUsername
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Provide Ask Release assistant external DB username:"
-      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlType == 'external')"
-      description: Username for Ask Release assistant database connection.
+      prompt: "Provide Release AI Assistant external DB username:"
+      promptIf: !expr "ServerType == 'dai-Assistant' && (ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlType == 'external')"
+      description: Username for Release AI Assistant database connection.
       default: <assistant-username>
     - name: PostgresqlExternalConfigReleaseAssistantPassword
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Provide Ask Release assistant external DB password:"
+      prompt: "Provide Release AI Assistant external DB password:"
       promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && (PostgresqlType == 'external')"
-      description: Password for Ask Release assistant database connection.
+      description: Password for Release AI Assistant database connection.
       default: <assistant-password>
     - name: PostgresqlExternalConfigLlmServiceUrl
       type: Input
@@ -1348,7 +1348,31 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       description: The name of your custom resource
-      default: !expr "(ServerType != 'dai-release-runner' && CrdName != '' && (CleanBefore || ProcessType == 'clean')) || (ProcessType == 'upgrade' && UpgradeType == 'operatorToOperator') ? k8sResource(Namespace, CrdName, ShortServerName) : ''"
+      default: !expr "(ServerType != 'dai-release-runner' && CrdName != '' && (CleanBefore || ProcessType == 'clean')) || (ProcessType == 'upgrade' && UpgradeType == 'operatorToOperator') ? k8sResource(Namespace, CrdName, ShortServerName) : (regex('^Openshift.*', K8sSetup) ? (UseCustomNamespace ? ('dai-ocp-' + ShortServerName + '-' + Namespace) : ('dai-ocp-' + ShortServerName)) : (UseCustomNamespace ? ('dai-' + ShortServerName + '-' + Namespace) : ('dai-' + ShortServerName)))"
+    - name: CurrentCrYaml
+      type: Editor
+      prompt: "Edit custom resource that will be used for upgrade:"
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      promptIf: !expr false
+      description: Existing custom resource YAML loaded from the cluster during operator-to-operator upgrade.
+      default: !expr "ProcessType == 'upgrade' && UpgradeType == 'operatorToOperator' && ServerType != 'dai-release-runner' ? k8sResourceYaml(Namespace, CrdName, CrName) : ''"
+    - name: ReleaseAssistantEnabledOnCr
+      type: Confirm
+      prompt: "Enable Release AI Assistant:"
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      promptIf: !expr false
+      description: Whether Release AI Assistant is enabled in the existing Release CR.
+      default: !expr "ProcessType == 'upgrade' && ServerType == 'dai-release' ? (yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.install', true) == true || yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.install', true) == 'true') : false"
+    - name: ReleaseAssistantLlmServiceEnabledOnCr
+      type: Confirm
+      prompt: "Enable LLM Service:"
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      promptIf: !expr false
+      description: Whether LLM Service is enabled in the existing Release CR.
+      default: !expr "ProcessType == 'upgrade' && ServerType == 'dai-release' ? (yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.llm-service-helm-chart.install', true) == true || yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.llm-service-helm-chart.install', true) == 'true') : false"
     - name: PreserveCrValuesDeploy
       type: Editor
       prompt: "Edit list of custom resource keys that will migrate to the new Deploy CR:"
@@ -1669,6 +1693,25 @@ spec:
             expression: .spec.Persistence.ExistingClaim
           23.3: .
         .spec.oidc: .
+        .spec.ai.enabled: .
+        .spec.ai.assistantUrl: .
+        .spec.release-assistant-helm-chart.ingress.enabled: .
+        .spec.release-assistant-helm-chart.ingress.hostname: .
+        .spec.release-assistant-helm-chart.ingress.tls.enabled: .
+        .spec.release-assistant-helm-chart.ingress.ingressClassName: .
+        .spec.release-assistant-helm-chart.config.release.baseUrl: .
+        .spec.release-assistant-helm-chart.config.releaseMcp.baseUrl: .
+        .spec.release-assistant-helm-chart.config.accountId: .
+        .spec.release-assistant-helm-chart.config.oidc.clientId: .
+        .spec.release-assistant-helm-chart.config.oidc.clientSecret: .
+        .spec.release-assistant-helm-chart.config.oidc.issuerUri: .
+        .spec.release-assistant-helm-chart.config.oidc.jwkSetUri: .
+        .spec.release-assistant-helm-chart.llm-service-helm-chart.image.tag: .
+        .spec.release-assistant-helm-chart.config.aiLlm.baseUrl: .
+        .spec.release-assistant-helm-chart.config.aiLlm.chatModel: .
+        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.config: .
+        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.systemModelAliasMappings: .
+        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.auth.accountId: .
         .spec.external.db:
           0.0:
           23.3: .
@@ -1765,6 +1808,9 @@ spec:
         .spec.ssl: .
         .spec.hooks.genSelfSigned.enabled: .
         .spec.hooks.getLicense.enabled: .
+        .spec.xlReleaseConfExtra: .
+        .spec.jvm.securityScripting.allowedJavaClasses: .
+        .spec.jvm.securityScripting.deniedJavaClasses: .
         .spec.configuration: .
         .spec.extraConfiguration: .
         .spec.postgresql.primary.configuration: .
@@ -1901,50 +1947,75 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       description: Release Runner Helm Chart local filesystem path or URL to the Release Runner Helm Chart package.
-    - name: ReleaseAssistantInstall
-      type: Confirm
-      default: false
+    - name: ReleaseAssistantUpgrade
+      type: Select
+      options:
+        - label: Upgrade existing Release AI Assistant configuration
+          value: existing
+        - label: Remove Release AI Assistant
+          value: remove
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Install Digital.ai Release Assistant:"
+      prompt: "Upgrade Release AI Assistant or uninstall it:"
+      promptIf: !expr ServerType == 'dai-release' && ProcessType == "upgrade" && ReleaseAssistantEnabledOnCr
       description: |
-        Type yes to install Digital.ai Release Assistant in the same namespace using Release operator.
-        Type no to skip the Release Assistant installation.
+        Provide the type of the Release AI Assistant upgrade. Based on the type, you will be providing the Release AI Assistant configuration
+        or using the Release AI Assistant configuration.
+      default: existing
+    - name: ReleaseAssistantInstall
+      type: Confirm
+      default: !expr "ProcessType == 'upgrade' ? (ReleaseAssistantUpgrade == 'remove' ? false : ReleaseAssistantEnabledOnCr) : false"
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Install Release AI Assistant:"
+      description: |
+        Type yes to install Release AI Assistant in the same namespace using Release operator.
+        Type no to skip the Release AI Assistant installation.
     - name: RepositoryNameReleaseAssistant
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter the Release Assistant image repository name:"
-      description: Release Assistant container image repository name used by the Assistant.
+      prompt: "Enter the Release AI Assistant image repository name:"
+      description: Release AI Assistant container image repository name used by the Assistant.
+    - name: ImageNameReleaseAssistant
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      prompt: "Enter the Release AI Assistant image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Release AI Assistant container image name used by the Assistant.
+      default: dai-release-assistant
     - name: ImageTagReleaseAssistant
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter the Release Assistant image tag:"
-      description: Release Assistant container image tag used by the Assistant.
+      prompt: "Enter the Release AI Assistant image tag:"
+      description: Release AI Assistant container image tag used by the Assistant.
     - name: ReleaseAssistantIngressEnabled
       type: Confirm
       default: false
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enable ingress for Release Assistant:"
-      description: Type yes to expose Release Assistant through ingress.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enable ingress for Release AI Assistant:"
+      description: Type yes to expose Release AI Assistant through ingress.
     - name: ReleaseAssistantIngressHostname
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Provide ingress hostname for Release Assistant:"
-      description: DNS hostname to use for Release Assistant ingress.
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Provide ingress hostname for Release AI Assistant:"
+      description: DNS hostname to use for Release AI Assistant ingress.
       default: release-assistant.local
       validate: !expr "regex('^[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}$', ReleaseAssistantIngressHostname)"
     - name: ReleaseAssistantIngressTlsEnabled
@@ -1953,17 +2024,17 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enable TLS for Release Assistant ingress:"
-      description: Type yes to configure TLS on Release Assistant ingress.
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enable TLS for Release AI Assistant ingress:"
+      description: Type yes to configure TLS on Release AI Assistant ingress.
     - name: ReleaseAssistantIngressClassName
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Provide ingress class name for Release Assistant (optional):"
-      description: Optional ingress class name for Release Assistant ingress resource.
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantIngressEnabled && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Provide ingress class name for Release AI Assistant (optional):"
+      description: Optional ingress class name for Release AI Assistant ingress resource.
       default: ""
       allowEmpty: true
     - name: ReleaseAssistantUrl
@@ -1971,39 +2042,40 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter public Release AI assistant URL:"
-      description: Assistant URL set in Release CR (.spec.ai.assistantUrl). If empty and Release Assistant is installed, chart defaults to in-cluster service URL.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enter public Release AI Assistant URL:"
+      description: Assistant URL set in Release CR (.spec.ai.assistantUrl). If empty and Release AI Assistant is installed, chart defaults to in-cluster service URL.
       default: ""
       allowEmpty: true
+      validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantUrl)"
     - name: ReleaseAssistantReleaseBaseUrl
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter Digital.ai Release base public URL for Release Assistant:"
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enter Digital.ai Release base public URL for Release AI Assistant:"
       default: ""
-      description: Digital.ai Release server base URL used by Release Assistant.
+      description: Digital.ai Release server base URL used by Release AI Assistant.
       validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantReleaseBaseUrl)"
     - name: ReleaseAssistantReleaseMcpBaseUrl
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter Release MCP base URL for Release Assistant:"
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enter Release MCP base URL for Release AI Assistant:"
       default: !expr "'http://' + CrName + '-digitalai-release.' + Namespace"
-      description: Release MCP base URL used by Release Assistant configuration.
+      description: Release MCP base URL used by Release AI Assistant configuration.
       validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantReleaseMcpBaseUrl)"
     - name: ReleaseAssistantAccountId
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter account ID for Release Assistant:"
-      description: Account ID used by Ask Release as DAI_ACCOUNT_ID.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enter account ID for Release AI Assistant:"
+      description: Account ID used by Release AI Assistant as DAI_ACCOUNT_ID.
       allowEmpty: false
       default: ""
     - name: ReleaseAssistantOauth2TokenClientId
@@ -2011,49 +2083,67 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter OAuth2 token client ID for Release Assistant:"
-      description: OAuth2 client ID used by Release Assistant token-auth-server registration.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enter OAuth2 token client ID for Release AI Assistant:"
+      description: OAuth2 client ID used by Release AI Assistant token-auth-server registration.
       allowEmpty: false
-      default: ""
+      default: !expr "ProcessType == 'upgrade' && ServerType == 'dai-release' && ReleaseAssistantEnabledOnCr ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.oidc.clientId') : (OidcConfigType == 'external' || OidcConfigType == 'identity-service' ? yamlPath(ExternalOidcConf, 'clientId') : yamlPath(CurrentCrYaml, 'spec.oidc.clientId', true))"
     - name: ReleaseAssistantOauth2TokenClientSecret
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter OAuth2 token client secret for Release Assistant:"
-      description: OAuth2 client secret used by Release Assistant token-auth-server registration.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enter OAuth2 token client secret for Release AI Assistant:"
+      description: OAuth2 client secret used by Release AI Assistant token-auth-server registration.
       allowEmpty: false
-      default: ""
+      default: !expr "ProcessType == 'upgrade' && ServerType == 'dai-release' && ReleaseAssistantEnabledOnCr ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.oidc.clientSecret') : (OidcConfigType == 'external' || OidcConfigType == 'identity-service' ? yamlPath(ExternalOidcConf, 'clientSecret') : yamlPath(CurrentCrYaml, 'spec.oidc.clientSecret', true))"
     - name: ReleaseAssistantOidcIssuerUri
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter OIDC issuer URI for Release Assistant:"
-      description: OIDC issuer URI used by Release Assistant JWT and OAuth2 client configuration.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enter OIDC issuer URI for Release AI Assistant:"
+      description: OIDC issuer URI used by Release AI Assistant JWT and OAuth2 client configuration.
       allowEmpty: false
-      default: ""
+      default: !expr "ProcessType == 'upgrade' && ReleaseAssistantEnabledOnCr ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.oidc.issuerUri') : (OidcConfigType == 'external' || OidcConfigType == 'identity-service' ? yamlPath(ExternalOidcConf, 'issuer') : yamlPath(CurrentCrYaml, 'spec.oidc.issuer', true))"
+      validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantOidcIssuerUri)"
     - name: ReleaseAssistantOidcJwkSetUri
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter OIDC JWK Set URI for Release Assistant:"
-      description: OIDC JWK set URI used by Release Assistant JWT validation.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Enter OIDC JWK Set URI for Release AI Assistant:"
+      description: OIDC JWK set URI used by Release AI Assistant JWT validation.
       allowEmpty: false
-      default: !expr "ReleaseAssistantOidcIssuerUri + '/protocol/openid-connect/certs'"
-    - name: ReleaseAssistantLlmServiceInstall
-      type: Confirm
-      default: false
+      default: !expr "ProcessType == 'upgrade' && ReleaseAssistantEnabledOnCr ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.oidc.jwkSetUri') : (OidcConfigType == 'external' ? yamlPath(ExternalOidcConf, 'keyRetrievalUri') : (OidcConfigType == 'identity-service' ? (yamlPath(ExternalOidcConf, 'issuer') + '/protocol/openid-connect/certs') : (yamlPath(CurrentCrYaml, 'spec.oidc.issuer', true) + '/protocol/openid-connect/certs')))"
+      validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', ReleaseAssistantOidcJwkSetUri)"
+    - name: ReleaseAssistantLlmServiceUpgrade
+      type: Select
+      options:
+        - label: Upgrade existing LLM Service configuration
+          value: existing
+        - label: Remove LLM Service
+          value: remove
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Install LLM Service for Release Assistant:"
+      prompt: "Upgrade LLM Service or uninstall it:"
+      promptIf: !expr ServerType == 'dai-release' && ProcessType == "upgrade" && ReleaseAssistantInstall && ReleaseAssistantLlmServiceEnabledOnCr
+      description: |
+        Provide the type of the LLM Service upgrade. Based on the type, you will be providing the LLM Service configuration
+        or using the LLM Service configuration.
+      default: existing
+    - name: ReleaseAssistantLlmServiceInstall
+      type: Confirm
+      default: !expr "ProcessType == 'upgrade' ? (ReleaseAssistantLlmServiceUpgrade == 'remove' ? false : ReleaseAssistantLlmServiceEnabledOnCr) : false"
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
+      prompt: "Install LLM Service for Release AI Assistant:"
       description: Type yes to install LLM Service as an optional subchart. By default it is disabled.
     - name: RepositoryNameLlmService
       type: Input
@@ -2061,24 +2151,33 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter the Release Assistant LLM Service image repository name:"
-      description: Release Assistant LLM Service container image repository name used by the LLM Service.
+      prompt: "Enter the Release AI Assistant LLM Service image repository name:"
+      description: Release AI Assistant LLM Service container image repository name used by the LLM Service.
+    - name: ImageNameLlmService
+      type: Input
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      prompt: "Enter the Release AI Assistant LLM Service image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
+      description: Release AI Assistant LLM Service container image name used by the LLM Service.
+      default: llm-service-api
     - name: ImageTagLlmService
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
       promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter the Release Assistant LLM Service image tag:"
-      description: Release Assistant LLM Service container image tag used by the LLM Service.
+      prompt: "Enter the Release AI Assistant LLM Service image tag:"
+      description: Release AI Assistant LLM Service container image tag used by the LLM Service.
     - name: ReleaseAssistantAiLlmBaseUrl
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: false
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && !ReleaseAssistantLlmServiceInstall
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && !ReleaseAssistantLlmServiceInstall && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
       prompt: "Enter LLM API base URL:"
-      description: Base URL used by Ask Release for AI LLM API. When embedded LLM Service is enabled, this value is auto-set to the in-cluster LLM Service URL.
+      description: Base URL used by Release AI Assistant for AI LLM API. When embedded LLM Service is enabled, this value is auto-set to the in-cluster LLM Service URL.
       allowEmpty: false
       default: !expr "ReleaseAssistantLlmServiceInstall ? ('http://' + CrName + '-llm-service.' + Namespace + ':9000/llm') : ''"
     - name: ReleaseAssistantLlmServiceProviderConfig
@@ -2086,7 +2185,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
       prompt: "Provide LLM Service provider JSON config:"
       description: JSON configuration used to seed the default LLM provider.
       default: |-
@@ -2101,7 +2200,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
       prompt: "Provide LLM Service system model alias mappings JSON (optional):"
       description: JSON object mapping system aliases to provider-specific model names.
       default: |-
@@ -2125,15 +2224,15 @@ spec:
       prompt: "Issuer URL pattern for LLM Service (auto-derived):"
       description: Auto-derived from ReleaseAssistantOidcIssuerUri.
       allowEmpty: false
-      default: !expr ReleaseAssistantOidcIssuerUri
+      default: !expr "ReleaseAssistantOidcIssuerUri == '' ? ((OidcConfigType == 'external' || OidcConfigType == 'identity-service') ? yamlPath(ExternalOidcConf, 'issuer') : yamlPath(CurrentCrYaml, 'spec.oidc.issuer', true)) : ReleaseAssistantOidcIssuerUri"
     - name: ReleaseAssistantAiLlmChatModel
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
-      prompt: "Enter Ask Release AI chat model:"
-      description: Chat model name used by Ask Release (config.aiLlm.chatModel).
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
+      prompt: "Enter Release AI Assistant chat model:"
+      description: Chat model name used by Release AI Assistant (config.aiLlm.chatModel).
       allowEmpty: false
       default: ""
     - name: RemoteRunnerGeneration
@@ -2151,7 +2250,7 @@ spec:
       promptIf: !expr RemoteRunnerInstall && RemoteRunnerInstallType != 'cluster-install' && (ServerType == 'dai-release-runner' || RemoteRunnerGeneration) && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enter the Release URL that will be used by Release Runner:"
       overrideDefault: true
-      default: !expr "'http://dai-xlr-digitalai-release.' + Namespace"
+      default: !expr "'http://' + CrName + '-digitalai-release.' + Namespace"
       description: The Release URL that will be used by Release Runner, it needs to be accessible from the Release Runner pod.
       validate: !expr "regex('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$', RemoteRunnerReleaseUrl)"
     - name: RemoteRunnerUserEmail
