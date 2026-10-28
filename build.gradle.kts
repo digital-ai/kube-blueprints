@@ -29,12 +29,12 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.4.21"
     id("nebula.release") version (properties["nebulaReleasePluginVersion"] as String)
     id("com.github.node-gradle.node") version "7.1.0"
     id("maven-publish")
     id("idea")
-    id("de.undercouch.download") version "5.6.0"
+    id("de.undercouch.download") version "5.7.0"
 }
 
 apply(plugin = "ai.digital.gradle-commit")
