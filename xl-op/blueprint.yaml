@@ -1735,9 +1735,6 @@ spec:
         .spec.release-assistant-helm-chart.config.aiLlm.chatModel:
           condition: .spec.release-assistant-helm-chart.install == true
           expression: .
-        .spec.release-assistant-helm-chart.llm-service-helm-chart.image.tag:
-          condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
-          expression: .
         .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.config:
           condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
           expression: .
