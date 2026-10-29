@@ -11,6 +11,6 @@ ImageTagReleaseAssistant: 27.1.1-SNAPSHOT
 RepositoryNameLlmService: xebialabsunsupported
 ImageTagLlmService: 0.0.1.302
 PostgresqlOperatorImageTag: 1.28.3
-PostgresqlClusterImageTag: 18.4-minimal-trixie
+PostgresqlClusterImageTag: 18.6-minimal-trixie
 RabbitmqOperatorImageTag: 2.19.0
-RabbitmqClusterImageTag: 4.2.3-management
+RabbitmqClusterImageTag: 4.2.9-management

@@ -43,14 +43,15 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin/kubectl
 
-RUN curl -LO https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 \
+RUN curl -LO https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_amd64 \
     && chmod +x yq_linux_amd64 \
     && mv yq_linux_amd64 /usr/local/bin/yq
 
-RUN curl https://get.helm.sh/helm-v3.19.0-linux-amd64.tar.gz |\
+RUN curl https://get.helm.sh/helm-v4.3.1-linux-amd64.tar.gz |\
     tar xz && mv linux-amd64/helm /usr/local/bin/helm
 
-RUN helm plugin install https://github.com/nikhilsbhat/helm-images
+# helm-images does not publish the provenance artifacts required by Helm 4.
+RUN helm plugin install https://github.com/nikhilsbhat/helm-images --version v0.1.8 --verify=false
 
 COPY --from=builder /go/src/kuttl/bin/kubectl-kuttl /usr/bin/kubectl-kuttl
 
