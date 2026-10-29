@@ -7,7 +7,7 @@ ImageTagRelease: 27.1.0-beta.1029
 RepositoryNameReleaseRunner: xebialabsunsupported
 ImageTagReleaseRunner: 27.1.0-beta.1029
 RepositoryNameReleaseAssistant: xebialabsunsupported
-ImageTagReleaseAssistant: 26.3.0
+ImageTagReleaseAssistant: 27.1.1-SNAPSHOT
 RepositoryNameLlmService: xebialabsunsupported
 ImageTagLlmService: 0.0.1.302
 PostgresqlOperatorImageTag: 1.28.3

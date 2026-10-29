@@ -1693,24 +1693,60 @@ spec:
             expression: .spec.Persistence.ExistingClaim
           23.3: .
         .spec.oidc: .
-        .spec.ai.assistantUrl: .
-        .spec.release-assistant-helm-chart.ingress.enabled: .
-        .spec.release-assistant-helm-chart.ingress.hostname: .
-        .spec.release-assistant-helm-chart.ingress.tls.enabled: .
-        .spec.release-assistant-helm-chart.ingress.ingressClassName: .
-        .spec.release-assistant-helm-chart.config.release.baseUrl: .
-        .spec.release-assistant-helm-chart.config.releaseMcp.baseUrl: .
-        .spec.release-assistant-helm-chart.config.accountId: .
-        .spec.release-assistant-helm-chart.config.oidc.clientId: .
-        .spec.release-assistant-helm-chart.config.oidc.clientSecret: .
-        .spec.release-assistant-helm-chart.config.oidc.issuerUri: .
-        .spec.release-assistant-helm-chart.config.oidc.jwkSetUri: .
-        .spec.release-assistant-helm-chart.llm-service-helm-chart.image.tag: .
-        .spec.release-assistant-helm-chart.config.aiLlm.baseUrl: .
-        .spec.release-assistant-helm-chart.config.aiLlm.chatModel: .
-        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.config: .
-        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.systemModelAliasMappings: .
-        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.auth.accountId: .
+        .spec.ai.assistantUrl:
+          condition: .spec.ai.enabled == true
+          expression: .
+        .spec.release-assistant-helm-chart.ingress.enabled:
+          condition: .spec.release-assistant-helm-chart.ingress.enabled == true
+          expression: .
+        .spec.release-assistant-helm-chart.ingress.hostname:
+          condition: .spec.release-assistant-helm-chart.ingress.enabled == true
+          expression: .
+        .spec.release-assistant-helm-chart.ingress.tls.enabled:
+          condition: .spec.release-assistant-helm-chart.ingress.tls.enabled == true
+          expression: .
+        .spec.release-assistant-helm-chart.ingress.ingressClassName:
+          condition: .spec.release-assistant-helm-chart.ingress.enabled == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.release.baseUrl:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.releaseMcp.baseUrl:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.accountId:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.oidc.clientId:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.oidc.clientSecret:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.oidc.issuerUri:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.oidc.jwkSetUri:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.aiLlm.baseUrl:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.config.aiLlm.chatModel:
+          condition: .spec.release-assistant-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.llm-service-helm-chart.image.tag:
+          condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.config:
+          condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.systemModelAliasMappings:
+          condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
+          expression: .
+        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.auth.accountId:
+          condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
+          expression: .
         .spec.external.db:
           0.0:
           23.3: .
