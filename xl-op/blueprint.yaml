@@ -1693,7 +1693,6 @@ spec:
             expression: .spec.Persistence.ExistingClaim
           23.3: .
         .spec.oidc: .
-        .spec.ai.enabled: .
         .spec.ai.assistantUrl: .
         .spec.release-assistant-helm-chart.ingress.enabled: .
         .spec.release-assistant-helm-chart.ingress.hostname: .
