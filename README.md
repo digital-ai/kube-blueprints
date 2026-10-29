@@ -76,7 +76,7 @@ Flow:
 - `ProcessType = install`
 - `ServerType = dai-release`
 - `ReleaseAssistantInstall = true`
-- `ReleaseAssistantLlmServiceInstall = true`
+- `ReleaseAssistantLlmServiceInstall = onprem`
 - Optional ingress for the Assistant (`ReleaseAssistantIngressEnabled = true`,
   `ReleaseAssistantIngressHostname`, `ReleaseAssistantIngressTlsEnabled`,
   `ReleaseAssistantIngressClassName`).
@@ -97,7 +97,7 @@ Flow:
 
 - `ProcessType = upgrade` (set in `xl-infra`).
 - `ReleaseAssistantInstall = true`.
-- `ReleaseAssistantLlmServiceInstall = true` (optional — if `false`, supply an
+- `ReleaseAssistantLlmServiceInstall = onprem` (optional — if `external`, supply an
   external LLM base URL via `ReleaseAssistantAiLlmBaseUrl`).
 - Reuses the existing PostgreSQL instance (`chart`, `operator`, or `external`).
   The `dai-assistant-db` and `dai-llm-db` databases are created automatically

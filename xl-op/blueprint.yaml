@@ -1144,7 +1144,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide LLM Service external DB JDBC URL:"
-      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && (PostgresqlType == 'external')"
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && (PostgresqlType == 'external')"
       description: JDBC URL for LLM Service database. Use JDBC format (for example jdbc:postgresql://db-host:5432/dai-llm-db).
       default: jdbc:postgresql://<llm-db-host>:5432/<llm-database-name>
     - name: PostgresqlExternalConfigLlmServiceUsername
@@ -1153,7 +1153,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide LLM Service external DB username:"
-      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && (PostgresqlType == 'external')"
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && (PostgresqlType == 'external')"
       description: Username for LLM Service database connection.
       default: <llm-username>
     - name: PostgresqlExternalConfigLlmServicePassword
@@ -1162,7 +1162,7 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Provide LLM Service external DB password:"
-      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && (PostgresqlType == 'external')"
+      promptIf: !expr "ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade') && ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && (PostgresqlType == 'external')"
       description: Password for LLM Service database connection.
       default: <llm-password>
     - name: PostgresqlExternalConfigDeploy
@@ -1729,12 +1729,6 @@ spec:
         .spec.release-assistant-helm-chart.config.oidc.jwkSetUri:
           condition: .spec.release-assistant-helm-chart.install == true
           expression: .
-        .spec.release-assistant-helm-chart.config.aiLlm.baseUrl:
-          condition: .spec.release-assistant-helm-chart.install == true
-          expression: .
-        .spec.release-assistant-helm-chart.config.aiLlm.chatModel:
-          condition: .spec.release-assistant-helm-chart.install == true
-          expression: .
         .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.config:
           condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
           expression: .
@@ -2157,32 +2151,48 @@ spec:
       options:
         - label: Upgrade existing LLM Service configuration
           value: existing
-        - label: Remove LLM Service
-          value: remove
+        - label: On-prem LLM Service
+          value: onprem
+        - label: External LLM Service
+          value: external
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      prompt: "Upgrade LLM Service or uninstall it:"
-      promptIf: !expr ServerType == 'dai-release' && ProcessType == "upgrade" && ReleaseAssistantInstall && ReleaseAssistantLlmServiceEnabledOnCr
+      prompt: "Upgrade existing LLM Service or change the LLM Service type:"
+      promptIf: !expr ServerType == 'dai-release' && ProcessType == "upgrade" && ReleaseAssistantInstall
       description: |
-        Provide the type of the LLM Service upgrade. Based on the type, you will be providing the LLM Service configuration
-        or using the LLM Service configuration.
-      default: existing
+        Provide the type of the LLM Service for the upgrade. Use the existing LLM Service configuration, or switch to an
+        external or an on-prem LLM Service.
+      default: !expr "ReleaseAssistantLlmServiceEnabledOnCr || ReleaseAssistantEnabledOnCr ? 'existing' : 'external'"
     - name: ReleaseAssistantLlmServiceInstall
-      type: Confirm
-      default: !expr "ProcessType == 'upgrade' ? (ReleaseAssistantLlmServiceUpgrade == 'remove' ? false : ReleaseAssistantLlmServiceEnabledOnCr) : false"
+      type: Select
+      options:
+        - label: On-prem LLM Service
+          value: onprem
+        - label: External LLM Service
+          value: external
+      default: external
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
-      prompt: "Install LLM Service for Release AI Assistant:"
-      description: Type yes to install LLM Service as an optional subchart. By default it is disabled.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
+      prompt: "Select LLM Service type for Release AI Assistant:"
+      description: Choose "On-prem LLM Service" to install the LLM Service as a subchart, or "External LLM Service" to use an externally hosted LLM API (you will provide its base URL).
+    - name: ReleaseAssistantLlmServiceOnPrem
+      type: Confirm
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr false
+      prompt: "Use on-prem LLM Service (auto-derived):"
+      description: Derived from ReleaseAssistantLlmServiceInstall on install and ReleaseAssistantLlmServiceUpgrade on upgrade.
+      default: !expr "ServerType == 'dai-release' && ReleaseAssistantInstall ? (ProcessType == 'install' ? ReleaseAssistantLlmServiceInstall == 'onprem' : (ProcessType == 'upgrade' ? (ReleaseAssistantLlmServiceUpgrade == 'onprem' || (ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantLlmServiceEnabledOnCr)) : false)) : false"
     - name: RepositoryNameLlmService
       type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enter the Release AI Assistant LLM Service image repository name:"
       description: Release AI Assistant LLM Service container image repository name used by the LLM Service.
     - name: ImageNameLlmService
@@ -2190,7 +2200,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enter the Release AI Assistant LLM Service image name (eg: <imageName> from <repositoryName>/<imageName>:<tagName>):"
       description: Release AI Assistant LLM Service container image name used by the LLM Service.
       default: llm-service-api
@@ -2199,7 +2209,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || ProcessType == 'upgrade')
       prompt: "Enter the Release AI Assistant LLM Service image tag:"
       description: Release AI Assistant LLM Service container image tag used by the LLM Service.
     - name: ReleaseAssistantAiLlmBaseUrl
@@ -2207,17 +2217,17 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: false
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && !ReleaseAssistantLlmServiceInstall && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
-      prompt: "Enter LLM API base URL:"
-      description: Base URL used by Release AI Assistant for AI LLM API. When embedded LLM Service is enabled, this value is auto-set to the in-cluster LLM Service URL.
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && !ReleaseAssistantLlmServiceOnPrem && (ProcessType == 'install' || ProcessType == 'upgrade')
+      prompt: "Enter external LLM API base URL:"
+      description: Base URL used by Release AI Assistant for AI LLM API. An external LLM service is required when the embedded LLM Service is not installed. When embedded LLM Service is enabled, this value is auto-set to the in-cluster LLM Service URL.
       allowEmpty: false
-      default: !expr "ReleaseAssistantLlmServiceInstall ? ('http://' + CrName + '-llm-service.' + Namespace + ':9000/llm') : ''"
+      default: !expr "ReleaseAssistantLlmServiceOnPrem ? ('http://' + CrName + '-llm-service.' + Namespace + ':9000/llm') : (ProcessType == 'upgrade' && ReleaseAssistantEnabledOnCr && !ReleaseAssistantLlmServiceEnabledOnCr ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.aiLlm.baseUrl', true) : '')"
     - name: ReleaseAssistantLlmServiceProviderConfig
       type: Editor
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
       prompt: "Provide LLM Service provider JSON config:"
       description: JSON configuration used to seed the default LLM provider.
       default: |-
@@ -2232,7 +2242,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
       prompt: "Provide LLM Service system model alias mappings JSON (optional):"
       description: JSON object mapping system aliases to provider-specific model names.
       default: |-
@@ -2262,11 +2272,11 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && (!ReleaseAssistantLlmServiceEnabledOnCr || !ReleaseAssistantLlmServiceOnPrem)))
       prompt: "Enter Release AI Assistant chat model:"
       description: Chat model name used by Release AI Assistant (config.aiLlm.chatModel).
       allowEmpty: false
-      default: ""
+      default: !expr "ProcessType == 'upgrade' && ServerType == 'dai-release' && ReleaseAssistantEnabledOnCr ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.aiLlm.chatModel', true) : ''"
     - name: RemoteRunnerGeneration
       type: Confirm
       saveInXlvals: true
