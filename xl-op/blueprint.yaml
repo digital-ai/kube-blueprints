@@ -2171,7 +2171,7 @@ spec:
           value: onprem
         - label: External LLM Service
           value: external
-      default: external
+      default: onprem
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -2217,7 +2217,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: false
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && !ReleaseAssistantLlmServiceOnPrem && (ProcessType == 'install' || ProcessType == 'upgrade')
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && !ReleaseAssistantLlmServiceOnPrem && (ProcessType == 'install' || (ProcessType == 'upgrade' && !(ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantEnabledOnCr)))
       prompt: "Enter external LLM API base URL:"
       description: Base URL used by Release AI Assistant for AI LLM API. An external LLM service is required when the embedded LLM Service is not installed. When embedded LLM Service is enabled, this value is auto-set to the in-cluster LLM Service URL.
       allowEmpty: false
@@ -2272,7 +2272,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && (!ReleaseAssistantLlmServiceEnabledOnCr || !ReleaseAssistantLlmServiceOnPrem)))
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !(ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantEnabledOnCr) && (!ReleaseAssistantLlmServiceEnabledOnCr || !ReleaseAssistantLlmServiceOnPrem)))
       prompt: "Enter Release AI Assistant chat model:"
       description: Chat model name used by Release AI Assistant (config.aiLlm.chatModel).
       allowEmpty: false
