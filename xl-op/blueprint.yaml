@@ -2159,11 +2159,11 @@ spec:
       ignoreIfSkipped: true
       overrideDefault: true
       prompt: "Upgrade existing LLM Service or change the LLM Service type:"
-      promptIf: !expr ServerType == 'dai-release' && ProcessType == "upgrade" && ReleaseAssistantInstall
+      promptIf: !expr ServerType == 'dai-release' && ProcessType == "upgrade" && ReleaseAssistantInstall && ReleaseAssistantEnabledOnCr
       description: |
         Provide the type of the LLM Service for the upgrade. Use the existing LLM Service configuration, or switch to an
         external or an on-prem LLM Service.
-      default: !expr "ReleaseAssistantLlmServiceEnabledOnCr || ReleaseAssistantEnabledOnCr ? 'existing' : 'external'"
+      default: existing
     - name: ReleaseAssistantLlmServiceInstall
       type: Select
       options:
@@ -2175,8 +2175,8 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && ProcessType == 'install'
-      prompt: "Select LLM Service type for Release AI Assistant:"
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      prompt: "Install LLM Service for Release AI Assistant:"
       description: Choose "On-prem LLM Service" to install the LLM Service as a subchart, or "External LLM Service" to use an externally hosted LLM API (you will provide its base URL).
     - name: ReleaseAssistantLlmServiceOnPrem
       type: Confirm
@@ -2185,8 +2185,8 @@ spec:
       overrideDefault: true
       promptIf: !expr false
       prompt: "Use on-prem LLM Service (auto-derived):"
-      description: Derived from ReleaseAssistantLlmServiceInstall on install and ReleaseAssistantLlmServiceUpgrade on upgrade.
-      default: !expr "ServerType == 'dai-release' && ReleaseAssistantInstall ? (ProcessType == 'install' ? ReleaseAssistantLlmServiceInstall == 'onprem' : (ProcessType == 'upgrade' ? (ReleaseAssistantLlmServiceUpgrade == 'onprem' || (ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantLlmServiceEnabledOnCr)) : false)) : false"
+      description: Derived from ReleaseAssistantLlmServiceInstall on install (or when the assistant is newly added on upgrade) and from ReleaseAssistantLlmServiceUpgrade when the assistant already exists on upgrade.
+      default: !expr "ServerType == 'dai-release' && ReleaseAssistantInstall ? (ProcessType == 'install' || !ReleaseAssistantEnabledOnCr ? (ReleaseAssistantLlmServiceInstall == 'onprem') : (ProcessType == 'upgrade' ? (ReleaseAssistantLlmServiceUpgrade == 'onprem' || (ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantLlmServiceEnabledOnCr)) : false)) : false"
     - name: RepositoryNameLlmService
       type: Input
       saveInXlvals: true
