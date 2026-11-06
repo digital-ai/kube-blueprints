@@ -1729,12 +1729,6 @@ spec:
         .spec.release-assistant-helm-chart.config.oidc.jwkSetUri:
           condition: .spec.release-assistant-helm-chart.install == true
           expression: .
-        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.config:
-          condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
-          expression: .
-        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.systemModelAliasMappings:
-          condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
-          expression: .
         .spec.release-assistant-helm-chart.llm-service-helm-chart.config.auth.accountId:
           condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
           expression: .
@@ -2149,10 +2143,10 @@ spec:
     - name: ReleaseAssistantLlmServiceUpgrade
       type: Select
       options:
-        - label: Upgrade existing LLM Service configuration
+        - label: Keep existing LLM Service configuration
           value: existing
         - label: On-prem LLM Service
-          value: onprem
+          value: on-prem
         - label: External LLM Service
           value: external
       saveInXlvals: true
@@ -2168,10 +2162,10 @@ spec:
       type: Select
       options:
         - label: On-prem LLM Service
-          value: onprem
+          value: on-prem
         - label: External LLM Service
           value: external
-      default: onprem
+      default: on-prem
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
@@ -2186,7 +2180,16 @@ spec:
       promptIf: !expr false
       prompt: "Use on-prem LLM Service (auto-derived):"
       description: Derived from ReleaseAssistantLlmServiceInstall on install (or when the assistant is newly added on upgrade) and from ReleaseAssistantLlmServiceUpgrade when the assistant already exists on upgrade.
-      default: !expr "ServerType == 'dai-release' && ReleaseAssistantInstall ? (ProcessType == 'install' || !ReleaseAssistantEnabledOnCr ? (ReleaseAssistantLlmServiceInstall == 'onprem') : (ProcessType == 'upgrade' ? (ReleaseAssistantLlmServiceUpgrade == 'onprem' || (ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantLlmServiceEnabledOnCr)) : false)) : false"
+      default: !expr "ServerType == 'dai-release' && ReleaseAssistantInstall ? (ProcessType == 'install' || !ReleaseAssistantEnabledOnCr ? (ReleaseAssistantLlmServiceInstall == 'on-prem') : (ProcessType == 'upgrade' ? (ReleaseAssistantLlmServiceUpgrade == 'on-prem' || (ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantLlmServiceEnabledOnCr)) : false)) : false"
+    - name: ReleaseAssistantLlmServiceReuseExisting
+      type: Confirm
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr false
+      prompt: "Keep the existing LLM Service configuration (auto-derived):"
+      description: Derived from ReleaseAssistantLlmServiceUpgrade. True only when an on-prem LLM Service already exists on the CR and the upgrade keeps it as is, in which case its configuration is not prompted again.
+      default: !expr "ProcessType == 'upgrade' && ReleaseAssistantEnabledOnCr && ReleaseAssistantLlmServiceEnabledOnCr && ReleaseAssistantLlmServiceUpgrade == 'existing'"
     - name: RepositoryNameLlmService
       type: Input
       saveInXlvals: true
@@ -2222,31 +2225,36 @@ spec:
       description: Base URL used by Release AI Assistant for AI LLM API. An external LLM service is required when the embedded LLM Service is not installed. When embedded LLM Service is enabled, this value is auto-set to the in-cluster LLM Service URL.
       allowEmpty: false
       default: !expr "ReleaseAssistantLlmServiceOnPrem ? ('http://' + CrName + '-llm-service.' + Namespace + ':9000/llm') : (ProcessType == 'upgrade' && ReleaseAssistantEnabledOnCr && !ReleaseAssistantLlmServiceEnabledOnCr ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.aiLlm.baseUrl', true) : '')"
-    - name: ReleaseAssistantLlmServiceProviderConfig
-      type: Editor
+    - name: DefaultLlmServiceProviderConfig
+      type: Input
       saveInXlvals: true
       ignoreIfSkipped: true
-      overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
-      prompt: "Provide LLM Service provider JSON config:"
-      description: JSON configuration used to seed the default LLM provider.
-      default: |-
+      value: |-
         {
           "type": "openai",
           "config": {
             "api_key": "REPLACE-ME"
           }
         }
+      description: Default values for the LLM Service provider JSON config editor.
+    - name: ReleaseAssistantLlmServiceProviderConfig
+      type: Editor
+      saveInXlvals: true
+      ignoreIfSkipped: true
+      overrideDefault: true
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceReuseExisting))
+      prompt: "Provide LLM Service provider JSON config:"
+      description: JSON configuration used to seed the default LLM provider.
+      default: !expr "ProcessType == 'upgrade' && ReleaseAssistantLlmServiceEnabledOnCr && yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.config', true) != '' ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.config', true) : DefaultLlmServiceProviderConfig"
     - name: ReleaseAssistantLlmServiceSystemModelAliasMappings
       type: Editor
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceEnabledOnCr))
+      promptIf: !expr ReleaseAssistantInstall && ReleaseAssistantLlmServiceOnPrem && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantLlmServiceReuseExisting))
       prompt: "Provide LLM Service system model alias mappings JSON (optional):"
       description: JSON object mapping system aliases to provider-specific model names.
-      default: |-
-        {}
+      default: !expr "ProcessType == 'upgrade' && ReleaseAssistantLlmServiceEnabledOnCr && yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.systemModelAliasMappings', true) != '' ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.llm-service-helm-chart.config.provider.systemModelAliasMappings', true) : '{}'"
     - name: ReleaseAssistantLlmServiceAccountId
       type: Input
       saveInXlvals: true
@@ -2272,7 +2280,7 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !(ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantEnabledOnCr) && (!ReleaseAssistantLlmServiceEnabledOnCr || !ReleaseAssistantLlmServiceOnPrem)))
+      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !(ReleaseAssistantLlmServiceUpgrade == 'existing' && ReleaseAssistantEnabledOnCr)))
       prompt: "Enter Release AI Assistant chat model:"
       description: Chat model name used by Release AI Assistant (config.aiLlm.chatModel).
       allowEmpty: false
