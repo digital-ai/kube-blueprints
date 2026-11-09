@@ -173,4 +173,7 @@ UpgradeType: operatorToOperator
 ReleaseName: 'dai-xlr'
 CrdName: 'digitalaireleases.xlr.digital.ai'
 PreservePvc: true
-ImageTagReleaseRunner: 27.1.0-beta.1226
+ImageTagReleaseRunner: 27.1.0-beta.1026
+RemoteRunnerInstallType: 'no-install'
+ReleaseAssistantUpgrade: false
+ReleaseAssistantLlmServiceUpgrade: false
