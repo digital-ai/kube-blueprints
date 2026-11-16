@@ -292,8 +292,8 @@ graph TD
 ### Prerequisites
 
 - **JDK 21** (the build pins `languageLevel=21`)
-- **Node 20** + **Yarn 1.22** (used for Docusaurus documentation generation)
-- The `installHelm` Gradle task downloads Helm 4.2 automatically on first build.
+- **Node 24** + **Yarn 1.22** (used for Docusaurus documentation generation)
+- The `installHelm` Gradle task downloads Helm 4.3 automatically on first build.
 
 ### Key Gradle tasks
 
