@@ -1729,9 +1729,6 @@ spec:
         .spec.release-assistant-helm-chart.config.oidc.jwkSetUri:
           condition: .spec.release-assistant-helm-chart.install == true
           expression: .
-        .spec.release-assistant-helm-chart.llm-service-helm-chart.config.auth.accountId:
-          condition: .spec.release-assistant-helm-chart.llm-service-helm-chart.install == true
-          expression: .
         .spec.external.db:
           0.0:
           23.3: .
@@ -2093,11 +2090,11 @@ spec:
       saveInXlvals: true
       ignoreIfSkipped: true
       overrideDefault: true
-      promptIf: !expr ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && !ReleaseAssistantEnabledOnCr))
+      promptIf: !expr "ReleaseAssistantInstall && ServerType == 'dai-release' && (ProcessType == 'install' || (ProcessType == 'upgrade' && (!ReleaseAssistantEnabledOnCr || yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.accountId', true) == '')))"
       prompt: "Enter account ID for Release AI Assistant:"
       description: Account ID used by Release AI Assistant as DAI_ACCOUNT_ID.
       allowEmpty: false
-      default: ""
+      default: !expr "ProcessType == 'upgrade' && ReleaseAssistantEnabledOnCr ? yamlPath(CurrentCrYaml, 'spec.release-assistant-helm-chart.config.accountId', true) : ''"
     - name: ReleaseAssistantOauth2TokenClientId
       type: Input
       saveInXlvals: true
